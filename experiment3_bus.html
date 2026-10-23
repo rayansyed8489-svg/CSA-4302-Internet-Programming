@@ -1,0 +1,2630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Experiment 3 - Online Bus Ticket Booking System</title>
+  <meta name="description" content="Experiment 3: Online Bus Ticket Booking System with seat selection, bus categories, user registration/login/password utilities, ticket booking and cancellation, bus comments, admin schedule management, and report generation.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* ==========================================================================
+       EXPERIMENT 3 - ONLINE BUS TICKET BOOKING SYSTEM
+       Clean, Simple, Intuitive Styling
+       ========================================================================== */
+    :root {
+      --primary: #059669;
+      --primary-dark: #047857;
+      --primary-light: rgba(5, 150, 105, 0.12);
+
+      --accent: #2563eb;
+      --accent-light: rgba(37, 99, 235, 0.12);
+
+      --danger: #ef4444;
+      --danger-light: rgba(239, 68, 68, 0.12);
+
+      --warning: #f59e0b;
+      --warning-light: rgba(245, 158, 11, 0.12);
+
+      --bg-body: #0f172a;
+      --bg-surface: #1e293b;
+      --bg-card: #334155;
+      --bg-card-hover: #3b4d66;
+      --border: rgba(255, 255, 255, 0.1);
+
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --radius-full: 9999px;
+
+      --transition: 0.2s ease;
+    }
+
+    [data-theme="light"] {
+      --bg-body: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-card: #f1f5f9;
+      --bg-card-hover: #e2e8f0;
+      --border: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-dim: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color var(--transition), color var(--transition);
+    }
+
+    /* Experiment 3 Top Bar */
+    .exp-bar {
+      background: linear-gradient(90deg, #064e3b, #047857, #064e3b);
+      color: #d1fae5;
+      padding: 6px 1.5rem;
+      font-size: 0.8rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .exp-badge {
+      background: #059669;
+      color: #fff;
+      padding: 2px 8px;
+      border-radius: var(--radius-sm);
+      font-weight: 800;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+    }
+
+    .exp-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .quick-btn {
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #fff;
+      padding: 3px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 0.75rem;
+      cursor: pointer;
+      font-family: inherit;
+      transition: var(--transition);
+    }
+
+    .quick-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Navbar */
+    .navbar {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      text-decoration: none;
+      color: var(--text-main);
+    }
+
+    .nav-brand-icon {
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, #059669, #10b981);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.2rem;
+    }
+
+    .nav-brand-text {
+      font-size: 1.2rem;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .nav-brand-text span {
+      display: block;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      list-style: none;
+    }
+
+    .nav-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 7px 12px;
+      border-radius: var(--radius-md);
+      font-size: 0.88rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .nav-btn:hover {
+      color: var(--text-main);
+      background: var(--primary-light);
+    }
+
+    .nav-btn.active {
+      color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .theme-toggle-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      width: 34px;
+      height: 34px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .user-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 4px 10px 4px 6px;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      font-size: 0.82rem;
+    }
+
+    .user-avatar {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #059669;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.75rem;
+    }
+
+    /* Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1.5rem 1rem;
+      width: 100%;
+      flex: 1;
+    }
+
+    /* Views */
+    .view-section {
+      display: none;
+      animation: fadeIn 0.2s ease forwards;
+    }
+
+    .view-section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Hero / Search Box */
+    .bus-hero {
+      background: linear-gradient(135deg, rgba(5, 150, 105, 0.3), rgba(15, 23, 42, 0.8)), var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .bus-hero h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
+
+    .bus-hero p {
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+      font-size: 0.95rem;
+    }
+
+    .search-bar-widget {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+      align-items: flex-end;
+    }
+
+    /* Forms */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .form-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .form-control {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 8px 10px;
+      color: var(--text-main);
+      font-size: 0.88rem;
+      font-family: inherit;
+      outline: none;
+      width: 100%;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary);
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: var(--transition);
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn-secondary {
+      background: var(--bg-card);
+      border-color: var(--border);
+      color: var(--text-main);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-card-hover);
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: #fff;
+    }
+
+    .btn-danger:hover {
+      background: #dc2626;
+    }
+
+    .btn-accent {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .btn-sm {
+      padding: 4px 8px;
+      font-size: 0.78rem;
+    }
+
+    /* Bus Cards */
+    .buses-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .bus-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      display: grid;
+      grid-template-columns: 2fr 2fr 1fr 1.2fr;
+      gap: 1rem;
+      align-items: center;
+      transition: var(--transition);
+    }
+
+    .bus-card:hover {
+      border-color: var(--primary);
+    }
+
+    @media (max-width: 800px) {
+      .bus-card {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .bus-meta h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .bus-cat-badge {
+      display: inline-block;
+      background: var(--primary-light);
+      color: var(--primary);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .bus-route-time {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      font-size: 0.88rem;
+    }
+
+    .bus-price-seats {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
+    }
+
+    .bus-price {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--primary);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Seat Selector Layout (Bus Cabin) */
+    .bus-cabin-wrapper {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      max-width: 440px;
+      margin: 0 auto;
+    }
+
+    .bus-driver-row {
+      display: flex;
+      justify-content: flex-end;
+      border-bottom: 2px dashed var(--border);
+      padding-bottom: 8px;
+      margin-bottom: 12px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .seats-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      align-items: center;
+    }
+
+    .aisle-space {
+      visibility: hidden;
+    }
+
+    .seat-btn {
+      aspect-ratio: 1;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--bg-surface);
+      color: var(--text-main);
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+    }
+
+    .seat-btn:hover:not(:disabled) {
+      border-color: var(--primary);
+      transform: scale(1.05);
+    }
+
+    .seat-btn.available {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: #10b981;
+      color: #10b981;
+    }
+
+    .seat-btn.selected {
+      background: #f59e0b;
+      border-color: #f59e0b;
+      color: #ffffff;
+    }
+
+    .seat-btn.booked {
+      background: rgba(239, 68, 68, 0.2);
+      border-color: rgba(239, 68, 68, 0.3);
+      color: var(--text-dim);
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
+    .seat-legend {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 12px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .legend-box {
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+    }
+
+    /* Tables */
+    .table-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow-x: auto;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      text-align: left;
+    }
+
+    .table th {
+      background: var(--bg-card);
+      color: var(--text-muted);
+      font-weight: 700;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .table tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+
+    .badge-success { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+    .badge-danger  { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+    .badge-warning { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+
+    /* Modals */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      width: 100%;
+      max-width: 520px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-card.modal-lg {
+      max-width: 680px;
+    }
+
+    .modal-header {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .modal-close-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 1.3rem;
+    }
+
+    .modal-body {
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .modal-footer {
+      padding: 0.85rem 1.25rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    /* Admin Subnavigation */
+    .admin-tabs {
+      display: flex;
+      gap: 6px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1rem;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .admin-tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 8px 12px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+
+    .admin-tab-btn.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+
+    .admin-pane {
+      display: none;
+    }
+
+    .admin-pane.active {
+      display: block;
+    }
+
+    /* KPI Summary Cards */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .kpi-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+    }
+
+    .kpi-title {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .kpi-val {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--primary);
+      font-family: 'JetBrains Mono', monospace;
+      margin-top: 2px;
+    }
+
+    /* Toast */
+    .toast-box {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 300;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .toast-msg {
+      background: var(--bg-surface);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    }
+
+    .toast-msg.success { border-left: 4px solid var(--primary); }
+    .toast-msg.danger  { border-left: 4px solid var(--danger); }
+    .toast-msg.info    { border-left: 4px solid var(--accent); }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      background: var(--bg-surface);
+      padding: 1rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      margin-top: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========================================================================
+       EXPERIMENT 3 HEADER BAR
+       ======================================================================== -->
+  <div class="exp-bar">
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <span class="exp-badge">Experiment 3</span>
+      <span>Online Bus Ticket Booking System</span>
+    </div>
+    <div class="exp-actions">
+      <span style="opacity: 0.8; font-size: 0.75rem;">Fast Role Switcher:</span>
+      <button class="quick-btn" onclick="demoSwitch('user')">👤 Passenger: Alex</button>
+      <button class="quick-btn" onclick="demoSwitch('admin')">🔑 Transit Admin</button>
+      <button class="quick-btn" onclick="resetDemoData()">🔄 Reset Data</button>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       NAVBAR
+       ======================================================================== -->
+  <nav class="navbar">
+    <div class="nav-brand" onclick="navigate('search')">
+      <div class="nav-brand-icon">🚌</div>
+      <div class="nav-brand-text">
+        SwiftBus Express
+        <span>Ticket Booking & Administration • Exp 3</span>
+      </div>
+    </div>
+
+    <ul class="nav-links">
+      <li><button class="nav-btn active" id="nav-btn-search" onclick="navigate('search')">🔍 Search Buses</button></li>
+      <li><button class="nav-btn" id="nav-btn-history" onclick="navigate('history')">🎫 My Bookings</button></li>
+      <li><button class="nav-btn" id="nav-btn-comments" onclick="navigate('comments')">💬 Bus Reviews</button></li>
+      <li><button class="nav-btn" id="nav-btn-news" onclick="navigate('news')">📰 Transit News</button></li>
+      <li id="adminNavTab" style="display: none;">
+        <button class="nav-btn" id="nav-btn-admin" onclick="navigate('admin')" style="color: #10b981;">⚙️ Admin Panel</button>
+      </li>
+    </ul>
+
+    <div class="nav-actions">
+      <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle Light/Dark Theme">🌓</button>
+
+      <div id="authLoggedOut" style="display: none;">
+        <button class="btn btn-primary btn-sm" onclick="openAuthModal('login')">Sign In</button>
+      </div>
+
+      <div id="authLoggedIn" style="display: flex;">
+        <div class="user-badge" onclick="openUserMenu()">
+          <div class="user-avatar" id="navUserInitial">A</div>
+          <span id="navUserName">Alex</span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ========================================================================
+       MAIN APP CONTAINER
+       ======================================================================== -->
+  <main class="container">
+
+    <!-- ======================================================================
+         PAGE 1: SEARCH & BOOK BUS TICKETS
+         ====================================================================== -->
+    <section id="view-search" class="view-section active">
+      <div class="bus-hero">
+        <h1>Book Your Bus Tickets Online</h1>
+        <p>Select routes, departure dates, interactive seat selection, and instant confirmation.</p>
+
+        <!-- Search Bar -->
+        <div class="search-bar-widget">
+          <div class="form-group">
+            <label class="form-label">From City</label>
+            <select id="searchFrom" class="form-control" onchange="filterBuses()">
+              <option value="all">All Departure Cities</option>
+              <option value="New York">New York</option>
+              <option value="Boston">Boston</option>
+              <option value="Washington DC">Washington DC</option>
+              <option value="Philadelphia">Philadelphia</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">To Destination</label>
+            <select id="searchTo" class="form-control" onchange="filterBuses()">
+              <option value="all">All Destinations</option>
+              <option value="Boston">Boston</option>
+              <option value="Washington DC">Washington DC</option>
+              <option value="Philadelphia">Philadelphia</option>
+              <option value="New York">New York</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Travel Date</label>
+            <input type="date" id="searchDate" class="form-control" onchange="filterBuses()">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Bus Category</label>
+            <select id="searchCategory" class="form-control" onchange="filterBuses()">
+              <option value="all">All Bus Categories</option>
+              <!-- Populated by JS -->
+            </select>
+          </div>
+
+          <div class="form-group">
+            <button class="btn btn-primary" onclick="filterBuses()">Find Buses</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bus Results List -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+        <h3 style="font-size: 1.1rem; font-weight: 700;">Available Scheduled Buses</h3>
+        <span style="font-size: 0.8rem; color: var(--text-muted);" id="busesCountLabel">Showing 0 buses</span>
+      </div>
+
+      <div class="buses-list" id="busesContainer">
+        <!-- Rendered by JS -->
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         PAGE 2: MY BOOKINGS & CANCELLATION
+         ====================================================================== -->
+    <section id="view-history" class="view-section">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <div>
+          <h2 style="font-size: 1.5rem; font-weight: 800;">My Booked Bus Tickets</h2>
+          <p style="color: var(--text-muted); font-size: 0.85rem;">View journey details, boarding pass, or cancel ticket.</p>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="navigate('search')">+ Book New Ticket</button>
+      </div>
+
+      <div class="table-box">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Ticket ID</th>
+              <th>Bus & Category</th>
+              <th>Route</th>
+              <th>Journey Date & Time</th>
+              <th>Selected Seats</th>
+              <th>Total Paid</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="userBookingsTableBody">
+            <!-- Rendered by JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         PAGE 3: BUS COMMENTS & REVIEWS
+         ====================================================================== -->
+    <section id="view-comments" class="view-section">
+      <div style="max-width: 800px; margin: 0 auto;">
+        <div style="margin-bottom: 1.5rem;">
+          <h2 style="font-size: 1.5rem; font-weight: 800;">Passenger Comments & Reviews</h2>
+          <p style="color: var(--text-muted); font-size: 0.85rem;">Share feedback or read verified passenger experiences for each bus service.</p>
+        </div>
+
+        <!-- Post Comment Box -->
+        <div style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.25rem; margin-bottom: 1.5rem;">
+          <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.75rem;">Post a Comment on a Bus</h3>
+          <form onsubmit="handlePostComment(event)">
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 10px; margin-bottom: 0.75rem;">
+              <div class="form-group">
+                <label class="form-label">Select Bus</label>
+                <select id="commentBusSelect" class="form-control" required>
+                  <!-- Populated by JS -->
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Rating</label>
+                <select id="commentRating" class="form-control">
+                  <option value="5">⭐⭐⭐⭐⭐ (5/5)</option>
+                  <option value="4">⭐⭐⭐⭐ (4/5)</option>
+                  <option value="3">⭐⭐⭐ (3/5)</option>
+                  <option value="2">⭐⭐ (2/5)</option>
+                  <option value="1">⭐ (1/5)</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group" style="margin-bottom: 1rem;">
+              <label class="form-label">Your Comment / Experience</label>
+              <textarea id="commentText" class="form-control" rows="2" required placeholder="Comfortable seats, punctual departure, clean cabin..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-sm">Submit Passenger Comment</button>
+          </form>
+        </div>
+
+        <!-- Comments Feed -->
+        <div id="commentsFeed">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         PAGE 4: TRANSIT NEWS & ANNOUNCEMENTS
+         ====================================================================== -->
+    <section id="view-news" class="view-section">
+      <div style="max-width: 800px; margin: 0 auto;">
+        <h2 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 0.5rem;">Transit News & Announcements</h2>
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">Official updates, route expansions, discounts, and safety protocols.</p>
+        
+        <div id="newsContainer" style="display: flex; flex-direction: column; gap: 1rem;">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         PAGE 5: ADMIN DASHBOARD & MANAGEMENT PANEL
+         ====================================================================== -->
+    <section id="view-admin" class="view-section">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <div>
+          <span class="badge badge-success">Administrator Access</span>
+          <h2 style="font-size: 1.6rem; font-weight: 800; margin-top: 2px;">Transit Administration Dashboard</h2>
+        </div>
+      </div>
+
+      <!-- KPI Summary Cards -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-title">Total Active Buses</div>
+          <div class="kpi-val" id="adminKpiBuses">0</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-title">Total Bookings</div>
+          <div class="kpi-val" id="adminKpiBookings">0</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-title">Registered Users</div>
+          <div class="kpi-val" id="adminKpiUsers">0</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-title">Gross Ticket Revenue</div>
+          <div class="kpi-val" id="adminKpiRevenue">$0</div>
+        </div>
+      </div>
+
+      <!-- Admin Subnav Tabs -->
+      <div class="admin-tabs">
+        <button class="admin-tab-btn active" onclick="switchAdminTab('buses', this)">🚌 Maintain Buses</button>
+        <button class="admin-tab-btn" onclick="switchAdminTab('categories', this)">🏷️ Bus Categories</button>
+        <button class="admin-tab-btn" onclick="switchAdminTab('users', this)">👥 Registered Users</button>
+        <button class="admin-tab-btn" onclick="switchAdminTab('news-mgr', this)">📰 Manage News</button>
+        <button class="admin-tab-btn" onclick="switchAdminTab('reports', this)">📊 Generate Reports</button>
+      </div>
+
+      <!-- Admin Pane 1: Manage Buses -->
+      <div id="admin-pane-buses" class="admin-pane active">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
+          <h3 style="font-size: 1.05rem;">All Scheduled Buses</h3>
+          <button class="btn btn-primary btn-sm" onclick="openAddBusModal()">+ Add New Bus</button>
+        </div>
+        <div class="table-box">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Bus ID</th>
+                <th>Bus Name</th>
+                <th>Category</th>
+                <th>Route (From - To)</th>
+                <th>Time</th>
+                <th>Seats</th>
+                <th>Fare</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="adminBusesTableBody">
+              <!-- Rendered by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Admin Pane 2: Bus Categories -->
+      <div id="admin-pane-categories" class="admin-pane">
+        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1.5rem;">
+          <div style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1rem;">
+            <h3 style="font-size: 1rem; margin-bottom: 0.75rem;">Add New Category</h3>
+            <form onsubmit="handleAddCategory(event)">
+              <div class="form-group" style="margin-bottom: 0.75rem;">
+                <label class="form-label">Category Name</label>
+                <input type="text" id="newCatName" class="form-control" required placeholder="e.g. Semi-Sleeper Luxury">
+              </div>
+              <div class="form-group" style="margin-bottom: 1rem;">
+                <label class="form-label">Description</label>
+                <input type="text" id="newCatDesc" class="form-control" placeholder="Reclining seats, USB ports...">
+              </div>
+              <button type="submit" class="btn btn-primary btn-sm" style="width: 100%;">Save Category</button>
+            </form>
+          </div>
+
+          <div class="table-box">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Category Name</th>
+                  <th>Description</th>
+                  <th>Active Buses</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="adminCategoriesTableBody">
+                <!-- Rendered by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Admin Pane 3: Registered Users -->
+      <div id="admin-pane-users" class="admin-pane">
+        <div class="table-box">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>User ID</th>
+                <th>Full Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Role</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="adminUsersTableBody">
+              <!-- Rendered by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Admin Pane 4: Manage News -->
+      <div id="admin-pane-news-mgr" class="admin-pane">
+        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 1.5rem;">
+          <div style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1rem;">
+            <h3 style="font-size: 1rem; margin-bottom: 0.75rem;">Publish News / Announcement</h3>
+            <form onsubmit="handlePublishNews(event)">
+              <div class="form-group" style="margin-bottom: 0.75rem;">
+                <label class="form-label">Title</label>
+                <input type="text" id="newsTitleInput" class="form-control" required placeholder="Holiday special discounts">
+              </div>
+              <div class="form-group" style="margin-bottom: 1rem;">
+                <label class="form-label">Content</label>
+                <textarea id="newsContentInput" class="form-control" rows="3" required placeholder="Announcement details..."></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary btn-sm" style="width: 100%;">Publish Announcement</button>
+            </form>
+          </div>
+
+          <div class="table-box">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Title</th>
+                  <th>Snippet</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="adminNewsTableBody">
+                <!-- Rendered by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Admin Pane 5: Report Generation -->
+      <div id="admin-pane-reports" class="admin-pane">
+        <div style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.25rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <div>
+              <h3 style="font-size: 1.1rem; font-weight: 700;">Transit Operations & Revenue Manifest Report</h3>
+              <p style="color: var(--text-muted); font-size: 0.8rem;">Consolidated summary of bus bookings, passenger occupancy, and ticket sales.</p>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="printReport()">🖨️ Print / Export Report</button>
+          </div>
+
+          <div class="table-box">
+            <table class="table" id="reportManifestTable">
+              <thead>
+                <tr>
+                  <th>Bus Name</th>
+                  <th>Route</th>
+                  <th>Total Capacity</th>
+                  <th>Seats Booked</th>
+                  <th>Occupancy %</th>
+                  <th>Total Revenue</th>
+                </tr>
+              </thead>
+              <tbody id="adminReportTableBody">
+                <!-- Rendered by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================================================
+       MODALS
+       ======================================================================== -->
+
+  <!-- Modal 1: Seat Selection & Booking Modal -->
+  <div class="modal-overlay" id="seatBookingModal">
+    <div class="modal-card modal-lg">
+      <div class="modal-header">
+        <div>
+          <h3 id="seatModalBusTitle">Select Seats</h3>
+          <span style="font-size: 0.78rem; color: var(--text-muted);" id="seatModalRouteInfo">Route</span>
+        </div>
+        <button class="modal-close-btn" onclick="closeModal('seatBookingModal')">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <input type="hidden" id="seatModalBusId">
+
+        <!-- Bus Cabin Graphic -->
+        <div class="bus-cabin-wrapper">
+          <div class="bus-driver-row">
+            <span>💺 Driver Cabin</span>
+          </div>
+
+          <div class="seats-grid" id="seatsGridContainer">
+            <!-- Rendered by JS -->
+          </div>
+
+          <div class="seat-legend">
+            <div class="legend-item"><div class="legend-box" style="background: #10b981;"></div> Available</div>
+            <div class="legend-item"><div class="legend-box" style="background: #f59e0b;"></div> Selected</div>
+            <div class="legend-item"><div class="legend-box" style="background: #ef4444;"></div> Booked</div>
+          </div>
+        </div>
+
+        <!-- Booking Form & Passenger Details -->
+        <div style="background: var(--bg-card); padding: 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem;">
+            <span>Selected Seats: <strong id="selectedSeatsLabel" style="color: var(--primary);">None</strong></span>
+            <span>Total Fare: <strong id="selectedTotalFareLabel" style="color: #f59e0b; font-size: 1.1rem; font-family: 'JetBrains Mono', monospace;">$0</strong></span>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <div class="form-group">
+              <label class="form-label">Passenger Name</label>
+              <input type="text" id="passengerNameInput" class="form-control" required placeholder="Alex Johnson">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Contact Mobile</label>
+              <input type="tel" id="passengerPhoneInput" class="form-control" required placeholder="+1 555-0199">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary btn-sm" onclick="closeModal('seatBookingModal')">Cancel</button>
+        <button class="btn btn-primary btn-sm" id="confirmBookingBtn" onclick="confirmTicketBooking()">
+          Pay & Confirm Booking
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 2: Admin Add/Update Bus Modal -->
+  <div class="modal-overlay" id="busFormModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="busFormModalTitle">Add New Bus</h3>
+        <button class="modal-close-btn" onclick="closeModal('busFormModal')">&times;</button>
+      </div>
+      <form id="busEditForm" onsubmit="handleSaveBus(event)">
+        <div class="modal-body">
+          <input type="hidden" id="editBusId">
+
+          <div class="form-group">
+            <label class="form-label">Bus Name</label>
+            <input type="text" id="busNameInput" class="form-control" required placeholder="e.g. Apex Volvo Multi-Axle">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Bus Category</label>
+            <select id="busCategoryInput" class="form-control" required>
+              <!-- Populated by JS -->
+            </select>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <div class="form-group">
+              <label class="form-label">From City</label>
+              <input type="text" id="busFromInput" class="form-control" required placeholder="New York">
+            </div>
+            <div class="form-group">
+              <label class="form-label">To Destination</label>
+              <input type="text" id="busToInput" class="form-control" required placeholder="Boston">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <div class="form-group">
+              <label class="form-label">Departure Time</label>
+              <input type="time" id="busTimeInput" class="form-control" required value="08:30">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Estimated Duration</label>
+              <input type="text" id="busDurationInput" class="form-control" required placeholder="4h 15m">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <div class="form-group">
+              <label class="form-label">Total Seats</label>
+              <input type="number" id="busSeatsInput" class="form-control" required min="10" max="40" value="24">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Fare Per Seat ($)</label>
+              <input type="number" id="busFareInput" class="form-control" required min="5" value="35">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Tour Description / Amenities</label>
+            <input type="text" id="busDescInput" class="form-control" placeholder="AC, Wi-Fi, Water bottle, Charging ports">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" onclick="closeModal('busFormModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm">Save Bus Details</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 3: Authentication (Login / Register / Change Password / Forgot Password) -->
+  <div class="modal-overlay" id="authModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="authModalTitle">Sign In</h3>
+        <button class="modal-close-btn" onclick="closeModal('authModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="display: flex; gap: 6px; margin-bottom: 0.5rem; flex-wrap: wrap;">
+          <button class="btn btn-sm btn-primary" id="authTabLoginBtn" onclick="switchAuthTab('login')">Login</button>
+          <button class="btn btn-sm btn-secondary" id="authTabRegBtn" onclick="switchAuthTab('register')">Register</button>
+          <button class="btn btn-sm btn-secondary" id="authTabForgotBtn" onclick="switchAuthTab('forgot')">Forgot Password</button>
+        </div>
+
+        <!-- Login Form -->
+        <form id="loginForm" onsubmit="handleLoginSubmit(event)">
+          <div class="form-group" style="margin-bottom: 0.75rem;">
+            <label class="form-label">Email or Username</label>
+            <input type="text" id="loginUsername" class="form-control" required placeholder="alex@example.com or admin">
+          </div>
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label class="form-label">Password</label>
+            <input type="password" id="loginPassword" class="form-control" required placeholder="••••••••">
+          </div>
+          <div style="background: var(--bg-card); padding: 8px 10px; border-radius: 4px; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 1rem;">
+            Quick Logins:<br>
+            • Passenger: <code>alex@example.com</code> / <code>password</code><br>
+            • Admin: <code>admin</code> / <code>admin123</code>
+          </div>
+          <button type="submit" class="btn btn-primary btn-sm" style="width: 100%;">Sign In</button>
+        </form>
+
+        <!-- Register Form -->
+        <form id="regForm" onsubmit="handleRegisterSubmit(event)" style="display: none;">
+          <div class="form-group" style="margin-bottom: 0.75rem;">
+            <label class="form-label">Full Name</label>
+            <input type="text" id="regName" class="form-control" required placeholder="Jane Doe">
+          </div>
+          <div class="form-group" style="margin-bottom: 0.75rem;">
+            <label class="form-label">Email</label>
+            <input type="email" id="regEmail" class="form-control" required placeholder="jane@example.com">
+          </div>
+          <div class="form-group" style="margin-bottom: 0.75rem;">
+            <label class="form-label">Phone Number</label>
+            <input type="tel" id="regPhone" class="form-control" required placeholder="+1 555-0144">
+          </div>
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label class="form-label">Password</label>
+            <input type="password" id="regPassword" class="form-control" required placeholder="••••••••">
+          </div>
+          <button type="submit" class="btn btn-primary btn-sm" style="width: 100%;">Create Account</button>
+        </form>
+
+        <!-- Forgot Password Form -->
+        <form id="forgotForm" onsubmit="handleForgotSubmit(event)" style="display: none;">
+          <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+            Enter your registered email address to receive password reset verification.
+          </p>
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label class="form-label">Registered Email</label>
+            <input type="email" id="forgotEmail" class="form-control" required placeholder="alex@example.com">
+          </div>
+          <button type="submit" class="btn btn-primary btn-sm" style="width: 100%;">Send Reset Instructions</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 4: Change Password Modal -->
+  <div class="modal-overlay" id="changePasswordModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Change Password</h3>
+        <button class="modal-close-btn" onclick="closeModal('changePasswordModal')">&times;</button>
+      </div>
+      <form onsubmit="handleChangePasswordSubmit(event)">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label">Current Password</label>
+            <input type="password" id="cpCurrent" class="form-control" required placeholder="••••••••">
+          </div>
+          <div class="form-group">
+            <label class="form-label">New Password</label>
+            <input type="password" id="cpNew" class="form-control" required placeholder="••••••••">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Confirm New Password</label>
+            <input type="password" id="cpConfirm" class="form-control" required placeholder="••••••••">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" onclick="closeModal('changePasswordModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm">Update Password</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-box" id="toastContainer"></div>
+
+  <!-- ========================================================================
+       FOOTER
+       ======================================================================== -->
+  <footer>
+    <strong>Experiment 3: Online Bus Ticket Booking System</strong> • Internet Programming Laboratory
+    <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 2px;">
+      Features: Bus Schedules & Categories, Interactive Seat Booking, Ticket Cancellation, User Authentication & Password Utilities, Reviews & Report Generation.
+    </div>
+  </footer>
+
+  <!-- ========================================================================
+       JAVASCRIPT APPLICATION ENGINE
+       ======================================================================== -->
+  <script>
+    /* ==========================================================================
+       1. DATA MODELS & LOCAL STORAGE INITIALIZATION (MOCK DATABASE)
+       ========================================================================== */
+    const STORAGE_KEY_BUSES = 'exp3_buses_v1';
+    const STORAGE_KEY_CATEGORIES = 'exp3_categories_v1';
+    const STORAGE_KEY_BOOKINGS = 'exp3_bookings_v1';
+    const STORAGE_KEY_USERS = 'exp3_users_v1';
+    const STORAGE_KEY_COMMENTS = 'exp3_comments_v1';
+    const STORAGE_KEY_NEWS = 'exp3_news_v1';
+    const STORAGE_KEY_CURRENT_USER = 'exp3_current_user_v1';
+    const STORAGE_KEY_THEME = 'exp3_theme_v1';
+
+    function getDateOffset(days) {
+      const d = new Date();
+      d.setDate(d.getDate() + days);
+      return d.toISOString().split('T')[0];
+    }
+
+    // Default Bus Categories (Volvo, Sleeper coach, AC Luxury, etc.)
+    const DEFAULT_CATEGORIES = [
+      { id: 'CAT-1', name: 'Volvo Multi-Axle AC', desc: 'Ultra-smooth air suspension with reclining business-class seats.' },
+      { id: 'CAT-2', name: 'Sleeper Coach AC', desc: 'Comfortable individual berths with private curtains and reading lights.' },
+      { id: 'CAT-3', name: 'Executive Luxury Coach', desc: 'Ergonomic 2+2 push-back seating with USB charging and entertainment.' }
+    ];
+
+    // Default Scheduled Buses
+    const DEFAULT_BUSES = [
+      {
+        id: 'BUS-101',
+        name: 'Apex Horizon Volvo',
+        category: 'Volvo Multi-Axle AC',
+        from: 'New York',
+        to: 'Boston',
+        time: '08:30 AM',
+        duration: '4h 15m',
+        totalSeats: 24,
+        bookedSeats: ['1', '2', '5', '6'],
+        fare: 35,
+        desc: 'Direct express trip via I-95 with complimentary water bottle and Wi-Fi.'
+      },
+      {
+        id: 'BUS-102',
+        name: 'Royal Night Sleeper',
+        category: 'Sleeper Coach AC',
+        from: 'New York',
+        to: 'Washington DC',
+        time: '10:00 PM',
+        duration: '4h 45m',
+        totalSeats: 24,
+        bookedSeats: ['3', '4'],
+        fare: 45,
+        desc: 'Overnight quiet sleeper coach with pillows and fresh blankets.'
+      },
+      {
+        id: 'BUS-103',
+        name: 'Metro Link Executive',
+        category: 'Executive Luxury Coach',
+        from: 'Philadelphia',
+        to: 'New York',
+        time: '02:00 PM',
+        duration: '2h 10m',
+        totalSeats: 24,
+        bookedSeats: ['9', '10', '11'],
+        fare: 25,
+        desc: 'Hourly commuter service with express transit lanes.'
+      },
+      {
+        id: 'BUS-104',
+        name: 'Capital Express Volvo',
+        category: 'Volvo Multi-Axle AC',
+        from: 'Boston',
+        to: 'Philadelphia',
+        time: '07:15 AM',
+        duration: '5h 30m',
+        totalSeats: 24,
+        bookedSeats: ['1', '12'],
+        fare: 40,
+        desc: 'Morning departure with breakfast stop and panoramic sightseeing.'
+      }
+    ];
+
+    // Default Users
+    const DEFAULT_USERS = [
+      {
+        id: 'USR-1',
+        name: 'Alex Johnson',
+        email: 'alex@example.com',
+        phone: '+1 (555) 234-5678',
+        role: 'user',
+        password: 'password'
+      },
+      {
+        id: 'ADMIN-1',
+        name: 'Transit System Admin',
+        email: 'admin',
+        phone: '+1 (555) 999-0000',
+        role: 'admin',
+        password: 'admin123'
+      }
+    ];
+
+    // Default Bookings
+    const DEFAULT_BOOKINGS = [
+      {
+        ticketId: 'TKT-8801',
+        userId: 'USR-1',
+        passengerName: 'Alex Johnson',
+        passengerPhone: '+1 (555) 234-5678',
+        busId: 'BUS-101',
+        busName: 'Apex Horizon Volvo',
+        from: 'New York',
+        to: 'Boston',
+        date: getDateOffset(2),
+        time: '08:30 AM',
+        seats: ['1', '2'],
+        totalFare: 70,
+        status: 'Confirmed'
+      }
+    ];
+
+    // Default Bus Comments
+    const DEFAULT_COMMENTS = [
+      {
+        id: 'CMT-1',
+        busId: 'BUS-101',
+        busName: 'Apex Horizon Volvo',
+        userName: 'Alex Johnson',
+        rating: 5,
+        comment: 'Very punctual departure and clean spacious seats. Wi-Fi worked seamlessly throughout the route!',
+        date: getDateOffset(-1)
+      },
+      {
+        id: 'CMT-2',
+        busId: 'BUS-102',
+        busName: 'Royal Night Sleeper',
+        userName: 'Maria Garcia',
+        rating: 4,
+        comment: 'Great sleeper berths, smooth driving on the interstate. Arrived 10 minutes ahead of schedule.',
+        date: getDateOffset(-3)
+      }
+    ];
+
+    // Default News / Announcements
+    const DEFAULT_NEWS = [
+      {
+        id: 'NWS-1',
+        title: 'New Volvo Multi-Axle Express Route: NY to Boston',
+        content: 'We are thrilled to launch two new daily non-stop luxury Volvo departures connecting Manhattan and downtown Boston with zero highway stops.',
+        date: getDateOffset(-2)
+      },
+      {
+        id: 'NWS-2',
+        title: 'Luggage Policy & Free Wi-Fi Upgrade',
+        content: 'Each passenger is allowed 2 complimentary baggage items up to 25kg. High-speed 5G satellite Wi-Fi is now active on all routes.',
+        date: getDateOffset(-5)
+      }
+    ];
+
+    /* Initialize DB in LocalStorage */
+    function initDatabase() {
+      if (!localStorage.getItem(STORAGE_KEY_BUSES)) {
+        localStorage.setItem(STORAGE_KEY_BUSES, JSON.stringify(DEFAULT_BUSES));
+      }
+      if (!localStorage.getItem(STORAGE_KEY_CATEGORIES)) {
+        localStorage.setItem(STORAGE_KEY_CATEGORIES, JSON.stringify(DEFAULT_CATEGORIES));
+      }
+      if (!localStorage.getItem(STORAGE_KEY_BOOKINGS)) {
+        localStorage.setItem(STORAGE_KEY_BOOKINGS, JSON.stringify(DEFAULT_BOOKINGS));
+      }
+      if (!localStorage.getItem(STORAGE_KEY_USERS)) {
+        localStorage.setItem(STORAGE_KEY_USERS, JSON.stringify(DEFAULT_USERS));
+      }
+      if (!localStorage.getItem(STORAGE_KEY_COMMENTS)) {
+        localStorage.setItem(STORAGE_KEY_COMMENTS, JSON.stringify(DEFAULT_COMMENTS));
+      }
+      if (!localStorage.getItem(STORAGE_KEY_NEWS)) {
+        localStorage.setItem(STORAGE_KEY_NEWS, JSON.stringify(DEFAULT_NEWS));
+      }
+      if (!localStorage.getItem(STORAGE_KEY_CURRENT_USER)) {
+        localStorage.setItem(STORAGE_KEY_CURRENT_USER, JSON.stringify(DEFAULT_USERS[0]));
+      }
+
+      const savedTheme = localStorage.getItem(STORAGE_KEY_THEME) || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    }
+
+    function resetDemoData() {
+      if (confirm('Reset Experiment 3 to default seed data?')) {
+        localStorage.setItem(STORAGE_KEY_BUSES, JSON.stringify(DEFAULT_BUSES));
+        localStorage.setItem(STORAGE_KEY_CATEGORIES, JSON.stringify(DEFAULT_CATEGORIES));
+        localStorage.setItem(STORAGE_KEY_BOOKINGS, JSON.stringify(DEFAULT_BOOKINGS));
+        localStorage.setItem(STORAGE_KEY_USERS, JSON.stringify(DEFAULT_USERS));
+        localStorage.setItem(STORAGE_KEY_COMMENTS, JSON.stringify(DEFAULT_COMMENTS));
+        localStorage.setItem(STORAGE_KEY_NEWS, JSON.stringify(DEFAULT_NEWS));
+        localStorage.setItem(STORAGE_KEY_CURRENT_USER, JSON.stringify(DEFAULT_USERS[0]));
+        showToast('Experiment 3 database restored to defaults!', 'info');
+        refreshApp();
+      }
+    }
+
+    // Accessors
+    function getBuses() { return JSON.parse(localStorage.getItem(STORAGE_KEY_BUSES) || '[]'); }
+    function saveBuses(b) { localStorage.setItem(STORAGE_KEY_BUSES, JSON.stringify(b)); }
+
+    function getCategories() { return JSON.parse(localStorage.getItem(STORAGE_KEY_CATEGORIES) || '[]'); }
+    function saveCategories(c) { localStorage.setItem(STORAGE_KEY_CATEGORIES, JSON.stringify(c)); }
+
+    function getBookings() { return JSON.parse(localStorage.getItem(STORAGE_KEY_BOOKINGS) || '[]'); }
+    function saveBookings(b) { localStorage.setItem(STORAGE_KEY_BOOKINGS, JSON.stringify(b)); }
+
+    function getUsers() { return JSON.parse(localStorage.getItem(STORAGE_KEY_USERS) || '[]'); }
+    function saveUsers(u) { localStorage.setItem(STORAGE_KEY_USERS, JSON.stringify(u)); }
+
+    function getComments() { return JSON.parse(localStorage.getItem(STORAGE_KEY_COMMENTS) || '[]'); }
+    function saveComments(c) { localStorage.setItem(STORAGE_KEY_COMMENTS, JSON.stringify(c)); }
+
+    function getNews() { return JSON.parse(localStorage.getItem(STORAGE_KEY_NEWS) || '[]'); }
+    function saveNews(n) { localStorage.setItem(STORAGE_KEY_NEWS, JSON.stringify(n)); }
+
+    function getCurrentUser() { return JSON.parse(localStorage.getItem(STORAGE_KEY_CURRENT_USER) || 'null'); }
+    function setCurrentUser(u) { localStorage.setItem(STORAGE_KEY_CURRENT_USER, JSON.stringify(u)); }
+
+    /* ==========================================================================
+       2. NAVIGATION & AUTHENTICATION UI
+       ========================================================================== */
+    let currentView = 'search';
+
+    function navigate(viewId) {
+      const user = getCurrentUser();
+
+      if (viewId === 'admin' && (!user || user.role !== 'admin')) {
+        showToast('Please sign in as Administrator to access the Admin Panel', 'danger');
+        openAuthModal('login');
+        return;
+      }
+
+      document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+
+      const target = document.getElementById(`view-${viewId}`);
+      if (target) {
+        target.classList.add('active');
+        currentView = viewId;
+      }
+
+      const btn = document.getElementById(`nav-btn-${viewId}`);
+      if (btn) btn.classList.add('active');
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      if (viewId === 'search') filterBuses();
+      if (viewId === 'history') renderUserBookings();
+      if (viewId === 'comments') renderComments();
+      if (viewId === 'news') renderNews();
+      if (viewId === 'admin') renderAdminView();
+    }
+
+    function demoSwitch(role) {
+      const users = getUsers();
+      if (role === 'admin') {
+        const adminUser = users.find(u => u.role === 'admin');
+        if (adminUser) {
+          setCurrentUser(adminUser);
+          showToast('Switched to Administrator', 'info');
+          updateAuthUI();
+          navigate('admin');
+        }
+      } else {
+        const user = users.find(u => u.role === 'user');
+        if (user) {
+          setCurrentUser(user);
+          showToast(`Switched to Passenger: ${user.name}`, 'success');
+          updateAuthUI();
+          navigate('search');
+        }
+      }
+    }
+
+    function updateAuthUI() {
+      const user = getCurrentUser();
+      const authLoggedOut = document.getElementById('authLoggedOut');
+      const authLoggedIn = document.getElementById('authLoggedIn');
+      const adminNavTab = document.getElementById('adminNavTab');
+
+      if (!user) {
+        authLoggedOut.style.display = 'block';
+        authLoggedIn.style.display = 'none';
+        adminNavTab.style.display = 'none';
+      } else {
+        authLoggedOut.style.display = 'none';
+        authLoggedIn.style.display = 'flex';
+        document.getElementById('navUserName').textContent = user.name;
+        document.getElementById('navUserInitial').textContent = user.name.charAt(0);
+
+        if (user.role === 'admin') {
+          adminNavTab.style.display = 'block';
+        } else {
+          adminNavTab.style.display = 'none';
+        }
+      }
+    }
+
+    function openUserMenu() {
+      const user = getCurrentUser();
+      if (!user) {
+        openAuthModal('login');
+        return;
+      }
+
+      if (confirm(`User: ${user.name} (${user.email})\nRole: ${user.role}\n\nWould you like to Change Password? (Click OK to change password, or Cancel to sign out)`)) {
+        openModal('changePasswordModal');
+      } else {
+        logout();
+      }
+    }
+
+    /* ==========================================================================
+       3. SEARCH & BUS BOOKING (SEAT SELECTOR)
+       ========================================================================== */
+    function filterBuses() {
+      const buses = getBuses();
+      const from = document.getElementById('searchFrom').value;
+      const to = document.getElementById('searchTo').value;
+      const cat = document.getElementById('searchCategory').value;
+
+      const filtered = buses.filter(b => {
+        if (from !== 'all' && b.from !== from) return false;
+        if (to !== 'all' && b.to !== to) return false;
+        if (cat !== 'all' && b.category !== cat) return false;
+        return true;
+      });
+
+      renderBusesList(filtered);
+    }
+
+    function renderBusesList(buses) {
+      const container = document.getElementById('busesContainer');
+      document.getElementById('busesCountLabel').textContent = `Showing ${buses.length} scheduled buses`;
+
+      if (buses.length === 0) {
+        container.innerHTML = `
+          <div style="background: var(--bg-surface); border: 1px dashed var(--border); border-radius: var(--radius-md); padding: 2.5rem; text-align: center; color: var(--text-muted);">
+            No buses scheduled matching your route criteria. Try selecting "All Departure Cities".
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = buses.map(b => {
+        const bookedCount = (b.bookedSeats || []).length;
+        const availableCount = Math.max(0, b.totalSeats - bookedCount);
+
+        return `
+          <div class="bus-card">
+            <div class="bus-meta">
+              <span class="bus-cat-badge">${escapeHtml(b.category)}</span>
+              <h3>${escapeHtml(b.name)}</h3>
+              <p style="font-size: 0.8rem; color: var(--text-muted);">${escapeHtml(b.desc)}</p>
+            </div>
+
+            <div class="bus-route-time">
+              <div><strong>${escapeHtml(b.from)}</strong> ➔ <strong>${escapeHtml(b.to)}</strong></div>
+              <div style="font-size: 0.8rem; color: var(--text-dim);">Departure: ${escapeHtml(b.time)} (${escapeHtml(b.duration)})</div>
+            </div>
+
+            <div class="bus-price-seats">
+              <div class="bus-price">$${b.fare}</div>
+              <span class="badge ${availableCount > 0 ? 'badge-success' : 'badge-danger'}">
+                ${availableCount} / ${b.totalSeats} seats open
+              </span>
+            </div>
+
+            <div>
+              <button class="btn btn-primary" style="width: 100%;" ${availableCount === 0 ? 'disabled style="opacity: 0.5;"' : ''} onclick="openSeatModal('${b.id}')">
+                ${availableCount > 0 ? 'Select Seats' : 'Sold Out'}
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    /* Seat Picker Engine */
+    let activeSeatBus = null;
+    let currentlySelectedSeats = [];
+
+    function openSeatModal(busId) {
+      const user = getCurrentUser();
+      if (!user) {
+        showToast('Please sign in or register to book bus seats', 'info');
+        openAuthModal('login');
+        return;
+      }
+
+      const bus = getBuses().find(b => b.id === busId);
+      if (!bus) return;
+
+      activeSeatBus = bus;
+      currentlySelectedSeats = [];
+
+      document.getElementById('seatModalBusId').value = bus.id;
+      document.getElementById('seatModalBusTitle').textContent = `${bus.name} (${bus.category})`;
+      document.getElementById('seatModalRouteInfo').textContent = `${bus.from} ➔ ${bus.to} • Departure: ${bus.time} • $${bus.fare}/seat`;
+
+      document.getElementById('passengerNameInput').value = user.name || '';
+      document.getElementById('passengerPhoneInput').value = user.phone || '';
+
+      renderSeatGrid();
+      updateSelectedSeatSummary();
+      openModal('seatBookingModal');
+    }
+
+    function renderSeatGrid() {
+      if (!activeSeatBus) return;
+      const container = document.getElementById('seatsGridContainer');
+      const booked = activeSeatBus.bookedSeats || [];
+      const total = activeSeatBus.totalSeats || 24;
+
+      let html = '';
+      for (let i = 1; i <= total; i++) {
+        const seatNo = String(i);
+        const isBooked = booked.includes(seatNo);
+        const isSelected = currentlySelectedSeats.includes(seatNo);
+
+        let seatClass = 'available';
+        if (isBooked) seatClass = 'booked';
+        else if (isSelected) seatClass = 'selected';
+
+        html += `
+          <button type="button" class="seat-btn ${seatClass}" ${isBooked ? 'disabled' : ''} onclick="toggleSeatSelect('${seatNo}')">
+            <span>💺</span>
+            ${seatNo}
+          </button>
+        `;
+
+        // Insert aisle blank space after 2 seats in each row of 4
+        if (i % 2 === 0 && i % 4 !== 0) {
+          html += `<div class="aisle-space"></div>`;
+        }
+      }
+
+      container.innerHTML = html;
+    }
+
+    function toggleSeatSelect(seatNo) {
+      const idx = currentlySelectedSeats.indexOf(seatNo);
+      if (idx !== -1) {
+        currentlySelectedSeats.splice(idx, 1);
+      } else {
+        currentlySelectedSeats.push(seatNo);
+      }
+      renderSeatGrid();
+      updateSelectedSeatSummary();
+    }
+
+    function updateSelectedSeatSummary() {
+      const count = currentlySelectedSeats.length;
+      const fare = activeSeatBus ? activeSeatBus.fare : 0;
+      const totalFare = count * fare;
+
+      document.getElementById('selectedSeatsLabel').textContent = count > 0 ? currentlySelectedSeats.sort((a,b) => a-b).join(', ') : 'None';
+      document.getElementById('selectedTotalFareLabel').textContent = `$${totalFare}`;
+      document.getElementById('confirmBookingBtn').disabled = count === 0;
+    }
+
+    function confirmTicketBooking() {
+      const user = getCurrentUser();
+      if (!user || !activeSeatBus || currentlySelectedSeats.length === 0) return;
+
+      const passengerName = document.getElementById('passengerNameInput').value.trim();
+      const passengerPhone = document.getElementById('passengerPhoneInput').value.trim();
+
+      if (!passengerName || !passengerPhone) {
+        showToast('Please fill out passenger name and phone number!', 'danger');
+        return;
+      }
+
+      const buses = getBuses();
+      const busIdx = buses.findIndex(b => b.id === activeSeatBus.id);
+      if (busIdx === -1) return;
+
+      // Add selected seats to bus bookedSeats
+      if (!buses[busIdx].bookedSeats) buses[busIdx].bookedSeats = [];
+      buses[busIdx].bookedSeats.push(...currentlySelectedSeats);
+      saveBuses(buses);
+
+      // Create booking record
+      const travelDate = document.getElementById('searchDate').value || getDateOffset(1);
+      const totalFare = currentlySelectedSeats.length * activeSeatBus.fare;
+
+      const newBooking = {
+        ticketId: `TKT-${Math.floor(1000 + Math.random() * 9000)}`,
+        userId: user.id,
+        passengerName,
+        passengerPhone,
+        busId: activeSeatBus.id,
+        busName: activeSeatBus.name,
+        from: activeSeatBus.from,
+        to: activeSeatBus.to,
+        date: travelDate,
+        time: activeSeatBus.time,
+        seats: [...currentlySelectedSeats].sort((a,b) => a-b),
+        totalFare,
+        status: 'Confirmed'
+      };
+
+      const bookings = getBookings();
+      bookings.unshift(newBooking);
+      saveBookings(bookings);
+
+      closeModal('seatBookingModal');
+
+      // Confirmation Alert Dialog
+      alert(`🎉 BUS TICKET BOOKED SUCCESSFULLY!\n====================================\nTicket ID: ${newBooking.ticketId}\nBus: ${newBooking.busName}\nRoute: ${newBooking.from} ➔ ${newBooking.to}\nDeparture: ${newBooking.date} at ${newBooking.time}\nPassenger: ${passengerName}\nSeats: ${newBooking.seats.join(', ')}\nTotal Fare Paid: $${totalFare}\n\nA confirmation SMS/Email has been dispatched to your device.`);
+
+      showToast(`Booking ${newBooking.ticketId} confirmed!`, 'success');
+      refreshApp();
+      navigate('history');
+    }
+
+    /* ==========================================================================
+       4. MY BOOKINGS & CANCEL TICKET
+       ========================================================================== */
+    function renderUserBookings() {
+      const user = getCurrentUser();
+      const tbody = document.getElementById('userBookingsTableBody');
+
+      if (!user) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; padding: 2rem;">Please sign in to view your bookings.</td></tr>`;
+        return;
+      }
+
+      const bookings = getBookings().filter(b => b.userId === user.id);
+
+      if (bookings.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="8" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+              You have no active or past bookings. Click <strong>Search Buses</strong> to make a reservation!
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = bookings.map(b => `
+        <tr>
+          <td><strong>${b.ticketId}</strong></td>
+          <td>${escapeHtml(b.busName)}</td>
+          <td>${escapeHtml(b.from)} ➔ ${escapeHtml(b.to)}</td>
+          <td>${b.date} • ${b.time}</td>
+          <td><span class="badge badge-success">Seat ${b.seats.join(', ')}</span></td>
+          <td><strong>$${b.totalFare}</strong></td>
+          <td>
+            <span class="badge ${b.status === 'Confirmed' ? 'badge-success' : 'badge-danger'}">
+              ${b.status}
+            </span>
+          </td>
+          <td>
+            ${b.status === 'Confirmed' ? `
+              <div style="display: flex; gap: 4px;">
+                <button class="btn btn-secondary btn-sm" onclick="printTicket('${b.ticketId}')">Print</button>
+                <button class="btn btn-danger btn-sm" onclick="userCancelTicket('${b.ticketId}')">Cancel</button>
+              </div>
+            ` : '<span style="font-size: 0.75rem; color: var(--text-dim);">Cancelled</span>'}
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function userCancelTicket(ticketId) {
+      if (!confirm(`Are you sure you want to cancel Ticket ${ticketId}? Seats will be released and refund initiated.`)) return;
+
+      const bookings = getBookings();
+      const b = bookings.find(item => item.ticketId === ticketId);
+      if (!b) return;
+
+      b.status = 'Cancelled';
+      saveBookings(bookings);
+
+      // Release seats back to bus
+      const buses = getBuses();
+      const bus = buses.find(item => item.id === b.busId);
+      if (bus && bus.bookedSeats) {
+        bus.bookedSeats = bus.bookedSeats.filter(s => !b.seats.includes(s));
+        saveBuses(buses);
+      }
+
+      showToast(`Ticket ${ticketId} cancelled. Seats released.`, 'info');
+      refreshApp();
+    }
+
+    function printTicket(ticketId) {
+      const b = getBookings().find(item => item.ticketId === ticketId);
+      if (!b) return;
+
+      alert(`🎫 SWIFTBUS BOARDING PASS\n===============================\nTicket ID: ${b.ticketId}\nPassenger: ${b.passengerName}\nContact: ${b.passengerPhone}\nBus: ${b.busName}\nRoute: ${b.from} ➔ ${b.to}\nDeparture Date: ${b.date}\nDeparture Time: ${b.time}\nAssigned Seats: ${b.seats.join(', ')}\nTotal Fare: $${b.totalFare}\nStatus: VERIFIED & CONFIRMED\n\nPlease arrive at the departure terminal 15 minutes before scheduled departure.`);
+    }
+
+    /* ==========================================================================
+       5. COMMENTS & REVIEWS
+       ========================================================================== */
+    function renderComments() {
+      const buses = getBuses();
+      const comments = getComments();
+
+      // Populate Bus Select
+      const select = document.getElementById('commentBusSelect');
+      select.innerHTML = buses.map(b => `<option value="${b.id}">${b.name} (${b.from} to ${b.to})</option>`).join('');
+
+      // Render Feed
+      const container = document.getElementById('commentsFeed');
+      if (comments.length === 0) {
+        container.innerHTML = `<p style="color: var(--text-muted); text-align: center;">No comments posted yet. Be the first to share your experience!</p>`;
+        return;
+      }
+
+      container.innerHTML = comments.map(c => `
+        <div style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 0.75rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+            <div>
+              <strong style="color: var(--text-main); font-size: 0.95rem;">${escapeHtml(c.userName)}</strong>
+              <span style="font-size: 0.8rem; color: var(--primary); margin-left: 6px;">• on ${escapeHtml(c.busName)}</span>
+            </div>
+            <div style="font-size: 0.85rem; color: #f59e0b;">${'⭐'.repeat(c.rating || 5)}</div>
+          </div>
+          <p style="font-size: 0.88rem; color: var(--text-muted);">${escapeHtml(c.comment)}</p>
+          <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 4px;">Posted on ${c.date || 'Recent'}</div>
+        </div>
+      `).join('');
+    }
+
+    function handlePostComment(e) {
+      e.preventDefault();
+      const user = getCurrentUser();
+      if (!user) {
+        showToast('Please sign in to post passenger reviews', 'info');
+        openAuthModal('login');
+        return;
+      }
+
+      const busId = document.getElementById('commentBusSelect').value;
+      const rating = parseInt(document.getElementById('commentRating').value, 10);
+      const text = document.getElementById('commentText').value.trim();
+
+      const bus = getBuses().find(b => b.id === busId);
+      if (!bus) return;
+
+      const comments = getComments();
+      comments.unshift({
+        id: `CMT-${Date.now().toString().slice(-4)}`,
+        busId,
+        busName: bus.name,
+        userName: user.name,
+        rating,
+        comment: text,
+        date: getDateOffset(0)
+      });
+      saveComments(comments);
+
+      document.getElementById('commentText').value = '';
+      showToast('Thank you! Your comment has been posted.', 'success');
+      renderComments();
+    }
+
+    /* ==========================================================================
+       6. TRANSIT NEWS & ANNOUNCEMENTS
+       ========================================================================== */
+    function renderNews() {
+      const news = getNews();
+      const container = document.getElementById('newsContainer');
+
+      container.innerHTML = news.map(n => `
+        <div style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.25rem;">
+          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px;">
+            <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--text-main);">${escapeHtml(n.title)}</h3>
+            <span style="font-size: 0.75rem; color: var(--text-dim);">${n.date}</span>
+          </div>
+          <p style="font-size: 0.88rem; color: var(--text-muted); line-height: 1.6;">${escapeHtml(n.content)}</p>
+        </div>
+      `).join('');
+    }
+
+    /* ==========================================================================
+       7. ADMINISTRATOR DASHBOARD
+       ========================================================================== */
+    function switchAdminTab(tab, btn) {
+      document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+
+      document.querySelectorAll('.admin-pane').forEach(p => p.classList.remove('active'));
+      const target = document.getElementById(`admin-pane-${tab}`);
+      if (target) target.classList.add('active');
+
+      if (tab === 'buses') renderAdminBuses();
+      if (tab === 'categories') renderAdminCategories();
+      if (tab === 'users') renderAdminUsers();
+      if (tab === 'news-mgr') renderAdminNews();
+      if (tab === 'reports') renderAdminReports();
+    }
+
+    function renderAdminView() {
+      const buses = getBuses();
+      const bookings = getBookings();
+      const users = getUsers();
+
+      const grossRevenue = bookings.filter(b => b.status === 'Confirmed').reduce((sum, b) => sum + (b.totalFare || 0), 0);
+
+      document.getElementById('adminKpiBuses').textContent = buses.length;
+      document.getElementById('adminKpiBookings').textContent = bookings.length;
+      document.getElementById('adminKpiUsers').textContent = users.length;
+      document.getElementById('adminKpiRevenue').textContent = `$${grossRevenue}`;
+
+      renderAdminBuses();
+      renderAdminCategories();
+      renderAdminUsers();
+      renderAdminNews();
+      renderAdminReports();
+    }
+
+    // Maintain Buses
+    function renderAdminBuses() {
+      const buses = getBuses();
+      const tbody = document.getElementById('adminBusesTableBody');
+
+      tbody.innerHTML = buses.map(b => {
+        const booked = (b.bookedSeats || []).length;
+        return `
+          <tr>
+            <td><code>${b.id}</code></td>
+            <td><strong>${escapeHtml(b.name)}</strong></td>
+            <td><span class="bus-cat-badge">${escapeHtml(b.category)}</span></td>
+            <td>${escapeHtml(b.from)} ➔ ${escapeHtml(b.to)}</td>
+            <td>${escapeHtml(b.time)}</td>
+            <td>${b.totalSeats - booked} / ${b.totalSeats} avail</td>
+            <td><strong>$${b.fare}</strong></td>
+            <td>
+              <div style="display: flex; gap: 4px;">
+                <button class="btn btn-secondary btn-sm" onclick="openEditBusModal('${b.id}')">Edit</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteBus('${b.id}')">Delete</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function openAddBusModal() {
+      document.getElementById('busFormModalTitle').textContent = 'Add New Bus';
+      document.getElementById('busEditForm').reset();
+      document.getElementById('editBusId').value = '';
+
+      populateCategorySelect('busCategoryInput');
+      openModal('busFormModal');
+    }
+
+    function openEditBusModal(busId) {
+      const bus = getBuses().find(b => b.id === busId);
+      if (!bus) return;
+
+      document.getElementById('busFormModalTitle').textContent = 'Update Bus Information';
+      document.getElementById('editBusId').value = bus.id;
+      document.getElementById('busNameInput').value = bus.name;
+      document.getElementById('busFromInput').value = bus.from;
+      document.getElementById('busToInput').value = bus.to;
+      document.getElementById('busTimeInput').value = bus.time.includes(':') ? bus.time.slice(0, 5) : '08:30';
+      document.getElementById('busDurationInput').value = bus.duration;
+      document.getElementById('busSeatsInput').value = bus.totalSeats;
+      document.getElementById('busFareInput').value = bus.fare;
+      document.getElementById('busDescInput').value = bus.desc;
+
+      populateCategorySelect('busCategoryInput', bus.category);
+      openModal('busFormModal');
+    }
+
+    function handleSaveBus(e) {
+      e.preventDefault();
+      const buses = getBuses();
+      const editId = document.getElementById('editBusId').value;
+      const name = document.getElementById('busNameInput').value.trim();
+      const category = document.getElementById('busCategoryInput').value;
+      const from = document.getElementById('busFromInput').value.trim();
+      const to = document.getElementById('busToInput').value.trim();
+      const time = document.getElementById('busTimeInput').value;
+      const duration = document.getElementById('busDurationInput').value.trim();
+      const totalSeats = parseInt(document.getElementById('busSeatsInput').value, 10);
+      const fare = parseFloat(document.getElementById('busFareInput').value);
+      const desc = document.getElementById('busDescInput').value.trim();
+
+      if (editId) {
+        const idx = buses.findIndex(b => b.id === editId);
+        if (idx !== -1) {
+          buses[idx].name = name;
+          buses[idx].category = category;
+          buses[idx].from = from;
+          buses[idx].to = to;
+          buses[idx].time = time;
+          buses[idx].duration = duration;
+          buses[idx].totalSeats = totalSeats;
+          buses[idx].fare = fare;
+          buses[idx].desc = desc;
+        }
+        showToast('Bus information updated!', 'success');
+      } else {
+        buses.unshift({
+          id: `BUS-${Math.floor(100 + Math.random() * 900)}`,
+          name,
+          category,
+          from,
+          to,
+          time,
+          duration,
+          totalSeats,
+          bookedSeats: [],
+          fare,
+          desc
+        });
+        showToast('New bus added to transit schedule!', 'success');
+      }
+
+      saveBuses(buses);
+      closeModal('busFormModal');
+      refreshApp();
+    }
+
+    function deleteBus(busId) {
+      if (!confirm('Remove this bus from the transit system?')) return;
+      let buses = getBuses();
+      buses = buses.filter(b => b.id !== busId);
+      saveBuses(buses);
+      showToast('Bus removed from schedule', 'info');
+      refreshApp();
+    }
+
+    // Bus Categories
+    function populateCategorySelect(elementId, selectedVal) {
+      const cats = getCategories();
+      const el = document.getElementById(elementId);
+      if (!el) return;
+      el.innerHTML = cats.map(c => `
+        <option value="${c.name}" ${c.name === selectedVal ? 'selected' : ''}>${c.name}</option>
+      `).join('');
+    }
+
+    function renderAdminCategories() {
+      const cats = getCategories();
+      const buses = getBuses();
+      const tbody = document.getElementById('adminCategoriesTableBody');
+
+      tbody.innerHTML = cats.map(c => {
+        const activeCount = buses.filter(b => b.category === c.name).length;
+        return `
+          <tr>
+            <td><strong>${escapeHtml(c.name)}</strong></td>
+            <td>${escapeHtml(c.desc)}</td>
+            <td><span class="badge badge-success">${activeCount} buses</span></td>
+            <td>
+              <button class="btn btn-danger btn-sm" onclick="deleteCategory('${c.id}')">Delete</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      // Populate filter dropdown in search view
+      const searchCat = document.getElementById('searchCategory');
+      searchCat.innerHTML = `<option value="all">All Bus Categories</option>` + cats.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+    }
+
+    function handleAddCategory(e) {
+      e.preventDefault();
+      const name = document.getElementById('newCatName').value.trim();
+      const desc = document.getElementById('newCatDesc').value.trim();
+
+      const cats = getCategories();
+      cats.push({
+        id: `CAT-${Date.now().toString().slice(-4)}`,
+        name,
+        desc
+      });
+      saveCategories(cats);
+
+      document.getElementById('newCatName').value = '';
+      document.getElementById('newCatDesc').value = '';
+      showToast(`Category "${name}" added!`, 'success');
+      renderAdminCategories();
+    }
+
+    function deleteCategory(catId) {
+      if (!confirm('Delete this bus category?')) return;
+      let cats = getCategories();
+      cats = cats.filter(c => c.id !== catId);
+      saveCategories(cats);
+      showToast('Category deleted', 'info');
+      renderAdminCategories();
+    }
+
+    // Users
+    function renderAdminUsers() {
+      const users = getUsers();
+      const tbody = document.getElementById('adminUsersTableBody');
+
+      tbody.innerHTML = users.map(u => `
+        <tr>
+          <td><code>${u.id}</code></td>
+          <td><strong>${escapeHtml(u.name)}</strong></td>
+          <td>${escapeHtml(u.email)}</td>
+          <td>${escapeHtml(u.phone)}</td>
+          <td><span class="badge ${u.role === 'admin' ? 'badge-warning' : 'badge-success'}">${u.role}</span></td>
+          <td><span style="color: #10b981; font-weight: 600;">Active</span></td>
+        </tr>
+      `).join('');
+    }
+
+    // News
+    function renderAdminNews() {
+      const news = getNews();
+      const tbody = document.getElementById('adminNewsTableBody');
+
+      tbody.innerHTML = news.map(n => `
+        <tr>
+          <td>${n.date}</td>
+          <td><strong>${escapeHtml(n.title)}</strong></td>
+          <td>${escapeHtml(n.content.slice(0, 45))}...</td>
+          <td>
+            <button class="btn btn-danger btn-sm" onclick="deleteNews('${n.id}')">Delete</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function handlePublishNews(e) {
+      e.preventDefault();
+      const title = document.getElementById('newsTitleInput').value.trim();
+      const content = document.getElementById('newsContentInput').value.trim();
+
+      const news = getNews();
+      news.unshift({
+        id: `NWS-${Date.now().toString().slice(-4)}`,
+        title,
+        content,
+        date: getDateOffset(0)
+      });
+      saveNews(news);
+
+      document.getElementById('newsTitleInput').value = '';
+      document.getElementById('newsContentInput').value = '';
+      showToast('Announcement published successfully!', 'success');
+      renderAdminNews();
+    }
+
+    function deleteNews(id) {
+      if (!confirm('Delete this announcement?')) return;
+      let news = getNews();
+      news = news.filter(n => n.id !== id);
+      saveNews(news);
+      showToast('Announcement removed', 'info');
+      renderAdminNews();
+    }
+
+    // Report Generation Module
+    function renderAdminReports() {
+      const buses = getBuses();
+      const bookings = getBookings().filter(b => b.status === 'Confirmed');
+      const tbody = document.getElementById('adminReportTableBody');
+
+      tbody.innerHTML = buses.map(bus => {
+        const busBookings = bookings.filter(b => b.busId === bus.id);
+        let seatsSold = 0;
+        let revenue = 0;
+        busBookings.forEach(b => {
+          seatsSold += (b.seats || []).length;
+          revenue += (b.totalFare || 0);
+        });
+
+        const occupancyPct = Math.round((seatsSold / bus.totalSeats) * 100);
+
+        return `
+          <tr>
+            <td><strong>${escapeHtml(bus.name)}</strong></td>
+            <td>${escapeHtml(bus.from)} ➔ ${escapeHtml(bus.to)}</td>
+            <td>${bus.totalSeats} seats</td>
+            <td>${seatsSold} booked</td>
+            <td><strong style="color: ${occupancyPct > 50 ? '#10b981' : '#f59e0b'};">${occupancyPct}%</strong></td>
+            <td><strong style="font-family: 'JetBrains Mono', monospace;">$${revenue}</strong></td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function printReport() {
+      window.print();
+    }
+
+    /* ==========================================================================
+       8. AUTHENTICATION & PASSWORD UTILITIES
+       ========================================================================== */
+    function openAuthModal(mode) {
+      switchAuthTab(mode);
+      openModal('authModal');
+    }
+
+    function switchAuthTab(mode) {
+      const loginBtn = document.getElementById('authTabLoginBtn');
+      const regBtn = document.getElementById('authTabRegBtn');
+      const forgotBtn = document.getElementById('authTabForgotBtn');
+
+      const loginForm = document.getElementById('loginForm');
+      const regForm = document.getElementById('regForm');
+      const forgotForm = document.getElementById('forgotForm');
+      const title = document.getElementById('authModalTitle');
+
+      loginBtn.className = 'btn btn-sm btn-secondary';
+      regBtn.className = 'btn btn-sm btn-secondary';
+      forgotBtn.className = 'btn btn-sm btn-secondary';
+
+      loginForm.style.display = 'none';
+      regForm.style.display = 'none';
+      forgotForm.style.display = 'none';
+
+      if (mode === 'login') {
+        loginBtn.className = 'btn btn-sm btn-primary';
+        loginForm.style.display = 'block';
+        title.textContent = 'Sign In';
+      } else if (mode === 'register') {
+        regBtn.className = 'btn btn-sm btn-primary';
+        regForm.style.display = 'block';
+        title.textContent = 'Register New Account';
+      } else {
+        forgotBtn.className = 'btn btn-sm btn-primary';
+        forgotForm.style.display = 'block';
+        title.textContent = 'Forgot Password';
+      }
+    }
+
+    function handleLoginSubmit(e) {
+      e.preventDefault();
+      const username = document.getElementById('loginUsername').value.trim();
+      const password = document.getElementById('loginPassword').value.trim();
+
+      const users = getUsers();
+      const user = users.find(u => (u.email.toLowerCase() === username.toLowerCase() || u.name.toLowerCase() === username.toLowerCase()) && u.password === password);
+
+      if (user) {
+        setCurrentUser(user);
+        closeModal('authModal');
+        showToast(`Welcome back, ${user.name}!`, 'success');
+        updateAuthUI();
+        if (user.role === 'admin') navigate('admin');
+        else navigate('search');
+      } else {
+        showToast('Invalid credentials. Check email or password.', 'danger');
+      }
+    }
+
+    function handleRegisterSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('regName').value.trim();
+      const email = document.getElementById('regEmail').value.trim();
+      const phone = document.getElementById('regPhone').value.trim();
+      const password = document.getElementById('regPassword').value.trim();
+
+      const users = getUsers();
+      if (users.some(u => u.email.toLowerCase() === email.toLowerCase())) {
+        showToast('An account with this email is already registered!', 'danger');
+        return;
+      }
+
+      const newUser = {
+        id: `USR-${Date.now().toString().slice(-4)}`,
+        name,
+        email,
+        phone,
+        role: 'user',
+        password
+      };
+
+      users.push(newUser);
+      saveUsers(users);
+      setCurrentUser(newUser);
+
+      closeModal('authModal');
+      showToast(`Welcome ${name}! Your account has been registered.`, 'success');
+      updateAuthUI();
+      navigate('search');
+    }
+
+    function handleForgotSubmit(e) {
+      e.preventDefault();
+      const email = document.getElementById('forgotEmail').value.trim();
+      const user = getUsers().find(u => u.email.toLowerCase() === email.toLowerCase());
+
+      if (user) {
+        alert(`🔒 PASSWORD RECOVERY:\nA password reset PIN has been sent to ${email}.\nDemo recovery shortcut: Your current password is "${user.password}".`);
+        switchAuthTab('login');
+      } else {
+        showToast('Email address not found in registered accounts.', 'danger');
+      }
+    }
+
+    function handleChangePasswordSubmit(e) {
+      e.preventDefault();
+      const user = getCurrentUser();
+      if (!user) return;
+
+      const current = document.getElementById('cpCurrent').value;
+      const newPass = document.getElementById('cpNew').value;
+      const confirmPass = document.getElementById('cpConfirm').value;
+
+      if (user.password !== current) {
+        showToast('Current password does not match!', 'danger');
+        return;
+      }
+
+      if (newPass !== confirmPass) {
+        showToast('New passwords do not match!', 'danger');
+        return;
+      }
+
+      user.password = newPass;
+      setCurrentUser(user);
+
+      const users = getUsers();
+      const idx = users.findIndex(u => u.id === user.id);
+      if (idx !== -1) {
+        users[idx].password = newPass;
+        saveUsers(users);
+      }
+
+      closeModal('changePasswordModal');
+      showToast('Password updated successfully!', 'success');
+    }
+
+    function logout() {
+      localStorage.removeItem(STORAGE_KEY_CURRENT_USER);
+      showToast('Signed out successfully.', 'info');
+      updateAuthUI();
+      navigate('search');
+    }
+
+    /* ==========================================================================
+       9. UTILITIES (MODALS, TOASTS, THEME, REFRESH)
+       ========================================================================== */
+    function openModal(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.add('open');
+    }
+
+    function closeModal(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.remove('open');
+    }
+
+    document.querySelectorAll('.modal-overlay').forEach(overlay => {
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) overlay.classList.remove('open');
+      });
+    });
+
+    function showToast(msg, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast-msg ${type}`;
+      toast.textContent = msg;
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'all 0.2s ease';
+        setTimeout(() => toast.remove(), 200);
+      }, 3500);
+    }
+
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme') || 'dark';
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem(STORAGE_KEY_THEME, next);
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function refreshApp() {
+      updateAuthUI();
+      renderAdminCategories();
+      filterBuses();
+      renderUserBookings();
+      renderComments();
+      renderNews();
+      if (getCurrentUser() && getCurrentUser().role === 'admin') {
+        renderAdminView();
+      }
+    }
+
+    /* DOM Ready */
+    document.addEventListener('DOMContentLoaded', () => {
+      initDatabase();
+      updateAuthUI();
+      renderAdminCategories();
+      filterBuses();
+      renderComments();
+      renderNews();
+    });
+  </script>
+</body>
+</html>

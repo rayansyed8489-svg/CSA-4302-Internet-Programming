@@ -1,0 +1,2387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Experiment 3 - Online Train Reservation System</title>
+  <meta name="description" content="Experiment 3: Online Train Reservation System featuring route search, train list with via-details, seat & class availability, PNR status tracking, online/offline payments, cancellation with refund rules, and admin fare/train maintenance.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* ==========================================================================
+       EXPERIMENT 3 - ONLINE TRAIN RESERVATION SYSTEM
+       Clean, Simple, Intuitive Styling
+       ========================================================================== */
+    :root {
+      --primary: #1e40af;
+      --primary-hover: #1e3a8a;
+      --primary-light: rgba(30, 64, 175, 0.12);
+
+      --accent: #d97706;
+      --accent-light: rgba(217, 119, 6, 0.12);
+
+      --success: #16a34a;
+      --success-light: rgba(22, 163, 74, 0.12);
+
+      --danger: #dc2626;
+      --danger-light: rgba(220, 38, 38, 0.12);
+
+      --bg-body: #0f172a;
+      --bg-surface: #1e293b;
+      --bg-card: #334155;
+      --bg-card-hover: #3e4f68;
+      --border: rgba(255, 255, 255, 0.1);
+
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+
+      --transition: 0.2s ease;
+    }
+
+    [data-theme="light"] {
+      --bg-body: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-card: #f1f5f9;
+      --bg-card-hover: #e2e8f0;
+      --border: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-dim: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color var(--transition), color var(--transition);
+    }
+
+    /* Top Experiment 3 Banner */
+    .exp-bar {
+      background: linear-gradient(90deg, #172554, #1e40af, #172554);
+      color: #dbeafe;
+      padding: 6px 1.5rem;
+      font-size: 0.8rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      border-bottom: 1px solid rgba(30, 64, 175, 0.4);
+    }
+
+    .exp-badge {
+      background: #2563eb;
+      color: #fff;
+      padding: 2px 8px;
+      border-radius: var(--radius-sm);
+      font-weight: 800;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+    }
+
+    .exp-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .quick-btn {
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #fff;
+      padding: 3px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 0.75rem;
+      cursor: pointer;
+      font-family: inherit;
+      transition: var(--transition);
+    }
+
+    .quick-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Navbar */
+    .navbar {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      text-decoration: none;
+      color: var(--text-main);
+    }
+
+    .nav-brand-logo {
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, #1e40af, #3b82f6);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.25rem;
+    }
+
+    .nav-brand-text {
+      font-size: 1.2rem;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .nav-brand-text span {
+      display: block;
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      list-style: none;
+    }
+
+    .nav-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 7px 12px;
+      border-radius: var(--radius-md);
+      font-size: 0.88rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .nav-btn:hover {
+      color: var(--text-main);
+      background: var(--primary-light);
+    }
+
+    .nav-btn.active {
+      color: #3b82f6;
+      background: var(--primary-light);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .theme-toggle {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      width: 34px;
+      height: 34px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .user-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 4px 10px 4px 6px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 0.82rem;
+    }
+
+    .user-avatar {
+      width: 26px;
+      height: 26px;
+      border-radius: 4px;
+      background: var(--primary);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.75rem;
+    }
+
+    /* Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1.5rem 1rem;
+      width: 100%;
+      flex: 1;
+    }
+
+    /* Views */
+    .view-section {
+      display: none;
+      animation: fadeIn 0.2s ease forwards;
+    }
+
+    .view-section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Hero / Search Section */
+    .hero-box {
+      background: linear-gradient(135deg, rgba(30, 64, 175, 0.3), rgba(15, 23, 42, 0.8)), var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-box h1 {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
+
+    .hero-box p {
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+      font-size: 0.95rem;
+    }
+
+    .search-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      align-items: flex-end;
+    }
+
+    /* Forms */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .form-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .form-control {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 8px 10px;
+      color: var(--text-main);
+      font-size: 0.88rem;
+      font-family: inherit;
+      outline: none;
+      width: 100%;
+    }
+
+    .form-control:focus {
+      border-color: #3b82f6;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: var(--transition);
+      text-decoration: none;
+    }
+
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-hover); }
+
+    .btn-secondary { background: var(--bg-card); border-color: var(--border); color: var(--text-main); }
+    .btn-secondary:hover { background: var(--bg-card-hover); }
+
+    .btn-accent { background: var(--accent); color: #fff; }
+    .btn-accent:hover { background: #b45309; }
+
+    .btn-danger { background: var(--danger); color: #fff; }
+    .btn-danger:hover { background: #b91c1c; }
+
+    .btn-sm { padding: 4px 8px; font-size: 0.78rem; }
+
+    /* Train Cards */
+    .trains-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      margin-top: 1.5rem;
+    }
+
+    .train-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      transition: var(--transition);
+    }
+
+    .train-card:hover {
+      border-color: #3b82f6;
+    }
+
+    .train-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 10px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.75rem;
+    }
+
+    .train-title-zone h3 {
+      font-size: 1.15rem;
+      font-weight: 800;
+    }
+
+    .train-zone-tag {
+      background: var(--primary-light);
+      color: #60a5fa;
+      font-size: 0.72rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-left: 6px;
+    }
+
+    .train-via-info {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+
+    .train-timing-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      text-align: center;
+      background: var(--bg-card);
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+    }
+
+    .train-classes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 8px;
+    }
+
+    .class-option-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .class-option-card:hover {
+      border-color: var(--accent);
+      background: var(--bg-card-hover);
+    }
+
+    .class-title-fare {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    .class-avail-status {
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .status-avail { color: #22c55e; }
+    .status-rac   { color: #f59e0b; }
+    .status-wl    { color: #ef4444; }
+
+    /* Tables */
+    .table-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow-x: auto;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      text-align: left;
+    }
+
+    .table th {
+      background: var(--bg-card);
+      color: var(--text-muted);
+      font-weight: 700;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .table tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    .badge-success { background: rgba(22, 163, 74, 0.2); color: #22c55e; }
+    .badge-warning { background: rgba(217, 119, 6, 0.2); color: #f59e0b; }
+    .badge-danger  { background: rgba(220, 38, 38, 0.2); color: #ef4444; }
+    .badge-info    { background: rgba(37, 99, 235, 0.2); color: #60a5fa; }
+
+    /* PNR Enquiry Box */
+    .pnr-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      max-width: 600px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .pnr-input-wrap {
+      display: flex;
+      gap: 8px;
+      margin-top: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Modals */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      width: 100%;
+      max-width: 580px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+
+    .modal-close-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 1.3rem;
+    }
+
+    .modal-body {
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .modal-footer {
+      padding: 0.85rem 1.25rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    /* Admin Subnav Tabs */
+    .admin-tabs {
+      display: flex;
+      gap: 6px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1.25rem;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .admin-tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 8px 12px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+
+    .admin-tab-btn.active {
+      color: #3b82f6;
+      border-bottom-color: #3b82f6;
+    }
+
+    .admin-pane {
+      display: none;
+    }
+
+    .admin-pane.active {
+      display: block;
+    }
+
+    /* Toast */
+    .toast-box {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 300;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .toast-msg {
+      background: var(--bg-surface);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    }
+
+    .toast-msg.success { border-left: 4px solid var(--success); }
+    .toast-msg.danger  { border-left: 4px solid var(--danger); }
+    .toast-msg.info    { border-left: 4px solid #3b82f6; }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      background: var(--bg-surface);
+      padding: 1.25rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      margin-top: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========================================================================
+       EXPERIMENT 3 HEADER BAR
+       ======================================================================== -->
+  <div class="exp-bar">
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <span class="exp-badge">Experiment 3</span>
+      <span>Online Train Reservation System & PNR Enquiry</span>
+    </div>
+    <div class="exp-actions">
+      <span style="opacity: 0.8; font-size: 0.75rem;">Fast Role Switcher:</span>
+      <button class="quick-btn" onclick="demoSwitch('user')">👤 Passenger: Rajesh</button>
+      <button class="quick-btn" onclick="demoSwitch('admin')">🔑 Railway Admin</button>
+      <button class="quick-btn" onclick="resetDemoData()">🔄 Reset Data</button>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       NAVBAR
+       ======================================================================== -->
+  <nav class="navbar">
+    <div class="nav-brand" onclick="navigate('search')">
+      <div class="nav-brand-logo">🚂</div>
+      <div class="nav-brand-text">
+        RailYatra Express
+        <span>National Train Reservation System • Exp 3</span>
+      </div>
+    </div>
+
+    <ul class="nav-links">
+      <li><button class="nav-btn active" id="nav-btn-search" onclick="navigate('search')">🔍 Search Trains</button></li>
+      <li><button class="nav-btn" id="nav-btn-pnr" onclick="navigate('pnr')">🎫 PNR Status Enquiry</button></li>
+      <li><button class="nav-btn" id="nav-btn-history" onclick="navigate('history')">📋 My Bookings</button></li>
+      <li><button class="nav-btn" id="nav-btn-refund-rules" onclick="navigate('refund-rules')">⚖️ Refund Rules</button></li>
+      <li id="adminNavTab" style="display: none;">
+        <button class="nav-btn" id="nav-btn-admin" onclick="navigate('admin')" style="color: #60a5fa;">⚙️ Admin Dashboard</button>
+      </li>
+    </ul>
+
+    <div class="nav-actions">
+      <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Light/Dark Theme">🌓</button>
+
+      <div id="authLoggedOut" style="display: none;">
+        <button class="btn btn-primary btn-sm" onclick="openAuthModal('login')">Sign In</button>
+      </div>
+
+      <div id="authLoggedIn" style="display: flex;">
+        <div class="user-pill" onclick="handleUserPillClick()">
+          <div class="user-avatar" id="navUserInitial">R</div>
+          <span id="navUserName">Rajesh Kumar</span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ========================================================================
+       MAIN APP CONTAINER
+       ======================================================================== -->
+  <main class="container">
+
+    <!-- ======================================================================
+         PAGE 1: SEARCH TRAINS & BOOKING (REQUIREMENT 1, 2, 3)
+         ====================================================================== -->
+    <section id="view-search" class="view-section active">
+      <div class="hero-box">
+        <h1>Book Train Tickets Online</h1>
+        <p>Real-time seat availability across 1A, 2A, 3A, and Sleeper classes with via-route station details.</p>
+
+        <!-- Search Bar -->
+        <div class="search-panel">
+          <div class="form-group">
+            <label class="form-label">Origin Station</label>
+            <select id="searchOrigin" class="form-control" onchange="filterTrains()">
+              <option value="all">All Origin Stations</option>
+              <option value="New Delhi (NDLS)">New Delhi (NDLS)</option>
+              <option value="Mumbai Central (MMCT)">Mumbai Central (MMCT)</option>
+              <option value="Chennai Central (MAS)">Chennai Central (MAS)</option>
+              <option value="Kolkata Howrah (HWH)">Kolkata Howrah (HWH)</option>
+              <option value="Lucknow (LKO)">Lucknow (LKO)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Destination Station</label>
+            <select id="searchDest" class="form-control" onchange="filterTrains()">
+              <option value="all">All Destination Stations</option>
+              <option value="Mumbai Central (MMCT)">Mumbai Central (MMCT)</option>
+              <option value="Chennai Central (MAS)">Chennai Central (MAS)</option>
+              <option value="Kolkata Howrah (HWH)">Kolkata Howrah (HWH)</option>
+              <option value="Lucknow (LKO)">Lucknow (LKO)</option>
+              <option value="Varanasi (BSB)">Varanasi (BSB)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Date of Journey</label>
+            <input type="date" id="searchDate" class="form-control" onchange="filterTrains()">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Class Category</label>
+            <select id="searchClass" class="form-control" onchange="filterTrains()">
+              <option value="all">All Travel Classes</option>
+              <option value="1A">1A (First AC)</option>
+              <option value="2A">2A (Second AC)</option>
+              <option value="3A">3A (Third AC)</option>
+              <option value="SL">SL (Sleeper Class)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <button class="btn btn-primary" onclick="filterTrains()">🔍 Find Trains</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Train Search Results -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+        <h3 style="font-size: 1.1rem; font-weight: 700;">Scheduled Available Trains</h3>
+        <span style="font-size: 0.8rem; color: var(--text-muted);" id="trainsCountLabel">Showing 0 trains</span>
+      </div>
+
+      <div class="trains-list" id="trainsContainer">
+        <!-- Rendered by JS -->
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         PAGE 2: PNR STATUS ENQUIRY (REQUIREMENT 4)
+         ====================================================================== -->
+    <section id="view-pnr" class="view-section">
+      <div class="pnr-box">
+        <h2 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 0.5rem;">Passenger PNR Status Enquiry</h2>
+        <p style="color: var(--text-muted); font-size: 0.88rem;">Enter your 10-digit Passenger Name Record (PNR) number to inspect real-time reservation status.</p>
+
+        <form onsubmit="handleCheckPnr(event)">
+          <div class="pnr-input-wrap">
+            <input type="text" id="pnrSearchInput" class="form-control" required placeholder="Enter 10-digit PNR (e.g. PNR-8429103841)" style="font-family: 'JetBrains Mono', monospace; font-size: 1rem; text-align: center;">
+            <button type="submit" class="btn btn-primary">Check Status</button>
+          </div>
+        </form>
+
+        <div style="font-size: 0.78rem; color: var(--text-dim); margin-bottom: 1.5rem;">
+          Quick Demo PNRs:<br>
+          • Confirmed: <code style="color: #60a5fa; cursor: pointer;" onclick="quickPnr('PNR-8429103841')">PNR-8429103841</code><br>
+          • RAC: <code style="color: #f59e0b; cursor: pointer;" onclick="quickPnr('PNR-6210492815')">PNR-6210492815</code><br>
+          • Waiting List: <code style="color: #ef4444; cursor: pointer;" onclick="quickPnr('PNR-3104829102')">PNR-3104829102</code>
+        </div>
+
+        <div id="pnrResultCard" style="display: none; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.25rem; text-align: left;">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         PAGE 3: MY BOOKINGS & CANCEL WITH REFUND (REQUIREMENT 6)
+         ====================================================================== -->
+    <section id="view-history" class="view-section">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 8px;">
+        <div>
+          <h2 style="font-size: 1.5rem; font-weight: 800;">My Train Reservations</h2>
+          <p style="color: var(--text-muted); font-size: 0.85rem;">View electronic tickets, print boarding coupons, or cancel reservation.</p>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="navigate('search')">+ Book Another Train</button>
+      </div>
+
+      <div class="table-box">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>PNR No.</th>
+              <th>Train & Zone</th>
+              <th>Route</th>
+              <th>Date of Journey</th>
+              <th>Passengers & Berths</th>
+              <th>Class</th>
+              <th>Total Fare</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="userBookingsTableBody">
+            <!-- Rendered by JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         PAGE 4: REFUND RULES (REQUIREMENT 6)
+         ====================================================================== -->
+    <section id="view-refund-rules" class="view-section">
+      <div style="max-width: 800px; margin: 0 auto; background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.75rem;">
+        <h2 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 0.5rem;">Railway Ticket Cancellation & Refund Rules</h2>
+        <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 1.5rem;">
+          In accordance with railway passenger tariff regulations, refundable percentages depend upon the cancellation timing relative to the scheduled train departure:
+        </p>
+
+        <div class="table-box" style="margin-bottom: 1.5rem;">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Cancellation Timeline</th>
+                <th>Refundable Percentage</th>
+                <th>Clerkage / Cancellation Charge</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>More than 48 hours</strong> prior to train departure</td>
+                <td><strong style="color: #22c55e;">80% Refundable</strong></td>
+                <td>20% flat clerkage fee deducted</td>
+              </tr>
+              <tr>
+                <td><strong>Between 12 to 48 hours</strong> prior to train departure</td>
+                <td><strong style="color: #f59e0b;">50% Refundable</strong></td>
+                <td>50% cancellation fee deducted</td>
+              </tr>
+              <tr>
+                <td><strong>Less than 12 hours</strong> prior to train departure</td>
+                <td><strong style="color: #ef4444;">25% Refundable</strong></td>
+                <td>75% cancellation fee deducted</td>
+              </tr>
+              <tr>
+                <td>Post-departure (Train has departed)</td>
+                <td><strong style="color: var(--text-dim);">0% Non-Refundable</strong></td>
+                <td>No refund admissible</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div style="background: var(--bg-card); padding: 1rem; border-radius: var(--radius-sm); border: 1px solid var(--border); font-size: 0.85rem; color: var(--text-muted);">
+          ℹ️ <strong>System Refund Execution:</strong> Upon submitting a cancellation request using your PNR Number, the refundable amount is automatically processed by the system and recorded in the passenger's account statement.
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         PAGE 5: ADMINISTRATOR DASHBOARD (REQUIREMENTS 3, 5, 6)
+         ====================================================================== -->
+    <section id="view-admin" class="view-section">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+        <div>
+          <span class="badge badge-info">Railway Administrator Access</span>
+          <h2 style="font-size: 1.6rem; font-weight: 800; margin-top: 2px;">Railway Operations & Reservation Control</h2>
+        </div>
+      </div>
+
+      <!-- Admin Subnav Tabs -->
+      <div class="admin-tabs">
+        <button class="admin-tab-btn active" onclick="switchAdminTab('trains', this)">🚂 Train Maintenance</button>
+        <button class="admin-tab-btn" onclick="switchAdminTab('fares', this)">💰 Fare & Zone Matrix</button>
+        <button class="admin-tab-btn" onclick="switchAdminTab('pnrs', this)">🎫 All Booked PNRs</button>
+        <button class="admin-tab-btn" onclick="switchAdminTab('payments', this)">💳 Payment Audit Log</button>
+        <button class="admin-tab-btn" onclick="switchAdminTab('refunds', this)">💸 Refund Processing Desk</button>
+      </div>
+
+      <!-- Admin Pane 1: Maintain Trains -->
+      <div id="admin-pane-trains" class="admin-pane active">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+          <h3 style="font-size: 1.1rem;">Maintained Train Schedules</h3>
+          <button class="btn btn-primary btn-sm" onclick="openAddTrainModal()">+ Add New Train</button>
+        </div>
+        <div class="table-box">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Train No.</th>
+                <th>Train Name</th>
+                <th>Zone</th>
+                <th>Route (From - To)</th>
+                <th>Via Stations</th>
+                <th>Timings</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="adminTrainsTableBody">
+              <!-- Rendered by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Admin Pane 2: Maintain Fares & Quotas -->
+      <div id="admin-pane-fares" class="admin-pane">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+          <h3 style="font-size: 1.1rem;">Zone, Class & Fare Matrix</h3>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">Adjust base fare tariffs per zone and travel class.</p>
+        </div>
+        <div class="table-box">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Zone</th>
+                <th>Train Name</th>
+                <th>1A (First AC)</th>
+                <th>2A (Second AC)</th>
+                <th>3A (Third AC)</th>
+                <th>SL (Sleeper)</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="adminFaresTableBody">
+              <!-- Rendered by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Admin Pane 3: All Booked PNRs -->
+      <div id="admin-pane-pnrs" class="admin-pane">
+        <h3 style="font-size: 1.1rem; margin-bottom: 0.75rem;">Central PNR Repository</h3>
+        <div class="table-box">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>PNR No.</th>
+                <th>Passenger</th>
+                <th>Train</th>
+                <th>Date of Journey</th>
+                <th>Class</th>
+                <th>Fare Paid</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="adminPnrsTableBody">
+              <!-- Rendered by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Admin Pane 4: Payment Audit Log (Requirement 3) -->
+      <div id="admin-pane-payments" class="admin-pane">
+        <h3 style="font-size: 1.1rem; margin-bottom: 0.75rem;">Payment Transactions Sent to Admin</h3>
+        <div class="table-box">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Txn ID</th>
+                <th>PNR Ref</th>
+                <th>Passenger</th>
+                <th>Mode</th>
+                <th>Fare Amount</th>
+                <th>Date / Time</th>
+                <th>Admin Status</th>
+              </tr>
+            </thead>
+            <tbody id="adminPaymentsTableBody">
+              <!-- Rendered by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Admin Pane 5: Refund Processing (Requirement 6) -->
+      <div id="admin-pane-refunds" class="admin-pane">
+        <h3 style="font-size: 1.1rem; margin-bottom: 0.75rem;">Refund Processing & Settlement Desk</h3>
+        <div class="table-box">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Cancellation ID</th>
+                <th>PNR Ref</th>
+                <th>Passenger</th>
+                <th>Total Fare</th>
+                <th>Refund %</th>
+                <th>Refund Amount</th>
+                <th>Admin Action</th>
+              </tr>
+            </thead>
+            <tbody id="adminRefundsTableBody">
+              <!-- Rendered by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================================================
+       MODALS
+       ======================================================================== -->
+
+  <!-- Modal 1: Reserve Ticket Modal (Requirement 1 & 3) -->
+  <div class="modal-overlay" id="reserveModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <h3 id="resModalTrainTitle">Reserve Train Ticket</h3>
+          <span style="font-size: 0.75rem; color: var(--text-muted);" id="resModalRouteSubtitle">Route</span>
+        </div>
+        <button class="modal-close-btn" onclick="closeModal('reserveModal')">&times;</button>
+      </div>
+      <form id="reserveForm" onsubmit="handleConfirmReservation(event)">
+        <div class="modal-body">
+          <input type="hidden" id="resTrainId">
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <div class="form-group">
+              <label class="form-label">Date of Journey</label>
+              <input type="date" id="resJourneyDate" class="form-control" required onchange="calculateFareTotal()">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Class Type</label>
+              <select id="resClassSelect" class="form-control" required onchange="calculateFareTotal()">
+                <option value="1A">1A (First AC)</option>
+                <option value="2A" selected>2A (Second AC)</option>
+                <option value="3A">3A (Third AC)</option>
+                <option value="SL">SL (Sleeper Class)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Passenger Details (Requirement 1) -->
+          <div style="background: var(--bg-card); padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+            <div style="font-size: 0.8rem; font-weight: 700; margin-bottom: 6px; color: var(--text-main);">Passenger 1 Information</div>
+            <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 6px; margin-bottom: 6px;">
+              <input type="text" id="resPassName" class="form-control" required placeholder="Full Name">
+              <input type="number" id="resPassAge" class="form-control" required placeholder="Age" min="5" max="100" value="28">
+              <select id="resPassGender" class="form-control">
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Berth Preference</label>
+              <select id="resPassBerth" class="form-control">
+                <option value="Lower">Lower Berth</option>
+                <option value="Middle">Middle Berth</option>
+                <option value="Upper">Upper Berth</option>
+                <option value="Side Lower">Side Lower</option>
+                <option value="Side Upper">Side Upper</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Payment Mode (Requirement 3: Online/Offline) -->
+          <div class="form-group">
+            <label class="form-label">Payment Mode</label>
+            <select id="resPaymentMode" class="form-control">
+              <option value="Online - UPI / GPay">Online Mode: UPI / GPay / Net Banking</option>
+              <option value="Online - Credit/Debit Card">Online Mode: Credit / Debit Card</option>
+              <option value="Offline - Cash at Counter">Offline Mode: Pay Cash at Railway Counter</option>
+            </select>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 8px;">
+            <span style="font-size: 0.85rem; color: var(--text-muted);">Total Ticket Fare:</span>
+            <strong id="resTotalFareDisplay" style="font-size: 1.3rem; color: #60a5fa; font-family: 'JetBrains Mono', monospace;">₹0</strong>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" onclick="closeModal('reserveModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm">Pay Fare & Generate PNR</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 2: Admin Add/Edit Train Modal -->
+  <div class="modal-overlay" id="trainModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="trainModalTitle">Add New Train</h3>
+        <button class="modal-close-btn" onclick="closeModal('trainModal')">&times;</button>
+      </div>
+      <form onsubmit="handleSaveTrain(event)">
+        <div class="modal-body">
+          <input type="hidden" id="editTrainId">
+
+          <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 8px;">
+            <div class="form-group">
+              <label class="form-label">Train Number</label>
+              <input type="text" id="admTrainNo" class="form-control" required placeholder="e.g. 12952">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Train Name</label>
+              <input type="text" id="admTrainName" class="form-control" required placeholder="e.g. Rajdhani Express">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <div class="form-group">
+              <label class="form-label">Railway Zone</label>
+              <select id="admTrainZone" class="form-control">
+                <option value="Northern Railway (NR)">Northern Railway (NR)</option>
+                <option value="Western Railway (WR)">Western Railway (WR)</option>
+                <option value="Southern Railway (SR)">Southern Railway (SR)</option>
+                <option value="Eastern Railway (ER)">Eastern Railway (ER)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Via Stations</label>
+              <input type="text" id="admTrainVia" class="form-control" required placeholder="Kota, Vadodara, Surat">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <div class="form-group">
+              <label class="form-label">Origin Station</label>
+              <input type="text" id="admTrainOrigin" class="form-control" required placeholder="New Delhi (NDLS)">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Destination Station</label>
+              <input type="text" id="admTrainDest" class="form-control" required placeholder="Mumbai Central (MMCT)">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <div class="form-group">
+              <label class="form-label">Departure Time</label>
+              <input type="text" id="admTrainDep" class="form-control" required placeholder="16:55">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Arrival Time</label>
+              <input type="text" id="admTrainArr" class="form-control" required placeholder="08:35 (+1 day)">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" onclick="closeModal('trainModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm">Save Train Details</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 3: Authentication (Login / Register) -->
+  <div class="modal-overlay" id="authModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="authModalTitle">Sign In to Railway Portal</h3>
+        <button class="modal-close-btn" onclick="closeModal('authModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="display: flex; gap: 6px; margin-bottom: 0.5rem;">
+          <button class="btn btn-sm btn-primary" id="authTabLogin" onclick="switchAuthTab('login')">Login</button>
+          <button class="btn btn-sm btn-secondary" id="authTabReg" onclick="switchAuthTab('register')">Register</button>
+        </div>
+
+        <!-- Login Form -->
+        <form id="loginForm" onsubmit="handleAuthLogin(event)">
+          <div class="form-group" style="margin-bottom: 0.75rem;">
+            <label class="form-label">Username or Email</label>
+            <input type="text" id="loginUsername" class="form-control" required placeholder="rajesh@example.com or admin">
+          </div>
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label class="form-label">Password</label>
+            <input type="password" id="loginPassword" class="form-control" required placeholder="••••••••">
+          </div>
+          <div style="background: var(--bg-card); padding: 8px 10px; border-radius: 4px; font-size: 0.75rem; color: var(--text-muted); margin-bottom: 1rem;">
+            Quick Logins:<br>
+            • Passenger: <code>rajesh@example.com</code> / <code>password</code><br>
+            • Administrator: <code>admin</code> / <code>admin123</code>
+          </div>
+          <button type="submit" class="btn btn-primary btn-sm" style="width: 100%;">Sign In</button>
+        </form>
+
+        <!-- Register Form -->
+        <form id="regForm" onsubmit="handleAuthRegister(event)" style="display: none;">
+          <div class="form-group" style="margin-bottom: 0.75rem;">
+            <label class="form-label">Full Name</label>
+            <input type="text" id="regName" class="form-control" required placeholder="Rajesh Kumar">
+          </div>
+          <div class="form-group" style="margin-bottom: 0.75rem;">
+            <label class="form-label">Email</label>
+            <input type="email" id="regEmail" class="form-control" required placeholder="rajesh@example.com">
+          </div>
+          <div class="form-group" style="margin-bottom: 0.75rem;">
+            <label class="form-label">Mobile Number</label>
+            <input type="tel" id="regPhone" class="form-control" required placeholder="+91 98765 43210">
+          </div>
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label class="form-label">Create Password</label>
+            <input type="password" id="regPassword" class="form-control" required placeholder="••••••••">
+          </div>
+          <button type="submit" class="btn btn-primary btn-sm" style="width: 100%;">Complete Registration</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Box -->
+  <div class="toast-box" id="toastContainer"></div>
+
+  <!-- ========================================================================
+       FOOTER
+       ======================================================================== -->
+  <footer>
+    <strong>Experiment 3: Online Train Reservation System</strong> • Internet Programming Laboratory
+    <div style="font-size: 0.75rem; color: var(--text-dim); margin-top: 2px;">
+      Features: Via-details, Real-time Availability, PNR Status Tracking, Online/Offline Payments, Refund Rules, and Admin Zone/Class Fare Maintenance.
+    </div>
+  </footer>
+
+  <!-- ========================================================================
+       JAVASCRIPT APPLICATION ENGINE
+       ======================================================================== -->
+  <script>
+    /* ==========================================================================
+       1. DATA MODELS & LOCAL STORAGE INITIALIZATION (MOCK DATABASE)
+       ========================================================================== */
+    const STORAGE_KEY_TRAINS = 'exp3_trains_v1';
+    const STORAGE_KEY_BOOKINGS = 'exp3_train_bookings_v1';
+    const STORAGE_KEY_PAYMENTS = 'exp3_train_payments_v1';
+    const STORAGE_KEY_REFUNDS = 'exp3_train_refunds_v1';
+    const STORAGE_KEY_USERS = 'exp3_train_users_v1';
+    const STORAGE_KEY_CURRENT_USER = 'exp3_train_current_user_v1';
+    const STORAGE_KEY_THEME = 'exp3_train_theme_v1';
+
+    function getDateOffset(days) {
+      const d = new Date();
+      d.setDate(d.getDate() + days);
+      return d.toISOString().split('T')[0];
+    }
+
+    // Default Trains with Via-Details, Zone, and Class Fares (Requirement 2 & 5)
+    const DEFAULT_TRAINS = [
+      {
+        id: 'TRN-101',
+        number: '12952',
+        name: 'Mumbai Tejas Rajdhani Express',
+        zone: 'Western Railway (WR)',
+        origin: 'New Delhi (NDLS)',
+        dest: 'Mumbai Central (MMCT)',
+        via: 'Kota Jn, Vadodara Jn, Surat, Borivali',
+        depTime: '16:55',
+        arrTime: '08:35 (+1 day)',
+        duration: '15h 40m',
+        fares: { '1A': 4650, '2A': 2950, '3A': 2100, 'SL': 650 },
+        seats: { '1A': 18, '2A': 42, '3A': 64, 'SL': 120 }
+      },
+      {
+        id: 'TRN-102',
+        number: '12004',
+        name: 'Lucknow Swarna Shatabdi Express',
+        zone: 'Northern Railway (NR)',
+        origin: 'New Delhi (NDLS)',
+        dest: 'Lucknow (LKO)',
+        via: 'Ghaziabad, Aligarh, Tundla, Kanpur Central',
+        depTime: '06:10',
+        arrTime: '12:40',
+        duration: '6h 30m',
+        fares: { '1A': 1950, '2A': 1250, '3A': 850, 'SL': 320 },
+        seats: { '1A': 12, '2A': 30, '3A': 55, 'SL': 90 }
+      },
+      {
+        id: 'TRN-103',
+        number: '12622',
+        name: 'Tamil Nadu Superfast Express',
+        zone: 'Southern Railway (SR)',
+        origin: 'New Delhi (NDLS)',
+        dest: 'Chennai Central (MAS)',
+        via: 'Agra Cantt, Gwalior, Bhopal, Nagpur, Vijayawada',
+        depTime: '21:05',
+        arrTime: '06:15 (+2 days)',
+        duration: '33h 10m',
+        fares: { '1A': 5200, '2A': 3400, '3A': 2400, 'SL': 780 },
+        seats: { '1A': 10, '2A': 25, '3A': 50, 'SL': 140 }
+      },
+      {
+        id: 'TRN-104',
+        number: '22436',
+        name: 'Vande Bharat Express',
+        zone: 'Northern Railway (NR)',
+        origin: 'New Delhi (NDLS)',
+        dest: 'Varanasi (BSB)',
+        via: 'Kanpur Central, Prayagraj Jn (Allahabad)',
+        depTime: '06:00',
+        arrTime: '14:00',
+        duration: '8h 00m',
+        fares: { '1A': 3100, '2A': 1750, '3A': 1200, 'SL': 480 },
+        seats: { '1A': 24, '2A': 48, '3A': 72, 'SL': 0 }
+      },
+      {
+        id: 'TRN-105',
+        number: '12302',
+        name: 'Howrah Rajdhani Express',
+        zone: 'Eastern Railway (ER)',
+        origin: 'New Delhi (NDLS)',
+        dest: 'Kolkata Howrah (HWH)',
+        via: 'Kanpur, Prayagraj, Pt. Deen Dayal Upadhyaya, Gaya, Asansol',
+        depTime: '16:50',
+        arrTime: '09:55 (+1 day)',
+        duration: '17h 05m',
+        fares: { '1A': 4850, '2A': 3100, '3A': 2250, 'SL': 710 },
+        seats: { '1A': 14, '2A': 36, '3A': 60, 'SL': 110 }
+      }
+    ];
+
+    // Default Seeded Users
+    const DEFAULT_USERS = [
+      {
+        id: 'USR-101',
+        name: 'Rajesh Kumar',
+        email: 'rajesh@example.com',
+        phone: '+91 98765 43210',
+        role: 'user',
+        password: 'password'
+      },
+      {
+        id: 'ADMIN-101',
+        name: 'Chief Commercial Manager',
+        email: 'admin',
+        phone: '+91 98765 00000',
+        role: 'admin',
+        password: 'admin123'
+      }
+    ];
+
+    // Seeded Bookings with PNR Numbers (Requirement 3 & 4)
+    const DEFAULT_BOOKINGS = [
+      {
+        pnr: 'PNR-8429103841',
+        userId: 'USR-101',
+        passengerName: 'Rajesh Kumar',
+        passengerAge: 28,
+        passengerGender: 'Male',
+        trainId: 'TRN-101',
+        trainNo: '12952',
+        trainName: 'Mumbai Tejas Rajdhani Express',
+        zone: 'Western Railway (WR)',
+        origin: 'New Delhi (NDLS)',
+        dest: 'Mumbai Central (MMCT)',
+        journeyDate: getDateOffset(4),
+        classType: '2A',
+        berthAllocated: 'B3 - 24 (Lower Berth)',
+        fare: 2950,
+        paymentMode: 'Online - UPI / GPay',
+        status: 'CONFIRMED'
+      },
+      {
+        pnr: 'PNR-6210492815',
+        userId: 'USR-101',
+        passengerName: 'Priya Sharma',
+        passengerAge: 24,
+        passengerGender: 'Female',
+        trainId: 'TRN-103',
+        trainNo: '12622',
+        trainName: 'Tamil Nadu Superfast Express',
+        zone: 'Southern Railway (SR)',
+        origin: 'New Delhi (NDLS)',
+        dest: 'Chennai Central (MAS)',
+        journeyDate: getDateOffset(1),
+        classType: '3A',
+        berthAllocated: 'RAC-02 (Berth on Charting)',
+        fare: 2400,
+        paymentMode: 'Online - Credit/Debit Card',
+        status: 'RAC'
+      },
+      {
+        pnr: 'PNR-3104829102',
+        userId: 'USR-101',
+        passengerName: 'Amit Verma',
+        passengerAge: 32,
+        passengerGender: 'Male',
+        trainId: 'TRN-102',
+        trainNo: '12004',
+        trainName: 'Lucknow Swarna Shatabdi Express',
+        zone: 'Northern Railway (NR)',
+        origin: 'New Delhi (NDLS)',
+        dest: 'Lucknow (LKO)',
+        journeyDate: getDateOffset(2),
+        classType: '2A',
+        berthAllocated: 'WL-05 (Waitlisted)',
+        fare: 1250,
+        paymentMode: 'Offline - Cash at Counter',
+        status: 'WAITING LIST'
+      }
+    ];
+
+    // Seeded Admin Payment Log (Requirement 3)
+    const DEFAULT_PAYMENTS = [
+      {
+        txnId: 'TXN-9021',
+        pnr: 'PNR-8429103841',
+        passenger: 'Rajesh Kumar',
+        mode: 'Online - UPI / GPay',
+        fare: 2950,
+        time: `${getDateOffset(-1)} 14:22`,
+        status: 'Reconciled'
+      },
+      {
+        txnId: 'TXN-9022',
+        pnr: 'PNR-6210492815',
+        passenger: 'Priya Sharma',
+        mode: 'Online - Credit/Debit Card',
+        fare: 2400,
+        time: `${getDateOffset(-1)} 16:45`,
+        status: 'Reconciled'
+      },
+      {
+        txnId: 'TXN-9023',
+        pnr: 'PNR-3104829102',
+        passenger: 'Amit Verma',
+        mode: 'Offline - Cash at Counter',
+        fare: 1250,
+        time: `${getDateOffset(0)} 09:10`,
+        status: 'Counter Verified'
+      }
+    ];
+
+    // Seeded Cancellations & Refunds (Requirement 6)
+    const DEFAULT_REFUNDS = [
+      {
+        refundId: 'RFND-101',
+        pnr: 'PNR-7102938104',
+        passenger: 'Vikram Seth',
+        fare: 2100,
+        refundPct: 80,
+        refundAmount: 1680,
+        status: 'Refund Passed to Passenger'
+      }
+    ];
+
+    /* Initialize Database in LocalStorage */
+    function initDatabase() {
+      if (!localStorage.getItem(STORAGE_KEY_TRAINS)) {
+        localStorage.setItem(STORAGE_KEY_TRAINS, JSON.stringify(DEFAULT_TRAINS));
+      }
+      if (!localStorage.getItem(STORAGE_KEY_BOOKINGS)) {
+        localStorage.setItem(STORAGE_KEY_BOOKINGS, JSON.stringify(DEFAULT_BOOKINGS));
+      }
+      if (!localStorage.getItem(STORAGE_KEY_PAYMENTS)) {
+        localStorage.setItem(STORAGE_KEY_PAYMENTS, JSON.stringify(DEFAULT_PAYMENTS));
+      }
+      if (!localStorage.getItem(STORAGE_KEY_REFUNDS)) {
+        localStorage.setItem(STORAGE_KEY_REFUNDS, JSON.stringify(DEFAULT_REFUNDS));
+      }
+      if (!localStorage.getItem(STORAGE_KEY_USERS)) {
+        localStorage.setItem(STORAGE_KEY_USERS, JSON.stringify(DEFAULT_USERS));
+      }
+      if (!localStorage.getItem(STORAGE_KEY_CURRENT_USER)) {
+        localStorage.setItem(STORAGE_KEY_CURRENT_USER, JSON.stringify(DEFAULT_USERS[0]));
+      }
+
+      const savedTheme = localStorage.getItem(STORAGE_KEY_THEME) || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    }
+
+    function resetDemoData() {
+      if (confirm('Reset Experiment 3 to default seed data?')) {
+        localStorage.setItem(STORAGE_KEY_TRAINS, JSON.stringify(DEFAULT_TRAINS));
+        localStorage.setItem(STORAGE_KEY_BOOKINGS, JSON.stringify(DEFAULT_BOOKINGS));
+        localStorage.setItem(STORAGE_KEY_PAYMENTS, JSON.stringify(DEFAULT_PAYMENTS));
+        localStorage.setItem(STORAGE_KEY_REFUNDS, JSON.stringify(DEFAULT_REFUNDS));
+        localStorage.setItem(STORAGE_KEY_USERS, JSON.stringify(DEFAULT_USERS));
+        localStorage.setItem(STORAGE_KEY_CURRENT_USER, JSON.stringify(DEFAULT_USERS[0]));
+        showToast('Experiment 3 database restored to defaults!', 'info');
+        refreshApp();
+      }
+    }
+
+    // Accessors
+    function getTrains() { return JSON.parse(localStorage.getItem(STORAGE_KEY_TRAINS) || '[]'); }
+    function saveTrains(t) { localStorage.setItem(STORAGE_KEY_TRAINS, JSON.stringify(t)); }
+
+    function getBookings() { return JSON.parse(localStorage.getItem(STORAGE_KEY_BOOKINGS) || '[]'); }
+    function saveBookings(b) { localStorage.setItem(STORAGE_KEY_BOOKINGS, JSON.stringify(b)); }
+
+    function getPayments() { return JSON.parse(localStorage.getItem(STORAGE_KEY_PAYMENTS) || '[]'); }
+    function savePayments(p) { localStorage.setItem(STORAGE_KEY_PAYMENTS, JSON.stringify(p)); }
+
+    function getRefunds() { return JSON.parse(localStorage.getItem(STORAGE_KEY_REFUNDS) || '[]'); }
+    function saveRefunds(r) { localStorage.setItem(STORAGE_KEY_REFUNDS, JSON.stringify(r)); }
+
+    function getUsers() { return JSON.parse(localStorage.getItem(STORAGE_KEY_USERS) || '[]'); }
+    function saveUsers(u) { localStorage.setItem(STORAGE_KEY_USERS, JSON.stringify(u)); }
+
+    function getCurrentUser() { return JSON.parse(localStorage.getItem(STORAGE_KEY_CURRENT_USER) || 'null'); }
+    function setCurrentUser(u) { localStorage.setItem(STORAGE_KEY_CURRENT_USER, JSON.stringify(u)); }
+
+    /* ==========================================================================
+       2. NAVIGATION & ROLE SWITCHING
+       ========================================================================== */
+    let currentView = 'search';
+
+    function navigate(viewId) {
+      const user = getCurrentUser();
+
+      if (viewId === 'admin' && (!user || user.role !== 'admin')) {
+        showToast('Please sign in as Railway Administrator to access the Admin Panel', 'danger');
+        openAuthModal('login');
+        return;
+      }
+
+      document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+
+      const target = document.getElementById(`view-${viewId}`);
+      if (target) {
+        target.classList.add('active');
+        currentView = viewId;
+      }
+
+      const btn = document.getElementById(`nav-btn-${viewId}`);
+      if (btn) btn.classList.add('active');
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      if (viewId === 'search') filterTrains();
+      if (viewId === 'history') renderUserBookings();
+      if (viewId === 'admin') renderAdminView();
+    }
+
+    function demoSwitch(role) {
+      const users = getUsers();
+      if (role === 'admin') {
+        const adminUser = users.find(u => u.role === 'admin');
+        if (adminUser) {
+          setCurrentUser(adminUser);
+          showToast('Switched to Railway Administrator', 'info');
+          updateAuthUI();
+          navigate('admin');
+        }
+      } else {
+        const user = users.find(u => u.role === 'user');
+        if (user) {
+          setCurrentUser(user);
+          showToast(`Switched to Passenger: ${user.name}`, 'success');
+          updateAuthUI();
+          navigate('search');
+        }
+      }
+    }
+
+    function updateAuthUI() {
+      const user = getCurrentUser();
+      const authLoggedOut = document.getElementById('authLoggedOut');
+      const authLoggedIn = document.getElementById('authLoggedIn');
+      const adminNavTab = document.getElementById('adminNavTab');
+
+      if (!user) {
+        authLoggedOut.style.display = 'block';
+        authLoggedIn.style.display = 'none';
+        adminNavTab.style.display = 'none';
+      } else {
+        authLoggedOut.style.display = 'none';
+        authLoggedIn.style.display = 'flex';
+        document.getElementById('navUserName').textContent = user.name;
+        document.getElementById('navUserInitial').textContent = user.name.charAt(0);
+
+        if (user.role === 'admin') {
+          adminNavTab.style.display = 'block';
+        } else {
+          adminNavTab.style.display = 'none';
+        }
+      }
+    }
+
+    function handleUserPillClick() {
+      const user = getCurrentUser();
+      if (!user) {
+        openAuthModal('login');
+        return;
+      }
+
+      if (confirm(`Logged in as: ${user.name} (${user.email})\nRole: ${user.role}\n\nWould you like to Sign Out?`)) {
+        logout();
+      }
+    }
+
+    /* ==========================================================================
+       3. SEARCH TRAINS & BOOKING (REQUIREMENTS 1, 2, 3)
+       ========================================================================== */
+    function filterTrains() {
+      const trains = getTrains();
+      const origin = document.getElementById('searchOrigin').value;
+      const dest = document.getElementById('searchDest').value;
+      const cls = document.getElementById('searchClass').value;
+
+      const filtered = trains.filter(t => {
+        if (origin !== 'all' && t.origin !== origin) return false;
+        if (dest !== 'all' && t.dest !== dest) return false;
+        if (cls !== 'all' && (!t.fares[cls] || t.fares[cls] === 0)) return false;
+        return true;
+      });
+
+      renderTrainsList(filtered);
+    }
+
+    function renderTrainsList(trains) {
+      const container = document.getElementById('trainsContainer');
+      document.getElementById('trainsCountLabel').textContent = `Showing ${trains.length} scheduled trains`;
+
+      if (trains.length === 0) {
+        container.innerHTML = `
+          <div style="background: var(--bg-surface); border: 1px dashed var(--border); border-radius: var(--radius-md); padding: 2.5rem; text-align: center; color: var(--text-muted);">
+            No trains scheduled for this origin and destination route. Try selecting "All Origin Stations".
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = trains.map(t => `
+        <div class="train-card">
+          <div class="train-header-row">
+            <div class="train-title-zone">
+              <h3>${t.number} / ${escapeHtml(t.name)} <span class="train-zone-tag">${escapeHtml(t.zone)}</span></h3>
+              <div class="train-via-info">
+                <strong>Via Stations:</strong> ${escapeHtml(t.via)}
+              </div>
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="openReserveModal('${t.id}')">
+              Reserve Ticket
+            </button>
+          </div>
+
+          <div class="train-timing-row">
+            <div>
+              <div style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase;">Origin Departure</div>
+              <strong style="color: var(--text-main); font-size: 1rem;">${t.depTime}</strong>
+              <div style="color: var(--text-muted); font-size: 0.8rem;">${escapeHtml(t.origin)}</div>
+            </div>
+            <div style="display: flex; flex-direction: column; justify-content: center;">
+              <span style="font-size: 0.75rem; color: var(--accent);">⏱️ ${escapeHtml(t.duration)}</span>
+              <div style="border-top: 2px dashed var(--border); margin: 4px 10px;"></div>
+            </div>
+            <div>
+              <div style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase;">Destination Arrival</div>
+              <strong style="color: var(--text-main); font-size: 1rem;">${t.arrTime}</strong>
+              <div style="color: var(--text-muted); font-size: 0.8rem;">${escapeHtml(t.dest)}</div>
+            </div>
+          </div>
+
+          <!-- Classes & Availability (Requirement 2) -->
+          <div>
+            <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; font-weight: 700;">Seat Availability & Fares:</div>
+            <div class="train-classes-grid">
+              ${Object.keys(t.fares).map(cls => {
+                const fare = t.fares[cls];
+                const seats = t.seats[cls] || 0;
+                let statusText = `AVAILABLE-${seats}`;
+                let statusClass = 'status-avail';
+                if (seats === 0) {
+                  statusText = 'WL-08';
+                  statusClass = 'status-wl';
+                } else if (seats < 15) {
+                  statusText = `RAC-${seats}`;
+                  statusClass = 'status-rac';
+                }
+
+                return `
+                  <div class="class-option-card" onclick="openReserveModal('${t.id}', '${cls}')">
+                    <div class="class-title-fare">
+                      <span>${cls}</span>
+                      <span style="color: #60a5fa;">₹${fare}</span>
+                    </div>
+                    <div class="class-avail-status ${statusClass}">${statusText}</div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    let activeReserveTrain = null;
+
+    function openReserveModal(trainId, preferredClass = '2A') {
+      const user = getCurrentUser();
+      if (!user) {
+        showToast('Please sign in with valid credentials before reserving train tickets (Requirement 1)', 'info');
+        openAuthModal('login');
+        return;
+      }
+
+      const train = getTrains().find(t => t.id === trainId);
+      if (!train) return;
+
+      activeReserveTrain = train;
+      document.getElementById('resTrainId').value = train.id;
+      document.getElementById('resModalTrainTitle').textContent = `${train.number} - ${train.name}`;
+      document.getElementById('resModalRouteSubtitle').textContent = `${train.origin} ➔ ${train.dest} • Departs: ${train.depTime}`;
+
+      // Default Date: tomorrow
+      document.getElementById('resJourneyDate').value = document.getElementById('searchDate').value || getDateOffset(2);
+      document.getElementById('resClassSelect').value = preferredClass;
+
+      document.getElementById('resPassName').value = user.name || '';
+
+      calculateFareTotal();
+      openModal('reserveModal');
+    }
+
+    function calculateFareTotal() {
+      if (!activeReserveTrain) return;
+      const cls = document.getElementById('resClassSelect').value;
+      const fare = activeReserveTrain.fares[cls] || 0;
+      document.getElementById('resTotalFareDisplay').textContent = `₹${fare}`;
+    }
+
+    function handleConfirmReservation(e) {
+      e.preventDefault();
+      const user = getCurrentUser();
+      if (!user || !activeReserveTrain) return;
+
+      const journeyDate = document.getElementById('resJourneyDate').value;
+      const classType = document.getElementById('resClassSelect').value;
+      const passName = document.getElementById('resPassName').value.trim();
+      const passAge = document.getElementById('resPassAge').value;
+      const passGender = document.getElementById('resPassGender').value;
+      const berthPref = document.getElementById('resPassBerth').value;
+      const paymentMode = document.getElementById('resPaymentMode').value;
+
+      const fare = activeReserveTrain.fares[classType] || 1500;
+
+      // 10-digit PNR Generation (Requirement 3)
+      const pnrNo = `PNR-${Math.floor(1000000000 + Math.random() * 9000000000)}`;
+
+      // Determine Berth & Status
+      let coachPrefix = classType === '1A' ? 'H1' : (classType === '2A' ? 'A1' : (classType === '3A' ? 'B2' : 'S3'));
+      let berthNo = Math.floor(1 + Math.random() * 64);
+      let berthAllocated = `${coachPrefix} - ${berthNo} (${berthPref} Berth)`;
+      let status = 'CONFIRMED';
+
+      const newBooking = {
+        pnr: pnrNo,
+        userId: user.id,
+        passengerName: passName,
+        passengerAge: passAge,
+        passengerGender: passGender,
+        trainId: activeReserveTrain.id,
+        trainNo: activeReserveTrain.number,
+        trainName: activeReserveTrain.name,
+        zone: activeReserveTrain.zone,
+        origin: activeReserveTrain.origin,
+        dest: activeReserveTrain.dest,
+        journeyDate,
+        classType,
+        berthAllocated,
+        fare,
+        paymentMode,
+        status
+      };
+
+      const bookings = getBookings();
+      bookings.unshift(newBooking);
+      saveBookings(bookings);
+
+      // Send payment record to system Admin (Requirement 3)
+      const payments = getPayments();
+      payments.unshift({
+        txnId: `TXN-${Math.floor(1000 + Math.random() * 9000)}`,
+        pnr: pnrNo,
+        passenger: passName,
+        mode: paymentMode,
+        fare,
+        time: `${getDateOffset(0)} ${new Date().toLocaleTimeString().slice(0, 5)}`,
+        status: paymentMode.startsWith('Online') ? 'Reconciled' : 'Counter Verified'
+      });
+      savePayments(payments);
+
+      closeModal('reserveModal');
+
+      // Digital Ticket Notification Alert
+      alert(`🎉 RAILWAY TICKET GENERATED SUCCESSFULLY!\n=========================================\nPNR NUMBER: ${pnrNo}\nTrain: ${newBooking.trainNo} / ${newBooking.trainName}\nRoute: ${newBooking.origin} ➔ ${newBooking.dest}\nDate of Journey: ${journeyDate}\nClass: ${classType}\nPassenger: ${passName} (${passAge} yrs, ${passGender})\nAssigned Berth: ${berthAllocated}\nTotal Fare: ₹${fare}\nPayment Mode: ${paymentMode}\nStatus: ${status}\n\nPayment record has been dispatched to Railway System Admin.`);
+
+      showToast(`PNR ${pnrNo} generated and confirmed!`, 'success');
+      refreshApp();
+      navigate('history');
+    }
+
+    /* ==========================================================================
+       4. PNR STATUS ENQUIRY (REQUIREMENT 4)
+       ========================================================================== */
+    function handleCheckPnr(e) {
+      e.preventDefault();
+      const pnr = document.getElementById('pnrSearchInput').value.trim();
+      executePnrLookup(pnr);
+    }
+
+    function quickPnr(pnr) {
+      document.getElementById('pnrSearchInput').value = pnr;
+      executePnrLookup(pnr);
+    }
+
+    function executePnrLookup(pnr) {
+      const bookings = getBookings();
+      const b = bookings.find(item => item.pnr.toLowerCase() === pnr.toLowerCase());
+      const resultCard = document.getElementById('pnrResultCard');
+
+      if (!b) {
+        resultCard.style.display = 'block';
+        resultCard.innerHTML = `
+          <div style="color: var(--danger); text-align: center;">
+            ⚠️ PNR Record Not Found. Please verify the 10-digit number.
+          </div>
+        `;
+        return;
+      }
+
+      let badgeClass = 'badge-success';
+      if (b.status === 'RAC') badgeClass = 'badge-warning';
+      if (b.status === 'WAITING LIST') badgeClass = 'badge-danger';
+      if (b.status === 'CANCELLED') badgeClass = 'badge-danger';
+
+      resultCard.style.display = 'block';
+      resultCard.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 10px;">
+          <div>
+            <span style="font-size: 0.75rem; color: var(--text-muted);">PNR NUMBER</span>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.15rem; font-weight: 800; color: #60a5fa;">${b.pnr}</div>
+          </div>
+          <span class="badge ${badgeClass}" style="font-size: 0.82rem; padding: 4px 10px;">${b.status}</span>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.85rem; margin-bottom: 10px;">
+          <div><strong>Train:</strong> ${escapeHtml(b.trainNo)} / ${escapeHtml(b.trainName)}</div>
+          <div><strong>Zone:</strong> ${escapeHtml(b.zone)}</div>
+          <div><strong>Journey Date:</strong> ${b.journeyDate}</div>
+          <div><strong>Class:</strong> ${b.classType}</div>
+          <div><strong>Origin:</strong> ${escapeHtml(b.origin)}</div>
+          <div><strong>Destination:</strong> ${escapeHtml(b.dest)}</div>
+        </div>
+
+        <div style="background: var(--bg-surface); padding: 8px 10px; border-radius: 4px; border: 1px solid var(--border); font-size: 0.85rem;">
+          <div><strong>Passenger Name:</strong> ${escapeHtml(b.passengerName)} (${b.passengerAge || 28} / ${b.passengerGender || 'Male'})</div>
+          <div><strong>Berth Allocation:</strong> <strong style="color: #22c55e;">${escapeHtml(b.berthAllocated)}</strong></div>
+        </div>
+      `;
+    }
+
+    /* ==========================================================================
+       5. MY BOOKINGS & CANCELLATION WITH REFUND (REQUIREMENT 6)
+       ========================================================================== */
+    function renderUserBookings() {
+      const user = getCurrentUser();
+      const tbody = document.getElementById('userBookingsTableBody');
+
+      if (!user) {
+        tbody.innerHTML = `<tr><td colspan="9" style="text-align: center; padding: 2rem;">Please sign in to view your bookings.</td></tr>`;
+        return;
+      }
+
+      const bookings = getBookings().filter(b => b.userId === user.id);
+
+      if (bookings.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="9" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+              You have no active train bookings. Click <strong>Search Trains</strong> to make a reservation!
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = bookings.map(b => `
+        <tr>
+          <td><strong style="font-family: 'JetBrains Mono', monospace; color: #60a5fa;">${b.pnr}</strong></td>
+          <td>
+            <strong>${escapeHtml(b.trainName)}</strong>
+            <div style="font-size: 0.72rem; color: var(--text-muted);">${escapeHtml(b.trainNo)} • ${escapeHtml(b.zone)}</div>
+          </td>
+          <td>${escapeHtml(b.origin)} ➔ ${escapeHtml(b.dest)}</td>
+          <td>${b.journeyDate}</td>
+          <td>
+            <div>${escapeHtml(b.passengerName)}</div>
+            <div style="font-size: 0.75rem; color: #22c55e;">${escapeHtml(b.berthAllocated)}</div>
+          </td>
+          <td><span class="badge badge-info">${b.classType}</span></td>
+          <td><strong>₹${b.fare}</strong></td>
+          <td>
+            <span class="badge ${b.status === 'CONFIRMED' ? 'badge-success' : (b.status === 'CANCELLED' ? 'badge-danger' : 'badge-warning')}">
+              ${b.status}
+            </span>
+          </td>
+          <td>
+            ${b.status !== 'CANCELLED' ? `
+              <div style="display: flex; gap: 4px;">
+                <button class="btn btn-secondary btn-sm" onclick="printTicket('${b.pnr}')">Print</button>
+                <button class="btn btn-danger btn-sm" onclick="requestCancelTicket('${b.pnr}')">Cancel</button>
+              </div>
+            ` : `<span style="font-size: 0.75rem; color: var(--text-dim);">Refunded</span>`}
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function printTicket(pnr) {
+      const b = getBookings().find(item => item.pnr === pnr);
+      if (!b) return;
+
+      alert(`🎫 NATIONAL RAILWAY E-TICKET\n=========================================\nPNR: ${b.pnr}\nTrain: ${b.trainNo} - ${b.trainName}\nRoute: ${b.origin} to ${b.dest}\nJourney Date: ${b.journeyDate}\nClass: ${b.classType}\nPassenger: ${b.passengerName}\nBerth Assigned: ${b.berthAllocated}\nFare Paid: ₹${b.fare} (${b.paymentMode})\nStatus: ${b.status}\n\nPlease carry valid Original Government Photo ID during train journey.`);
+    }
+
+    // Cancellation & Refund Calculation (Requirement 6)
+    function requestCancelTicket(pnr) {
+      const bookings = getBookings();
+      const b = bookings.find(item => item.pnr === pnr);
+      if (!b) return;
+
+      // Calculate time difference to departure
+      const today = new Date();
+      today.setHours(0,0,0,0);
+      const jDate = new Date(b.journeyDate);
+      jDate.setHours(0,0,0,0);
+
+      const diffDays = Math.ceil((jDate - today) / (1000 * 60 * 60 * 24));
+
+      let refundPct = 80;
+      let clerkageNote = 'More than 48 hours before journey (80% refundable, 20% clerkage)';
+      if (diffDays < 1) {
+        refundPct = 25;
+        clerkageNote = 'Less than 12 hours before journey (25% refundable)';
+      } else if (diffDays <= 2) {
+        refundPct = 50;
+        clerkageNote = 'Between 12 to 48 hours before journey (50% refundable)';
+      }
+
+      const refundAmount = Math.round((b.fare * refundPct) / 100);
+
+      if (confirm(`⚠️ CANCEL RESERVATION (${pnr})?\n------------------------------------\nTicket Fare: ₹${b.fare}\nCancellation Timing: ${clerkageNote}\nRefundable Percentage: ${refundPct}%\nRefundable Amount to be Credited: ₹${refundAmount}\n\nDo you want to confirm cancellation and process refund?`)) {
+        b.status = 'CANCELLED';
+        saveBookings(bookings);
+
+        // Record in Admin refund desk (Requirement 6)
+        const refunds = getRefunds();
+        refunds.unshift({
+          refundId: `RFND-${Math.floor(100 + Math.random() * 900)}`,
+          pnr: b.pnr,
+          passenger: b.passengerName,
+          fare: b.fare,
+          refundPct,
+          refundAmount,
+          status: 'Refund Passed to Passenger'
+        });
+        saveRefunds(refunds);
+
+        alert(`✅ CANCELLATION COMPLETED\n------------------------------------\nPNR: ${b.pnr}\nSystem has initiated refund of ₹${refundAmount} (${refundPct}% of ₹${b.fare}). Amount returned to passenger.`);
+
+        showToast(`Ticket ${pnr} cancelled. Refund of ₹${refundAmount} credited.`, 'info');
+        refreshApp();
+      }
+    }
+
+    /* ==========================================================================
+       6. ADMINISTRATOR OPERATIONS (REQUIREMENTS 3, 5, 6)
+       ========================================================================== */
+    function switchAdminTab(tab, btn) {
+      document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+
+      document.querySelectorAll('.admin-pane').forEach(p => p.classList.remove('active'));
+      const target = document.getElementById(`admin-pane-${tab}`);
+      if (target) target.classList.add('active');
+
+      if (tab === 'trains') renderAdminTrains();
+      if (tab === 'fares') renderAdminFares();
+      if (tab === 'pnrs') renderAdminPnrs();
+      if (tab === 'payments') renderAdminPayments();
+      if (tab === 'refunds') renderAdminRefunds();
+    }
+
+    function renderAdminView() {
+      renderAdminTrains();
+      renderAdminFares();
+      renderAdminPnrs();
+      renderAdminPayments();
+      renderAdminRefunds();
+    }
+
+    function renderAdminTrains() {
+      const trains = getTrains();
+      const tbody = document.getElementById('adminTrainsTableBody');
+
+      tbody.innerHTML = trains.map(t => `
+        <tr>
+          <td><strong style="color: #60a5fa;">${t.number}</strong></td>
+          <td><strong>${escapeHtml(t.name)}</strong></td>
+          <td><span class="badge badge-info">${escapeHtml(t.zone)}</span></td>
+          <td>${escapeHtml(t.origin)} ➔ ${escapeHtml(t.dest)}</td>
+          <td><span style="font-size: 0.78rem; color: var(--text-muted);">${escapeHtml(t.via)}</span></td>
+          <td>${t.depTime} - ${t.arrTime}</td>
+          <td>
+            <div style="display: flex; gap: 4px;">
+              <button class="btn btn-secondary btn-sm" onclick="openEditTrainModal('${t.id}')">Edit</button>
+              <button class="btn btn-danger btn-sm" onclick="deleteTrain('${t.id}')">Delete</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function openAddTrainModal() {
+      document.getElementById('trainModalTitle').textContent = 'Add New Train';
+      document.getElementById('editTrainId').value = '';
+      document.getElementById('admTrainNo').value = '';
+      document.getElementById('admTrainName').value = '';
+      document.getElementById('admTrainVia').value = '';
+      document.getElementById('admTrainOrigin').value = 'New Delhi (NDLS)';
+      document.getElementById('admTrainDest').value = '';
+      document.getElementById('admTrainDep').value = '08:00';
+      document.getElementById('admTrainArr').value = '20:00';
+      openModal('trainModal');
+    }
+
+    function openEditTrainModal(trainId) {
+      const t = getTrains().find(item => item.id === trainId);
+      if (!t) return;
+
+      document.getElementById('trainModalTitle').textContent = 'Update Train Schedule';
+      document.getElementById('editTrainId').value = t.id;
+      document.getElementById('admTrainNo').value = t.number;
+      document.getElementById('admTrainName').value = t.name;
+      document.getElementById('admTrainZone').value = t.zone;
+      document.getElementById('admTrainVia').value = t.via;
+      document.getElementById('admTrainOrigin').value = t.origin;
+      document.getElementById('admTrainDest').value = t.dest;
+      document.getElementById('admTrainDep').value = t.depTime;
+      document.getElementById('admTrainArr').value = t.arrTime;
+      openModal('trainModal');
+    }
+
+    function handleSaveTrain(e) {
+      e.preventDefault();
+      const trains = getTrains();
+      const editId = document.getElementById('editTrainId').value;
+      const number = document.getElementById('admTrainNo').value.trim();
+      const name = document.getElementById('admTrainName').value.trim();
+      const zone = document.getElementById('admTrainZone').value;
+      const via = document.getElementById('admTrainVia').value.trim();
+      const origin = document.getElementById('admTrainOrigin').value.trim();
+      const dest = document.getElementById('admTrainDest').value.trim();
+      const depTime = document.getElementById('admTrainDep').value.trim();
+      const arrTime = document.getElementById('admTrainArr').value.trim();
+
+      if (editId) {
+        const idx = trains.findIndex(item => item.id === editId);
+        if (idx !== -1) {
+          trains[idx].number = number;
+          trains[idx].name = name;
+          trains[idx].zone = zone;
+          trains[idx].via = via;
+          trains[idx].origin = origin;
+          trains[idx].dest = dest;
+          trains[idx].depTime = depTime;
+          trains[idx].arrTime = arrTime;
+        }
+        showToast('Train details updated!', 'success');
+      } else {
+        trains.unshift({
+          id: `TRN-${Math.floor(100 + Math.random() * 900)}`,
+          number,
+          name,
+          zone,
+          origin,
+          dest,
+          via,
+          depTime,
+          arrTime,
+          duration: '12h 00m',
+          fares: { '1A': 3200, '2A': 2100, '3A': 1400, 'SL': 480 },
+          seats: { '1A': 15, '2A': 35, '3A': 55, 'SL': 100 }
+        });
+        showToast('New train added to national schedule!', 'success');
+      }
+
+      saveTrains(trains);
+      closeModal('trainModal');
+      refreshApp();
+    }
+
+    function deleteTrain(trainId) {
+      if (!confirm('Remove this train from schedule?')) return;
+      let trains = getTrains();
+      trains = trains.filter(t => t.id !== trainId);
+      saveTrains(trains);
+      showToast('Train removed from schedule', 'info');
+      refreshApp();
+    }
+
+    function renderAdminFares() {
+      const trains = getTrains();
+      const tbody = document.getElementById('adminFaresTableBody');
+
+      tbody.innerHTML = trains.map(t => `
+        <tr>
+          <td><span class="badge badge-info">${escapeHtml(t.zone)}</span></td>
+          <td><strong>${t.number} - ${escapeHtml(t.name)}</strong></td>
+          <td>₹<input type="number" id="fare_1a_${t.id}" value="${t.fares['1A'] || 0}" style="width: 75px; padding: 2px 4px; background: var(--bg-card); color: #fff; border: 1px solid var(--border);"></td>
+          <td>₹<input type="number" id="fare_2a_${t.id}" value="${t.fares['2A'] || 0}" style="width: 75px; padding: 2px 4px; background: var(--bg-card); color: #fff; border: 1px solid var(--border);"></td>
+          <td>₹<input type="number" id="fare_3a_${t.id}" value="${t.fares['3A'] || 0}" style="width: 75px; padding: 2px 4px; background: var(--bg-card); color: #fff; border: 1px solid var(--border);"></td>
+          <td>₹<input type="number" id="fare_sl_${t.id}" value="${t.fares['SL'] || 0}" style="width: 75px; padding: 2px 4px; background: var(--bg-card); color: #fff; border: 1px solid var(--border);"></td>
+          <td>
+            <button class="btn btn-primary btn-sm" onclick="saveAdminFares('${t.id}')">Save</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function saveAdminFares(trainId) {
+      const trains = getTrains();
+      const t = trains.find(item => item.id === trainId);
+      if (!t) return;
+
+      t.fares['1A'] = parseFloat(document.getElementById(`fare_1a_${trainId}`).value);
+      t.fares['2A'] = parseFloat(document.getElementById(`fare_2a_${trainId}`).value);
+      t.fares['3A'] = parseFloat(document.getElementById(`fare_3a_${trainId}`).value);
+      t.fares['SL'] = parseFloat(document.getElementById(`fare_sl_${trainId}`).value);
+
+      saveTrains(trains);
+      showToast(`Fares updated for ${t.name}`, 'success');
+      refreshApp();
+    }
+
+    function renderAdminPnrs() {
+      const bookings = getBookings();
+      const tbody = document.getElementById('adminPnrsTableBody');
+
+      tbody.innerHTML = bookings.map(b => `
+        <tr>
+          <td><strong style="color: #60a5fa; font-family: 'JetBrains Mono', monospace;">${b.pnr}</strong></td>
+          <td>${escapeHtml(b.passengerName)}</td>
+          <td>${escapeHtml(b.trainNo)} - ${escapeHtml(b.trainName)}</td>
+          <td>${b.journeyDate}</td>
+          <td><span class="badge badge-info">${b.classType}</span></td>
+          <td>₹${b.fare}</td>
+          <td><span class="badge ${b.status === 'CONFIRMED' ? 'badge-success' : 'badge-danger'}">${b.status}</span></td>
+        </tr>
+      `).join('');
+    }
+
+    function renderAdminPayments() {
+      const payments = getPayments();
+      const tbody = document.getElementById('adminPaymentsTableBody');
+
+      tbody.innerHTML = payments.map(p => `
+        <tr>
+          <td><code>${p.txnId}</code></td>
+          <td><strong>${p.pnr}</strong></td>
+          <td>${escapeHtml(p.passenger)}</td>
+          <td>${escapeHtml(p.mode)}</td>
+          <td><strong>₹${p.fare}</strong></td>
+          <td>${p.time}</td>
+          <td><span class="badge badge-success">${p.status}</span></td>
+        </tr>
+      `).join('');
+    }
+
+    function renderAdminRefunds() {
+      const refunds = getRefunds();
+      const tbody = document.getElementById('adminRefundsTableBody');
+
+      tbody.innerHTML = refunds.map(r => `
+        <tr>
+          <td><code>${r.refundId}</code></td>
+          <td><strong>${r.pnr}</strong></td>
+          <td>${escapeHtml(r.passenger)}</td>
+          <td>₹${r.fare}</td>
+          <td><strong style="color: #22c55e;">${r.refundPct}%</strong></td>
+          <td><strong style="color: #60a5fa;">₹${r.refundAmount}</strong></td>
+          <td><span class="badge badge-success">${r.status}</span></td>
+        </tr>
+      `).join('');
+    }
+
+    /* ==========================================================================
+       7. AUTHENTICATION & LOGIN/REGISTER
+       ========================================================================== */
+    function openAuthModal(tab) {
+      switchAuthTab(tab);
+      openModal('authModal');
+    }
+
+    function switchAuthTab(tab) {
+      const loginBtn = document.getElementById('authTabLogin');
+      const regBtn = document.getElementById('authTabReg');
+      const loginForm = document.getElementById('loginForm');
+      const regForm = document.getElementById('regForm');
+      const title = document.getElementById('authModalTitle');
+
+      if (tab === 'login') {
+        loginBtn.className = 'btn btn-sm btn-primary';
+        regBtn.className = 'btn btn-sm btn-secondary';
+        loginForm.style.display = 'block';
+        regForm.style.display = 'none';
+        title.textContent = 'Sign In to Railway Portal';
+      } else {
+        loginBtn.className = 'btn btn-sm btn-secondary';
+        regBtn.className = 'btn btn-sm btn-primary';
+        loginForm.style.display = 'none';
+        regForm.style.display = 'block';
+        title.textContent = 'Register Passenger Account';
+      }
+    }
+
+    function handleAuthLogin(e) {
+      e.preventDefault();
+      const username = document.getElementById('loginUsername').value.trim();
+      const password = document.getElementById('loginPassword').value.trim();
+
+      const users = getUsers();
+      const user = users.find(u => (u.email.toLowerCase() === username.toLowerCase() || u.name.toLowerCase() === username.toLowerCase()) && u.password === password);
+
+      if (user) {
+        setCurrentUser(user);
+        closeModal('authModal');
+        showToast(`Welcome back, ${user.name}!`, 'success');
+        updateAuthUI();
+        if (user.role === 'admin') navigate('admin');
+        else navigate('search');
+      } else {
+        showToast('Invalid credentials. Check email or password.', 'danger');
+      }
+    }
+
+    function handleAuthRegister(e) {
+      e.preventDefault();
+      const name = document.getElementById('regName').value.trim();
+      const email = document.getElementById('regEmail').value.trim();
+      const phone = document.getElementById('regPhone').value.trim();
+      const password = document.getElementById('regPassword').value.trim();
+
+      const users = getUsers();
+      if (users.some(u => u.email.toLowerCase() === email.toLowerCase())) {
+        showToast('An account with this email is already registered!', 'danger');
+        return;
+      }
+
+      const newUser = {
+        id: `USR-${Date.now().toString().slice(-4)}`,
+        name,
+        email,
+        phone,
+        role: 'user',
+        password
+      };
+
+      users.push(newUser);
+      saveUsers(users);
+      setCurrentUser(newUser);
+
+      closeModal('authModal');
+      showToast(`Welcome ${name}! Account registered.`, 'success');
+      updateAuthUI();
+      navigate('search');
+    }
+
+    function logout() {
+      localStorage.removeItem(STORAGE_KEY_CURRENT_USER);
+      showToast('Signed out successfully.', 'info');
+      updateAuthUI();
+      navigate('search');
+    }
+
+    /* ==========================================================================
+       8. UTILITIES (MODALS, TOASTS, THEME, REFRESH)
+       ========================================================================== */
+    function openModal(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.add('open');
+    }
+
+    function closeModal(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.remove('open');
+    }
+
+    document.querySelectorAll('.modal-overlay').forEach(overlay => {
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) overlay.classList.remove('open');
+      });
+    });
+
+    function showToast(msg, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast-msg ${type}`;
+      toast.textContent = msg;
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'all 0.2s ease';
+        setTimeout(() => toast.remove(), 200);
+      }, 3500);
+    }
+
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme') || 'dark';
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem(STORAGE_KEY_THEME, next);
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function refreshApp() {
+      updateAuthUI();
+      filterTrains();
+      renderUserBookings();
+      if (getCurrentUser() && getCurrentUser().role === 'admin') {
+        renderAdminView();
+      }
+    }
+
+    /* DOM Ready */
+    document.addEventListener('DOMContentLoaded', () => {
+      initDatabase();
+      updateAuthUI();
+      document.getElementById('searchDate').value = getDateOffset(2);
+      filterTrains();
+    });
+  </script>
+</body>
+</html>

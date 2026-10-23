@@ -1,0 +1,2527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Experiment 2 - Online Hotel Room Booking System</title>
+  <meta name="description" content="Experiment 2: Complete Online Hotel Room Booking System with room availability, user profile, 3-day change/cancellation policy, admin room inventory/pricing, booking management, and editable static pages.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* ==========================================================================
+       EXPERIMENT 2 - ONLINE HOTEL ROOM BOOKING SYSTEM
+       Clean, Responsive, Modern Styling
+       ========================================================================== */
+    :root {
+      --primary: #0284c7;
+      --primary-dark: #0369a1;
+      --primary-light: rgba(2, 132, 199, 0.1);
+      
+      --gold: #d97706;
+      --gold-light: rgba(217, 119, 6, 0.12);
+
+      --success: #10b981;
+      --success-light: rgba(16, 185, 129, 0.12);
+
+      --danger: #ef4444;
+      --danger-light: rgba(239, 68, 68, 0.12);
+
+      --bg-body: #0f172a;
+      --bg-surface: #1e293b;
+      --bg-card: #334155;
+      --bg-card-hover: #3e4f69;
+      --border: rgba(255, 255, 255, 0.1);
+
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-xl: 20px;
+      --radius-full: 9999px;
+
+      --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.2);
+      --shadow-md: 0 6px 18px rgba(0, 0, 0, 0.3);
+      --shadow-lg: 0 12px 30px rgba(0, 0, 0, 0.4);
+
+      --transition: 0.2s ease;
+    }
+
+    [data-theme="light"] {
+      --bg-body: #f8fafc;
+      --bg-surface: #ffffff;
+      --bg-card: #f1f5f9;
+      --bg-card-hover: #e2e8f0;
+      --border: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-dim: #94a3b8;
+      --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 6px 18px rgba(0, 0, 0, 0.08);
+      --shadow-lg: 0 12px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color var(--transition), color var(--transition);
+    }
+
+    /* Experiment 2 Header Bar */
+    .exp-bar {
+      background: linear-gradient(90deg, #0f172a, #0369a1, #0f172a);
+      border-bottom: 1px solid rgba(2, 132, 199, 0.4);
+      padding: 6px 1.5rem;
+      font-size: 0.8rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      z-index: 100;
+    }
+
+    .exp-bar-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #bae6fd;
+      font-weight: 600;
+    }
+
+    .exp-badge {
+      background: #0284c7;
+      color: #fff;
+      padding: 2px 8px;
+      border-radius: var(--radius-sm);
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .exp-bar-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .quick-role-btn {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+      padding: 3px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 0.75rem;
+      cursor: pointer;
+      font-family: inherit;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .quick-role-btn:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    /* Navigation */
+    .navbar {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 90;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      text-decoration: none;
+      color: var(--text-main);
+    }
+
+    .nav-brand-logo {
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, #0284c7, #d97706);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 800;
+      font-size: 1.1rem;
+    }
+
+    .nav-brand-title {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 1.25rem;
+      line-height: 1.2;
+    }
+
+    .nav-brand-title span {
+      display: block;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      list-style: none;
+    }
+
+    .nav-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 7px 12px;
+      border-radius: var(--radius-md);
+      font-size: 0.88rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .nav-btn:hover {
+      color: var(--text-main);
+      background: var(--primary-light);
+    }
+
+    .nav-btn.active {
+      color: var(--primary);
+      background: var(--primary-light);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .theme-toggle-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .theme-toggle-btn:hover {
+      color: var(--text-main);
+    }
+
+    .user-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 4px 10px 4px 6px;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      font-size: 0.82rem;
+    }
+
+    .user-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--gold));
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.8rem;
+    }
+
+    /* Container */
+    .container {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 1.75rem 1.25rem;
+      width: 100%;
+      flex: 1;
+    }
+
+    /* Views */
+    .view-section {
+      display: none;
+      animation: fadeIn 0.25s ease forwards;
+    }
+
+    .view-section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Hero / Search Card */
+    .hotel-hero {
+      background: linear-gradient(135deg, rgba(3, 105, 161, 0.4), rgba(15, 23, 42, 0.8)), var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 2.25rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow-md);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hotel-hero-tag {
+      background: var(--gold-light);
+      color: var(--gold);
+      border: 1px solid rgba(217, 119, 6, 0.3);
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      display: inline-block;
+      margin-bottom: 0.75rem;
+    }
+
+    .hotel-hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.3rem;
+      line-height: 1.2;
+      margin-bottom: 0.5rem;
+    }
+
+    .hotel-hero p {
+      color: var(--text-muted);
+      font-size: 1rem;
+      max-width: 650px;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Search Bar Booking Widget */
+    .search-widget {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+      align-items: flex-end;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .form-label {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .form-control {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 9px 12px;
+      color: var(--text-main);
+      font-size: 0.9rem;
+      font-family: inherit;
+      outline: none;
+      transition: var(--transition);
+      width: 100%;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary);
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 9px 16px;
+      border-radius: var(--radius-md);
+      font-size: 0.88rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: var(--transition);
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn-gold {
+      background: var(--gold);
+      color: #fff;
+    }
+
+    .btn-gold:hover {
+      background: #b45309;
+    }
+
+    .btn-secondary {
+      background: var(--bg-card);
+      border-color: var(--border);
+      color: var(--text-main);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-card-hover);
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: #fff;
+    }
+
+    .btn-danger:hover {
+      background: #dc2626;
+    }
+
+    .btn-sm {
+      padding: 5px 10px;
+      font-size: 0.8rem;
+      border-radius: var(--radius-sm);
+    }
+
+    /* Room Cards Grid */
+    .rooms-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .room-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+    }
+
+    .room-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+      border-color: rgba(2, 132, 199, 0.4);
+    }
+
+    .room-card-header {
+      height: 160px;
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      position: relative;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      color: white;
+    }
+
+    .room-type-badge {
+      align-self: flex-start;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+
+    .room-avail-tag {
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .room-avail-tag.available {
+      background: var(--success);
+      color: #fff;
+    }
+
+    .room-avail-tag.booked {
+      background: var(--danger);
+      color: #fff;
+    }
+
+    .room-card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    }
+
+    .room-card-body {
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      flex: 1;
+    }
+
+    .room-price-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.75rem;
+    }
+
+    .room-price {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--primary);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .room-price span {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      font-weight: 400;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .room-specs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      font-size: 0.78rem;
+    }
+
+    .room-spec-item {
+      background: var(--bg-card);
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      color: var(--text-muted);
+    }
+
+    .room-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .room-card-actions {
+      margin-top: auto;
+      padding-top: 0.5rem;
+      display: flex;
+      gap: 8px;
+    }
+
+    /* Policy Notice Box (3-Day Rule Requirement) */
+    .policy-banner {
+      background: linear-gradient(135deg, rgba(2, 132, 199, 0.1), rgba(217, 119, 6, 0.1));
+      border: 1px solid rgba(2, 132, 199, 0.25);
+      border-radius: var(--radius-lg);
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.88rem;
+      color: var(--text-main);
+    }
+
+    .policy-banner strong {
+      color: var(--gold);
+    }
+
+    /* Tables */
+    .table-responsive {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow-x: auto;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.88rem;
+    }
+
+    .table th {
+      background: var(--bg-card);
+      color: var(--text-muted);
+      font-weight: 700;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-main);
+    }
+
+    .table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .table tr:hover td {
+      background: var(--bg-card-hover);
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      border-radius: var(--radius-full);
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    .badge-success { background: var(--success-light); color: var(--success); }
+    .badge-danger  { background: var(--danger-light); color: var(--danger); }
+    .badge-warning { background: var(--gold-light); color: var(--gold); }
+    .badge-info    { background: var(--primary-light); color: var(--primary); }
+
+    /* Modals */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(5px);
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 580px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .modal-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h3 {
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
+    .modal-close {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 1.4rem;
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .modal-footer {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    /* Admin Management Tabs */
+    .admin-subnav {
+      display: flex;
+      gap: 8px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1.5rem;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .admin-subnav-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 8px 14px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: var(--transition);
+      white-space: nowrap;
+    }
+
+    .admin-subnav-btn.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+    }
+
+    .admin-tab-pane {
+      display: none;
+    }
+
+    .admin-tab-pane.active {
+      display: block;
+    }
+
+    /* Toast */
+    .toast-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 300;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      pointer-events: none;
+    }
+
+    .toast-msg {
+      background: var(--bg-surface);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      padding: 10px 16px;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      font-size: 0.88rem;
+      pointer-events: auto;
+      animation: fadeIn 0.2s ease;
+      max-width: 380px;
+    }
+
+    .toast-msg.success { border-left: 4px solid var(--success); }
+    .toast-msg.danger  { border-left: 4px solid var(--danger); }
+    .toast-msg.info    { border-left: 4px solid var(--primary); }
+
+    /* Static Pages layout */
+    .static-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .static-card h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .static-card p {
+      color: var(--text-muted);
+      margin-bottom: 1rem;
+      line-height: 1.7;
+    }
+
+    .faq-item {
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      padding: 1rem 1.25rem;
+      margin-bottom: 0.75rem;
+      border: 1px solid var(--border);
+    }
+
+    .faq-q {
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 4px;
+      font-size: 0.95rem;
+    }
+
+    .faq-a {
+      color: var(--text-muted);
+      font-size: 0.88rem;
+      line-height: 1.5;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      background: var(--bg-surface);
+      padding: 1.5rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      margin-top: auto;
+    }
+
+    @media (max-width: 768px) {
+      .navbar { padding: 0.6rem 1rem; }
+      .nav-links { display: none; } /* Clean mobile simplicity */
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========================================================================
+       EXPERIMENT 2 HEADER BAR
+       ======================================================================== -->
+  <div class="exp-bar">
+    <div class="exp-bar-left">
+      <span class="exp-badge">Experiment 2</span>
+      <span>Online Hotel Room Booking Website & Administration</span>
+    </div>
+    <div class="exp-bar-actions">
+      <span style="opacity: 0.8; font-size: 0.75rem;">Fast Role Switcher:</span>
+      <button class="quick-role-btn" onclick="demoSwitchRole('user')">
+        👤 User: John Doe
+      </button>
+      <button class="quick-role-btn" onclick="demoSwitchRole('admin')">
+        🔑 Hotel Administrator
+      </button>
+      <button class="quick-role-btn" onclick="resetHotelDemoData()">
+        🔄 Reset Demo Data
+      </button>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       NAVBAR
+       ======================================================================== -->
+  <nav class="navbar">
+    <div class="nav-brand" onclick="navigateTo('rooms')">
+      <div class="nav-brand-logo">H</div>
+      <div class="nav-brand-title">
+        Grand Horizon Hotel
+        <span>Online Booking & Management • Exp 2</span>
+      </div>
+    </div>
+
+    <ul class="nav-links">
+      <li><button class="nav-btn active" id="nav-btn-rooms" onclick="navigateTo('rooms')">🏨 Rooms & Booking</button></li>
+      <li><button class="nav-btn" id="nav-btn-history" onclick="navigateTo('history')">📋 My Bookings</button></li>
+      <li><button class="nav-btn" id="nav-btn-about" onclick="navigateTo('about')">ℹ️ About & Rooms</button></li>
+      <li><button class="nav-btn" id="nav-btn-faq" onclick="navigateTo('faq')">❓ Customer Q&A</button></li>
+      <li><button class="nav-btn" id="nav-btn-travel" onclick="navigateTo('travel')">✈️ Travel & Shipping</button></li>
+      <li><button class="nav-btn" id="nav-btn-contact" onclick="navigateTo('contact')">📞 Contact Us</button></li>
+      <li><button class="nav-btn" id="nav-btn-privacy" onclick="navigateTo('privacy')">🔒 Privacy Policy</button></li>
+      <li id="adminNavTab" style="display: none;">
+        <button class="nav-btn" id="nav-btn-admin" onclick="navigateTo('admin')" style="color: var(--gold);">⚙️ Admin Panel</button>
+      </li>
+    </ul>
+
+    <div class="nav-actions">
+      <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle Light/Dark Theme">🌓</button>
+      
+      <div id="authLoggedOut" style="display: none;">
+        <button class="btn btn-primary btn-sm" onclick="openAuthModal('login')">Sign In</button>
+      </div>
+
+      <div id="authLoggedIn" style="display: flex;">
+        <div class="user-pill" onclick="onUserPillClick()">
+          <div class="user-avatar" id="navUserAvatar">J</div>
+          <span id="navUserName" style="font-weight: 600;">John Doe</span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ========================================================================
+       MAIN APPLICATION VIEWS
+       ======================================================================== -->
+  <main class="container">
+
+    <!-- Policy Banner Explaining the 3-Day Rule (Requirements 4 & 5) -->
+    <div class="policy-banner">
+      <span style="font-size: 1.25rem;">📌</span>
+      <div>
+        <strong>Reservation Policy:</strong> Guests can modify dates or cancel any booking free of charge 
+        <strong>at least 3 days prior to arrival date</strong>. Within 3 days of arrival, modifications and cancellations 
+        are locked for users (Administrators can override at any time).
+      </div>
+    </div>
+
+    <!-- ======================================================================
+         PAGE 1: ROOMS SEARCH & BOOKING (REQUIREMENTS 2, 6, 11)
+         ====================================================================== -->
+    <section id="view-rooms" class="view-section active">
+      <div class="hotel-hero">
+        <span class="hotel-hero-tag">Luxury Hospitality • 4 Premium Room Categories</span>
+        <h1>Find Your Perfect Room at Grand Horizon</h1>
+        <p>Experience world-class luxury, personalized concierge services, and scenic comfort. Check real-time room availability and book with instant confirmation.</p>
+
+        <!-- Search & Availability Widget -->
+        <div class="search-widget">
+          <div class="form-group">
+            <label class="form-label">Check-In Date</label>
+            <input type="date" id="searchCheckIn" class="form-control" onchange="checkAvailability()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Check-Out Date</label>
+            <input type="date" id="searchCheckOut" class="form-control" onchange="checkAvailability()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Guests</label>
+            <select id="searchGuests" class="form-control" onchange="checkAvailability()">
+              <option value="1">1 Guest (Single)</option>
+              <option value="2" selected>2 Guests (Double)</option>
+              <option value="3">3 Guests (Suite)</option>
+              <option value="4">4+ Guests (Family)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <button class="btn btn-primary" onclick="checkAvailability()">
+              🔍 Check Room Availability
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Availability Summary Banner -->
+      <div id="availSummaryBanner" style="display: flex; justify-content: space-between; align-items: center; background: var(--bg-surface); border: 1px solid var(--border); padding: 12px 18px; border-radius: var(--radius-md); margin-bottom: 1.5rem;">
+        <div>
+          <span style="color: var(--text-muted); font-size: 0.85rem;">Showing room availability for:</span>
+          <strong id="availDatesSummary" style="color: var(--text-main); margin-left: 6px;">Today onwards</strong>
+        </div>
+        <span class="badge badge-info" id="totalAvailRoomsCount">All 4 room types open</span>
+      </div>
+
+      <!-- 4 Room Types Cards Grid -->
+      <div class="rooms-grid" id="roomsListContainer">
+        <!-- Rendered dynamically from database -->
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         PAGE 2: MY BOOKING HISTORY (REQUIREMENTS 3, 4, 5)
+         ====================================================================== -->
+    <section id="view-history" class="view-section">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 10px;">
+        <div>
+          <h2 style="font-family: 'Playfair Display', serif; font-size: 1.8rem;">My Booking History</h2>
+          <p style="color: var(--text-muted); font-size: 0.88rem;">Review your reservations, reschedule dates, or cancel bookings in compliance with the 3-day policy.</p>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="navigateTo('rooms')">+ Book Another Room</button>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Booking Ref</th>
+              <th>Room Type</th>
+              <th>Check-In</th>
+              <th>Check-Out</th>
+              <th>Nights</th>
+              <th>Total Paid</th>
+              <th>Policy Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="userBookingsTableBody">
+            <!-- Rendered by JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         PAGE 3: USER PROFILE (REQUIREMENT 1)
+         ====================================================================== -->
+    <section id="view-profile" class="view-section">
+      <div style="max-width: 650px; margin: 0 auto; background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 2rem;">
+        <h2 style="font-family: 'Playfair Display', serif; font-size: 1.8rem; margin-bottom: 0.5rem;">User Profile</h2>
+        <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 1.5rem;">View and update your registered guest contact details.</p>
+
+        <form id="profileForm" onsubmit="handleSaveProfile(event)">
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label class="form-label">Full Name</label>
+            <input type="text" id="profName" class="form-control" required>
+          </div>
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label class="form-label">Email Address</label>
+            <input type="email" id="profEmail" class="form-control" required>
+          </div>
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label class="form-label">Phone Number</label>
+            <input type="tel" id="profPhone" class="form-control" required>
+          </div>
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label class="form-label">Mailing Address</label>
+            <input type="text" id="profAddress" class="form-control" placeholder="123 Ocean Boulevard, Miami, FL">
+          </div>
+          <div class="form-group" style="margin-bottom: 1.5rem;">
+            <label class="form-label">Identity Proof (Passport / National ID)</label>
+            <input type="text" id="profIdProof" class="form-control" placeholder="ID: US-PASS-90821">
+          </div>
+
+          <div style="display: flex; justify-content: space-between;">
+            <button type="button" class="btn btn-secondary btn-sm" onclick="logout()">Sign Out</button>
+            <button type="submit" class="btn btn-primary">Save Profile Changes</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         PAGE 4: ABOUT US & ROOM INTRODUCTION (REQUIREMENT 10 & 11)
+         ====================================================================== -->
+    <section id="view-about" class="view-section">
+      <div class="static-card">
+        <h2 id="staticAboutTitle">About Grand Horizon Hotel</h2>
+        <div id="staticAboutContent">
+          <!-- Populated from storage -->
+        </div>
+      </div>
+
+      <div class="static-card">
+        <h2>Room Categories & Amenities Overview</h2>
+        <div id="staticRoomIntroContent">
+          <!-- Populated from storage -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         PAGE 5: CUSTOMER SERVICE Q&A (REQUIREMENT 10 & 11)
+         ====================================================================== -->
+    <section id="view-faq" class="view-section">
+      <div class="static-card">
+        <h2>Customer Service & Frequently Asked Questions (Q&A)</h2>
+        <p>Everything you need to know about our reservation guidelines, amenities, and check-in procedures.</p>
+        <div id="staticFaqContainer">
+          <!-- Populated from storage -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         PAGE 6: LOCAL TRAVEL & SHIPPING GUIDE (REQUIREMENT 10 & 11)
+         ====================================================================== -->
+    <section id="view-travel" class="view-section">
+      <div class="static-card">
+        <h2>Local Travel, Transit & Luggage Shipping Guide</h2>
+        <div id="staticTravelContent">
+          <!-- Populated from storage -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         PAGE 7: CONTACT US (REQUIREMENT 10 & 11)
+         ====================================================================== -->
+    <section id="view-contact" class="view-section">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+        <div class="static-card">
+          <h2>Contact Us</h2>
+          <div id="staticContactContent">
+            <!-- Populated from storage -->
+          </div>
+        </div>
+
+        <div class="static-card">
+          <h3>Send a Direct Inquiry</h3>
+          <p>Our front desk staff is available 24/7 to answer room inquiries or special arrival requests.</p>
+          <form onsubmit="handleContactSend(event)">
+            <div class="form-group" style="margin-bottom: 0.85rem;">
+              <label class="form-label">Your Name</label>
+              <input type="text" id="contactMsgName" class="form-control" required placeholder="John Doe">
+            </div>
+            <div class="form-group" style="margin-bottom: 0.85rem;">
+              <label class="form-label">Your Email</label>
+              <input type="email" id="contactMsgEmail" class="form-control" required placeholder="john@example.com">
+            </div>
+            <div class="form-group" style="margin-bottom: 1rem;">
+              <label class="form-label">Message / Inquiry</label>
+              <textarea id="contactMsgText" class="form-control" rows="3" required placeholder="Request airport shuttle, late check-in..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%;">Submit Inquiry</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         PAGE 8: PRIVACY POLICY (REQUIREMENT 10 & 11)
+         ====================================================================== -->
+    <section id="view-privacy" class="view-section">
+      <div class="static-card">
+        <h2>Privacy Policy & Reservation Data Terms</h2>
+        <div id="staticPrivacyContent">
+          <!-- Populated from storage -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         PAGE 9: ADMINISTRATOR PANEL (REQUIREMENTS 7, 8, 9, 10)
+         ====================================================================== -->
+    <section id="view-admin" class="view-section">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 10px;">
+        <div>
+          <span class="badge badge-warning">Admin Access Level</span>
+          <h2 style="font-family: 'Playfair Display', serif; font-size: 1.8rem; margin-top: 4px;">Hotel Management Control Center</h2>
+        </div>
+        <span style="color: var(--text-muted); font-size: 0.85rem;">Authorized as Hotel Administrator</span>
+      </div>
+
+      <!-- Admin Subnavigation Tabs -->
+      <div class="admin-subnav">
+        <button class="admin-subnav-btn active" onclick="switchAdminTab('rooms-mgr', this)">
+          🏨 4 Room Types (Price & Quantity)
+        </button>
+        <button class="admin-subnav-btn" onclick="switchAdminTab('bookings-mgr', this)">
+          📋 All Bookings (Edit / Cancel Any)
+        </button>
+        <button class="admin-subnav-btn" onclick="switchAdminTab('static-mgr', this)">
+          📝 Edit Static Pages Content
+        </button>
+      </div>
+
+      <!-- Admin Tab 1: Room Quantity & Price Manager (Requirement 7) -->
+      <div id="admin-tab-rooms-mgr" class="admin-tab-pane active">
+        <div style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1.5rem;">
+          <h3 style="font-size: 1.15rem; margin-bottom: 0.5rem;">Modify Room Types: Quantity & Nightly Price</h3>
+          <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.25rem;">
+            Administrators can adjust the total room inventory count and price per night for all four standard room types.
+          </p>
+
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Room Type Key</th>
+                  <th>Room Name</th>
+                  <th>Current Price / Night</th>
+                  <th>Total Inventory Quantity</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="adminRoomsTableBody">
+                <!-- Rendered by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Admin Tab 2: Manage Bookings (Requirements 8 & 9) -->
+      <div id="admin-tab-bookings-mgr" class="admin-tab-pane">
+        <div style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 8px;">
+            <div>
+              <h3 style="font-size: 1.15rem;">Universal Booking Management</h3>
+              <p style="color: var(--text-muted); font-size: 0.85rem;">
+                Administrators can change details or cancel any booking at any time, bypassing standard user date locks.
+              </p>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Ref ID</th>
+                  <th>Guest Name</th>
+                  <th>Room Type</th>
+                  <th>Check-In</th>
+                  <th>Check-Out</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="adminBookingsTableBody">
+                <!-- Rendered by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Admin Tab 3: Modify Static Pages (Requirement 10) -->
+      <div id="admin-tab-static-mgr" class="admin-tab-pane">
+        <div style="background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem;">
+          <h3 style="font-size: 1.15rem; margin-bottom: 0.5rem;">Modify Details of Static Pages</h3>
+          <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 1.5rem;">
+            Update information for Room Intro, About Us, Contact Us, Q&A, Travel & Shipping Guide, and Privacy Policy. Changes are published immediately.
+          </p>
+
+          <form id="staticEditForm" onsubmit="handleSaveStaticPages(event)" style="display: flex; flex-direction: column; gap: 1.25rem;">
+            <div class="form-group">
+              <label class="form-label">1. About Us Information</label>
+              <textarea id="editStaticAbout" class="form-control" rows="4"></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">2. Basic Room Type Introduction</label>
+              <textarea id="editStaticRoomIntro" class="form-control" rows="4"></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">3. Contact Us Information</label>
+              <textarea id="editStaticContact" class="form-control" rows="3"></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">4. Customer Service Q&A (FAQ 1 & 2 Details)</label>
+              <textarea id="editStaticFaq" class="form-control" rows="4"></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">5. Local Travel & Shipping Guide</label>
+              <textarea id="editStaticTravel" class="form-control" rows="4"></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">6. Privacy Policy</label>
+              <textarea id="editStaticPrivacy" class="form-control" rows="4"></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="align-self: flex-start;">
+              💾 Save All Static Page Updates
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================================================
+       MODALS
+       ======================================================================== -->
+
+  <!-- Modal 1: Booking Modal & Payment Gateway Simulation -->
+  <div class="modal-backdrop" id="bookingModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="bookModalRoomTitle">Book Room</h3>
+        <button class="modal-close" onclick="closeModal('bookingModal')">&times;</button>
+      </div>
+      <form id="bookingForm" onsubmit="handleConfirmBooking(event)">
+        <div class="modal-body">
+          <input type="hidden" id="bookModalRoomId">
+
+          <div style="background: var(--bg-card); padding: 10px 14px; border-radius: var(--radius-md); font-size: 0.85rem; display: flex; justify-content: space-between;">
+            <span>Rate Per Night:</span>
+            <strong id="bookModalRateDisplay" style="color: var(--primary);">$0 / night</strong>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div class="form-group">
+              <label class="form-label">Check-In Date</label>
+              <input type="date" id="bookModalCheckIn" class="form-control" required onchange="calculateBookingTotal()">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Check-Out Date</label>
+              <input type="date" id="bookModalCheckOut" class="form-control" required onchange="calculateBookingTotal()">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Guest Full Name</label>
+            <input type="text" id="bookModalGuestName" class="form-control" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Guest Email</label>
+            <input type="email" id="bookModalGuestEmail" class="form-control" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Select Payment Method (Integrated Gateway)</label>
+            <select id="bookModalPaymentMethod" class="form-control">
+              <option value="Credit Card">Credit / Debit Card (Visa / Mastercard)</option>
+              <option value="UPI / Digital Wallet">UPI / Apple Pay / PayPal</option>
+              <option value="Hotel Front Desk">Pay on Arrival at Front Desk</option>
+            </select>
+          </div>
+
+          <div style="border-top: 1px solid var(--border); padding-top: 10px; display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 0.9rem; color: var(--text-muted);">Total Calculation (<span id="bookNightsCalc">1</span> nights):</span>
+            <strong id="bookTotalCalc" style="font-size: 1.4rem; color: var(--gold); font-family: 'JetBrains Mono', monospace;">$0</strong>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" onclick="closeModal('bookingModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm">Confirm & Complete Payment</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 2: Edit Booking Modal (For User within 3 days or Admin anytime) -->
+  <div class="modal-backdrop" id="editBookingModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Change Booking Details</h3>
+        <button class="modal-close" onclick="closeModal('editBookingModal')">&times;</button>
+      </div>
+      <form id="editBookingForm" onsubmit="handleSaveEditedBooking(event)">
+        <div class="modal-body">
+          <input type="hidden" id="editBookingRef">
+
+          <div class="form-group">
+            <label class="form-label">Guest Name</label>
+            <input type="text" id="editBookingGuestName" class="form-control" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Room Type</label>
+            <select id="editBookingRoomSelect" class="form-control" required>
+              <!-- Populated by JS -->
+            </select>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div class="form-group">
+              <label class="form-label">New Check-In Date</label>
+              <input type="date" id="editBookingCheckIn" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">New Check-Out Date</label>
+              <input type="date" id="editBookingCheckOut" class="form-control" required>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" onclick="closeModal('editBookingModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary btn-sm">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 3: Authentication Modal (Login / Register) -->
+  <div class="modal-backdrop" id="authModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="authModalTitle">Sign In</h3>
+        <button class="modal-close" onclick="closeModal('authModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="display: flex; gap: 8px; margin-bottom: 0.5rem;">
+          <button class="btn btn-sm btn-primary" id="authTabLoginBtn" onclick="switchAuthMode('login')">Login</button>
+          <button class="btn btn-sm btn-secondary" id="authTabRegBtn" onclick="switchAuthMode('register')">Register New Account</button>
+        </div>
+
+        <!-- Login Form -->
+        <form id="loginForm" onsubmit="handleAuthLogin(event)">
+          <div class="form-group" style="margin-bottom: 0.85rem;">
+            <label class="form-label">Email or Username</label>
+            <input type="text" id="loginUsername" class="form-control" required placeholder="john@example.com or admin">
+          </div>
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label class="form-label">Password</label>
+            <input type="password" id="loginPassword" class="form-control" required placeholder="••••••••">
+          </div>
+          <div style="background: var(--bg-card); padding: 8px 12px; border-radius: var(--radius-sm); font-size: 0.78rem; color: var(--text-muted); margin-bottom: 1rem;">
+            Demo Logins:<br>
+            • Guest: <code>john@example.com</code> / <code>password</code><br>
+            • Administrator: <code>admin</code> / <code>admin123</code>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%;">Sign In</button>
+        </form>
+
+        <!-- Register Form -->
+        <form id="regForm" onsubmit="handleAuthRegister(event)" style="display: none;">
+          <div class="form-group" style="margin-bottom: 0.85rem;">
+            <label class="form-label">Full Name</label>
+            <input type="text" id="regName" class="form-control" required placeholder="Jane Doe">
+          </div>
+          <div class="form-group" style="margin-bottom: 0.85rem;">
+            <label class="form-label">Email Address</label>
+            <input type="email" id="regEmail" class="form-control" required placeholder="jane@example.com">
+          </div>
+          <div class="form-group" style="margin-bottom: 0.85rem;">
+            <label class="form-label">Phone Number</label>
+            <input type="tel" id="regPhone" class="form-control" required placeholder="+1 (555) 019-2834">
+          </div>
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label class="form-label">Password</label>
+            <input type="password" id="regPassword" class="form-control" required placeholder="••••••••">
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%;">Create Account</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Center -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- ========================================================================
+       FOOTER
+       ======================================================================== -->
+  <footer>
+    <strong>Experiment 2: Online Hotel Room Booking System</strong> • Internet Programming Laboratory
+    <div style="margin-top: 4px; color: var(--text-dim); font-size: 0.75rem;">
+      Functionalities: 4 Room Types Inventory, 3-Day Change/Cancellation Policy, Check Availability, Profile Management, and Editable Static Pages.
+    </div>
+  </footer>
+
+  <!-- ========================================================================
+       JAVASCRIPT APPLICATION ENGINE
+       ======================================================================== -->
+  <script>
+    /* ==========================================================================
+       1. DATA MODELS & LOCAL STORAGE INITIALIZATION (MOCK DATABASE)
+       ========================================================================== */
+    const STORAGE_KEY_HOTEL_ROOMS = 'exp2_hotel_rooms_v1';
+    const STORAGE_KEY_HOTEL_BOOKINGS = 'exp2_hotel_bookings_v1';
+    const STORAGE_KEY_HOTEL_USERS = 'exp2_hotel_users_v1';
+    const STORAGE_KEY_HOTEL_CURRENT_USER = 'exp2_hotel_current_user_v1';
+    const STORAGE_KEY_HOTEL_STATIC = 'exp2_hotel_static_content_v1';
+    const STORAGE_KEY_THEME = 'exp2_hotel_theme_v1';
+
+    // Helper: Formatted date offset
+    function getDateOffset(daysOffset) {
+      const d = new Date();
+      d.setDate(d.getDate() + daysOffset);
+      return d.toISOString().split('T')[0];
+    }
+
+    // Default 4 Room Types (Requirement 7 & 11)
+    const DEFAULT_ROOMS = [
+      {
+        id: 'R1',
+        name: 'Standard Single Room',
+        price: 75,
+        quantity: 10,
+        maxGuests: 1,
+        bed: '1 Single Bed',
+        size: '22 sq.m',
+        amenities: ['Free Wi-Fi', 'Work Desk', 'En-suite Bathroom', 'HD TV'],
+        desc: 'Compact, cozy accommodation ideal for solo travelers, business consultants, or short academic stays.'
+      },
+      {
+        id: 'R2',
+        name: 'Deluxe Double Room',
+        price: 120,
+        quantity: 15,
+        maxGuests: 2,
+        bed: '1 King Size Bed or 2 Twins',
+        size: '34 sq.m',
+        amenities: ['Free Wi-Fi', 'Private Balcony', 'Mini Bar', 'Smart TV', 'Complimentary Breakfast'],
+        desc: 'Spacious room with modern aesthetics, premium linens, city views, and deluxe toiletries.'
+      },
+      {
+        id: 'R3',
+        name: 'Executive Suite',
+        price: 220,
+        quantity: 8,
+        maxGuests: 3,
+        bed: '1 California King + Sofa Bed',
+        size: '58 sq.m',
+        amenities: ['Separate Living Area', 'Jacuzzi Bath', 'Espresso Bar', 'Executive Lounge Access', 'High-Speed Wi-Fi'],
+        desc: 'Sophisticated suite featuring a dedicated parlor, marble bathroom, and panoramic floor-to-ceiling windows.'
+      },
+      {
+        id: 'R4',
+        name: 'Family Presidential Suite',
+        price: 380,
+        quantity: 4,
+        maxGuests: 5,
+        bed: '2 Master Bedrooms (King + Queen)',
+        size: '95 sq.m',
+        amenities: ['2 Bedrooms', 'Dining Table', 'Terrace Deck', 'Kitchenette', '24/7 Butler Service'],
+        desc: 'The pinnacle of luxury catering to families and VIP guests, complete with private terrace dining.'
+      }
+    ];
+
+    // Default Users (Requirement 1)
+    const DEFAULT_USERS = [
+      {
+        id: 'U1',
+        name: 'John Doe',
+        email: 'john@example.com',
+        phone: '+1 (555) 234-5678',
+        address: '742 Evergreen Terrace, Springfield',
+        idProof: 'PASS-US-987123',
+        role: 'user',
+        password: 'password'
+      },
+      {
+        id: 'U2',
+        name: 'Sarah Connor',
+        email: 'sarah@example.com',
+        phone: '+1 (555) 987-6543',
+        address: '100 Sunset Blvd, Los Angeles, CA',
+        idProof: 'DL-CA-409124',
+        role: 'user',
+        password: 'password'
+      },
+      {
+        id: 'ADMIN',
+        name: 'Hotel General Manager',
+        email: 'admin',
+        phone: '+1 (555) 000-1122',
+        address: 'Grand Horizon Executive Suites',
+        idProof: 'ADMIN-EMP-001',
+        role: 'admin',
+        password: 'admin123'
+      }
+    ];
+
+    // Seeded Bookings to showcase the 3-day policy (Requirements 3, 4, 5, 8, 9)
+    // 1. One booking > 3 days ahead (Change / Cancel ALLOWED for user)
+    // 2. One booking < 3 days ahead (Change / Cancel BLOCKED for user, but ADMIN CAN EDIT)
+    // 3. One completed booking
+    const DEFAULT_BOOKINGS = [
+      {
+        ref: 'BK-701',
+        userId: 'U1',
+        guestName: 'John Doe',
+        guestEmail: 'john@example.com',
+        roomId: 'R2',
+        roomName: 'Deluxe Double Room',
+        checkIn: getDateOffset(7),  // 7 days away -> CAN CHANGE & CANCEL!
+        checkOut: getDateOffset(9),
+        nights: 2,
+        totalPaid: 240,
+        paymentMethod: 'Credit Card',
+        status: 'Confirmed'
+      },
+      {
+        ref: 'BK-702',
+        userId: 'U1',
+        guestName: 'John Doe',
+        guestEmail: 'john@example.com',
+        roomId: 'R1',
+        roomName: 'Standard Single Room',
+        checkIn: getDateOffset(1),  // 1 day away -> LOCKED FOR USER (< 3 days), ADMIN OVERRIDE ALLOWED!
+        checkOut: getDateOffset(3),
+        nights: 2,
+        totalPaid: 150,
+        paymentMethod: 'UPI / Digital Wallet',
+        status: 'Confirmed'
+      },
+      {
+        ref: 'BK-703',
+        userId: 'U2',
+        guestName: 'Sarah Connor',
+        guestEmail: 'sarah@example.com',
+        roomId: 'R3',
+        roomName: 'Executive Suite',
+        checkIn: getDateOffset(10),
+        checkOut: getDateOffset(14),
+        nights: 4,
+        totalPaid: 880,
+        paymentMethod: 'Credit Card',
+        status: 'Confirmed'
+      }
+    ];
+
+    // Default Static Pages Content (Requirement 10 & 11)
+    const DEFAULT_STATIC = {
+      about: `Grand Horizon Hotel & Suites is an acclaimed luxury boutique hotel committed to excellence in hospitality. Nestled in the heart of the coastal business and arts district, we blend classical architectural elegance with modern digital convenience. Whether visiting for vacation or executive corporate conferences, our concierge, Michelin-rated dining, and serene wellness centers guarantee an extraordinary stay.`,
+      
+      roomIntro: `Our property features 4 distinctive room types designed to accommodate every guest preference:\n\n1. Standard Single Room: Ideal for solo business travelers with dedicated workstations and en-suite showers.\n2. Deluxe Double Room: Features plush King or Twin bedding, private city-view balconies, and breakfast.\n3. Executive Suite: Expansive suites with private living rooms, jacuzzi baths, and executive lounge access.\n4. Family Presidential Suite: Multi-bedroom penthouse living with private dining, terrace, and 24/7 butler service.`,
+      
+      contact: `Grand Horizon Hotel & Luxury Suites\nAddress: 450 Grand Coastal Highway, Oceanview District\nPhone: +1 (800) 555-HORIZON / Front Desk: Ext. 0\nEmail: reservations@grandhorizonhotel.com / concierge@grandhorizonhotel.com\nFront Desk Hours: 24 Hours / 7 Days a week`,
+      
+      faq: `Q1: What are the hotel check-in and check-out times?\nA: Check-in begins at 2:00 PM and check-out is by 11:00 AM. Early check-in or late check-out is subject to room availability upon request.\n\nQ2: What is the modification and cancellation policy?\nA: Guests may reschedule or cancel any reservation free of charge up to 3 days prior to the scheduled arrival date. Within 3 days of arrival, bookings are locked to protect inventory allocation.`,
+      
+      travel: `Local Travel & Attractions:\n• Waterfront Marina & Promenade: 5 minutes walk.\n• Convention Center & Tech Hub: 10 minutes via hotel complimentary shuttle.\n• Historic Arts & Museum Quarter: 15 minutes by tram.\n\nAirport Transit & Shipping Services:\n• International Airport Shuttle runs every 30 minutes directly from the hotel lobby.\n• Luggage Forwarding & Shipping: We partner with FedEx and DHL for guest package receiving and luggage dispatch. Please notify front desk 24 hours in advance.`,
+      
+      privacy: `At Grand Horizon Hotel, we respect and safeguard your personal data. We collect guest identification and reservation parameters solely to confirm your booking, process payments securely, and comply with hospitality regulations. We never sell or distribute your private contact details to external third parties. All transaction records are encrypted using modern industry standards.`
+    };
+
+    /* Initialize Database in LocalStorage */
+    function initDatabase() {
+      if (!localStorage.getItem(STORAGE_KEY_HOTEL_ROOMS)) {
+        localStorage.setItem(STORAGE_KEY_HOTEL_ROOMS, JSON.stringify(DEFAULT_ROOMS));
+      }
+      if (!localStorage.getItem(STORAGE_KEY_HOTEL_USERS)) {
+        localStorage.setItem(STORAGE_KEY_HOTEL_USERS, JSON.stringify(DEFAULT_USERS));
+      }
+      if (!localStorage.getItem(STORAGE_KEY_HOTEL_BOOKINGS)) {
+        localStorage.setItem(STORAGE_KEY_HOTEL_BOOKINGS, JSON.stringify(DEFAULT_BOOKINGS));
+      }
+      if (!localStorage.getItem(STORAGE_KEY_HOTEL_STATIC)) {
+        localStorage.setItem(STORAGE_KEY_HOTEL_STATIC, JSON.stringify(DEFAULT_STATIC));
+      }
+
+      // Default active user: John Doe
+      if (!localStorage.getItem(STORAGE_KEY_HOTEL_CURRENT_USER)) {
+        localStorage.setItem(STORAGE_KEY_HOTEL_CURRENT_USER, JSON.stringify(DEFAULT_USERS[0]));
+      }
+
+      // Initialize theme
+      const savedTheme = localStorage.getItem(STORAGE_KEY_THEME) || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    }
+
+    function resetHotelDemoData() {
+      if (confirm('Reset Experiment 2 database to default seed data?')) {
+        localStorage.setItem(STORAGE_KEY_HOTEL_ROOMS, JSON.stringify(DEFAULT_ROOMS));
+        localStorage.setItem(STORAGE_KEY_HOTEL_USERS, JSON.stringify(DEFAULT_USERS));
+        localStorage.setItem(STORAGE_KEY_HOTEL_BOOKINGS, JSON.stringify(DEFAULT_BOOKINGS));
+        localStorage.setItem(STORAGE_KEY_HOTEL_STATIC, JSON.stringify(DEFAULT_STATIC));
+        localStorage.setItem(STORAGE_KEY_HOTEL_CURRENT_USER, JSON.stringify(DEFAULT_USERS[0]));
+        showToast('Experiment 2 database restored to defaults!', 'info');
+        refreshApp();
+      }
+    }
+
+    // Accessors
+    function getRooms() { return JSON.parse(localStorage.getItem(STORAGE_KEY_HOTEL_ROOMS) || '[]'); }
+    function saveRooms(r) { localStorage.setItem(STORAGE_KEY_HOTEL_ROOMS, JSON.stringify(r)); }
+
+    function getBookings() { return JSON.parse(localStorage.getItem(STORAGE_KEY_HOTEL_BOOKINGS) || '[]'); }
+    function saveBookings(b) { localStorage.setItem(STORAGE_KEY_HOTEL_BOOKINGS, JSON.stringify(b)); }
+
+    function getUsers() { return JSON.parse(localStorage.getItem(STORAGE_KEY_HOTEL_USERS) || '[]'); }
+    function saveUsers(u) { localStorage.setItem(STORAGE_KEY_HOTEL_USERS, JSON.stringify(u)); }
+
+    function getStaticContent() { return JSON.parse(localStorage.getItem(STORAGE_KEY_HOTEL_STATIC) || JSON.stringify(DEFAULT_STATIC)); }
+    function saveStaticContent(s) { localStorage.setItem(STORAGE_KEY_HOTEL_STATIC, JSON.stringify(s)); }
+
+    function getCurrentUser() { return JSON.parse(localStorage.getItem(STORAGE_KEY_HOTEL_CURRENT_USER) || 'null'); }
+    function setCurrentUser(u) { localStorage.setItem(STORAGE_KEY_HOTEL_CURRENT_USER, JSON.stringify(u)); }
+
+    /* ==========================================================================
+       2. 3-DAY POLICY CALCULATION ENGINE (REQUIREMENTS 4 & 5)
+       ========================================================================== */
+    function checkThreeDayPolicy(checkInDateStr) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const checkInDate = new Date(checkInDateStr);
+      checkInDate.setHours(0, 0, 0, 0);
+
+      const diffMs = checkInDate - today;
+      const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+
+      return {
+        daysRemaining: diffDays,
+        isAllowed: diffDays >= 3
+      };
+    }
+
+    /* ==========================================================================
+       3. NAVIGATION & ROLE SWITCHING
+       ========================================================================== */
+    let currentView = 'rooms';
+
+    function navigateTo(viewId) {
+      const user = getCurrentUser();
+
+      if (viewId === 'admin' && (!user || user.role !== 'admin')) {
+        showToast('Please sign in as Hotel Administrator to view the Admin panel', 'danger');
+        openAuthModal('login');
+        return;
+      }
+
+      document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+
+      const target = document.getElementById(`view-${viewId}`);
+      if (target) {
+        target.classList.add('active');
+        currentView = viewId;
+      }
+
+      const btn = document.getElementById(`nav-btn-${viewId}`);
+      if (btn) btn.classList.add('active');
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      // Trigger renders
+      if (viewId === 'rooms') renderRooms();
+      if (viewId === 'history') renderUserBookings();
+      if (viewId === 'profile') renderProfile();
+      if (viewId === 'about' || viewId === 'faq' || viewId === 'travel' || viewId === 'contact' || viewId === 'privacy') renderStaticPages();
+      if (viewId === 'admin') renderAdminView();
+    }
+
+    function demoSwitchRole(role) {
+      const users = getUsers();
+      if (role === 'admin') {
+        const adminUser = users.find(u => u.role === 'admin');
+        if (adminUser) {
+          setCurrentUser(adminUser);
+          showToast('Switched to Hotel Administrator', 'info');
+          updateAuthUI();
+          navigateTo('admin');
+        }
+      } else {
+        const user = users.find(u => u.role === 'user');
+        if (user) {
+          setCurrentUser(user);
+          showToast(`Switched to Guest: ${user.name}`, 'success');
+          updateAuthUI();
+          navigateTo('rooms');
+        }
+      }
+    }
+
+    function updateAuthUI() {
+      const user = getCurrentUser();
+      const authLoggedOut = document.getElementById('authLoggedOut');
+      const authLoggedIn = document.getElementById('authLoggedIn');
+      const adminNavTab = document.getElementById('adminNavTab');
+
+      if (!user) {
+        authLoggedOut.style.display = 'block';
+        authLoggedIn.style.display = 'none';
+        adminNavTab.style.display = 'none';
+      } else {
+        authLoggedOut.style.display = 'none';
+        authLoggedIn.style.display = 'flex';
+        document.getElementById('navUserName').textContent = user.name;
+        document.getElementById('navUserAvatar').textContent = user.name.charAt(0);
+
+        if (user.role === 'admin') {
+          adminNavTab.style.display = 'block';
+        } else {
+          adminNavTab.style.display = 'none';
+        }
+      }
+    }
+
+    function onUserPillClick() {
+      const user = getCurrentUser();
+      if (!user) {
+        openAuthModal('login');
+      } else if (user.role === 'admin') {
+        navigateTo('admin');
+      } else {
+        navigateTo('profile');
+      }
+    }
+
+    /* ==========================================================================
+       4. ROOM AVAILABILITY & BOOKING (REQUIREMENTS 2, 6, 11)
+       ========================================================================== */
+    function checkAvailability() {
+      const checkIn = document.getElementById('searchCheckIn').value;
+      const checkOut = document.getElementById('searchCheckOut').value;
+      const guests = parseInt(document.getElementById('searchGuests').value, 10);
+
+      if (checkIn && checkOut && checkOut <= checkIn) {
+        showToast('Check-out date must be after check-in date!', 'danger');
+        return;
+      }
+
+      if (checkIn && checkOut) {
+        document.getElementById('availDatesSummary').textContent = `${checkIn} to ${checkOut} (${guests} guest${guests > 1 ? 's' : ''})`;
+      } else {
+        document.getElementById('availDatesSummary').textContent = 'Today onwards';
+      }
+
+      renderRooms();
+    }
+
+    function getBookedCountForDates(roomId, checkIn, checkOut) {
+      if (!checkIn || !checkOut) return 0;
+      const bookings = getBookings().filter(b => b.roomId === roomId && b.status === 'Confirmed');
+      
+      const reqIn = new Date(checkIn);
+      const reqOut = new Date(checkOut);
+
+      let overlapping = 0;
+      bookings.forEach(b => {
+        const bIn = new Date(b.checkIn);
+        const bOut = new Date(b.checkOut);
+        // Overlap condition: reqIn < bOut && reqOut > bIn
+        if (reqIn < bOut && reqOut > bIn) {
+          overlapping++;
+        }
+      });
+      return overlapping;
+    }
+
+    function renderRooms() {
+      const rooms = getRooms();
+      const checkIn = document.getElementById('searchCheckIn').value;
+      const checkOut = document.getElementById('searchCheckOut').value;
+      const container = document.getElementById('roomsListContainer');
+
+      let totalAvailable = 0;
+
+      container.innerHTML = rooms.map(room => {
+        const bookedCount = getBookedCountForDates(room.id, checkIn, checkOut);
+        const remaining = Math.max(0, room.quantity - bookedCount);
+        const isAvailable = remaining > 0;
+
+        if (isAvailable) totalAvailable++;
+
+        return `
+          <div class="room-card">
+            <div class="room-card-header">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <span class="room-type-badge">${room.id}</span>
+                <span class="room-avail-tag ${isAvailable ? 'available' : 'booked'}">
+                  ${isAvailable ? `${remaining} Available` : 'Sold Out for Dates'}
+                </span>
+              </div>
+              <div class="room-card-title">${escapeHtml(room.name)}</div>
+            </div>
+
+            <div class="room-card-body">
+              <div class="room-price-row">
+                <div class="room-price">$${room.price} <span>/ night</span></div>
+                <div style="font-size: 0.8rem; color: var(--text-muted);">${escapeHtml(room.size)}</div>
+              </div>
+
+              <div class="room-specs">
+                <span class="room-spec-item">👥 Up to ${room.maxGuests} Guest${room.maxGuests > 1 ? 's' : ''}</span>
+                <span class="room-spec-item">🛏️ ${escapeHtml(room.bed)}</span>
+              </div>
+
+              <p class="room-desc">${escapeHtml(room.desc)}</p>
+
+              <div style="display: flex; flex-wrap: wrap; gap: 4px;">
+                ${room.amenities.map(a => `<span style="font-size: 0.72rem; background: var(--bg-card); padding: 2px 6px; border-radius: 4px; color: var(--text-muted);">✓ ${escapeHtml(a)}</span>`).join('')}
+              </div>
+
+              <div class="room-card-actions">
+                <button class="btn btn-primary" style="width: 100%;" ${!isAvailable ? 'disabled style="opacity: 0.5; cursor: not-allowed;"' : ''} onclick="openBookingModal('${room.id}')">
+                  ${isAvailable ? 'Book This Room' : 'Sold Out'}
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      document.getElementById('totalAvailRoomsCount').textContent = `${totalAvailable} of 4 room types available`;
+    }
+
+    let selectedBookingRoom = null;
+
+    function openBookingModal(roomId) {
+      const user = getCurrentUser();
+      if (!user) {
+        showToast('Please log in or register before completing a room booking', 'info');
+        openAuthModal('login');
+        return;
+      }
+
+      const room = getRooms().find(r => r.id === roomId);
+      if (!room) return;
+
+      selectedBookingRoom = room;
+
+      document.getElementById('bookModalRoomId').value = room.id;
+      document.getElementById('bookModalRoomTitle').textContent = `Book: ${room.name}`;
+      document.getElementById('bookModalRateDisplay').textContent = `$${room.price} / night`;
+
+      // Set default dates if search inputs had them, else tomorrow and +2 days
+      const searchIn = document.getElementById('searchCheckIn').value;
+      const searchOut = document.getElementById('searchCheckOut').value;
+
+      document.getElementById('bookModalCheckIn').value = searchIn || getDateOffset(2);
+      document.getElementById('bookModalCheckOut').value = searchOut || getDateOffset(4);
+
+      document.getElementById('bookModalGuestName').value = user.name || '';
+      document.getElementById('bookModalGuestEmail').value = user.email || '';
+
+      calculateBookingTotal();
+      openModal('bookingModal');
+    }
+
+    function calculateBookingTotal() {
+      if (!selectedBookingRoom) return;
+
+      const checkInStr = document.getElementById('bookModalCheckIn').value;
+      const checkOutStr = document.getElementById('bookModalCheckOut').value;
+
+      if (!checkInStr || !checkOutStr) return;
+
+      const d1 = new Date(checkInStr);
+      const d2 = new Date(checkOutStr);
+      const diffTime = d2 - d1;
+      const diffDays = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)));
+
+      document.getElementById('bookNightsCalc').textContent = diffDays;
+      document.getElementById('bookTotalCalc').textContent = `$${diffDays * selectedBookingRoom.price}`;
+    }
+
+    function handleConfirmBooking(e) {
+      e.preventDefault();
+      const user = getCurrentUser();
+      if (!user) return;
+
+      const roomId = document.getElementById('bookModalRoomId').value;
+      const checkIn = document.getElementById('bookModalCheckIn').value;
+      const checkOut = document.getElementById('bookModalCheckOut').value;
+      const guestName = document.getElementById('bookModalGuestName').value.trim();
+      const guestEmail = document.getElementById('bookModalGuestEmail').value.trim();
+      const paymentMethod = document.getElementById('bookModalPaymentMethod').value;
+
+      if (checkOut <= checkIn) {
+        showToast('Check-out date must be strictly after Check-in date!', 'danger');
+        return;
+      }
+
+      const room = getRooms().find(r => r.id === roomId);
+      if (!room) return;
+
+      // Check real-time availability
+      const bookedCount = getBookedCountForDates(room.id, checkIn, checkOut);
+      if (bookedCount >= room.quantity) {
+        showToast('Sorry! All rooms of this category have been booked for your chosen dates.', 'danger');
+        return;
+      }
+
+      const d1 = new Date(checkIn);
+      const d2 = new Date(checkOut);
+      const nights = Math.max(1, Math.ceil((d2 - d1) / (1000 * 60 * 60 * 24)));
+      const totalPaid = nights * room.price;
+
+      const newBooking = {
+        ref: `BK-${Math.floor(100 + Math.random() * 900)}`,
+        userId: user.id,
+        guestName,
+        guestEmail,
+        roomId: room.id,
+        roomName: room.name,
+        checkIn,
+        checkOut,
+        nights,
+        totalPaid,
+        paymentMethod,
+        status: 'Confirmed'
+      };
+
+      const bookings = getBookings();
+      bookings.unshift(newBooking);
+      saveBookings(bookings);
+
+      closeModal('bookingModal');
+
+      // Confirmation simulation dialog
+      alert(`🎉 RESERVATION CONFIRMED!\n==============================\nBooking Ref: ${newBooking.ref}\nRoom: ${newBooking.roomName}\nGuest: ${guestName}\nDates: ${checkIn} to ${checkOut} (${nights} nights)\nTotal Amount Paid: $${totalPaid}\nPayment Method: ${paymentMethod}\nStatus: Guaranteed\n\nA confirmation receipt has been dispatched to ${guestEmail}.`);
+
+      showToast(`Booking ${newBooking.ref} confirmed successfully!`, 'success');
+      refreshApp();
+      navigateTo('history');
+    }
+
+    /* ==========================================================================
+       5. MY BOOKING HISTORY & 3-DAY CHANGE/CANCEL (REQUIREMENTS 3, 4, 5)
+       ========================================================================== */
+    function renderUserBookings() {
+      const user = getCurrentUser();
+      const tbody = document.getElementById('userBookingsTableBody');
+
+      if (!user) {
+        tbody.innerHTML = `<tr><td colspan="8" style="text-align: center; padding: 2rem;">Please sign in to view your bookings.</td></tr>`;
+        return;
+      }
+
+      const bookings = getBookings().filter(b => b.userId === user.id);
+
+      if (bookings.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="8" style="text-align: center; padding: 2.5rem; color: var(--text-muted);">
+              You have no active or past bookings. Click <strong>Book Another Room</strong> to make a reservation!
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = bookings.map(b => {
+        const policy = checkThreeDayPolicy(b.checkIn);
+        const isCancelled = b.status === 'Cancelled';
+
+        let policyBadge = '';
+        if (isCancelled) {
+          policyBadge = `<span class="badge badge-danger">Cancelled</span>`;
+        } else if (policy.isAllowed) {
+          policyBadge = `<span class="badge badge-success" title="Modifications & Cancellations open">✓ Flexible (${policy.daysRemaining}d ahead)</span>`;
+        } else {
+          policyBadge = `<span class="badge badge-warning" title="Less than 3 days prior to arrival. Locked for users.">🔒 Locked (&lt;3 days)</span>`;
+        }
+
+        return `
+          <tr>
+            <td><strong>${b.ref}</strong></td>
+            <td>${escapeHtml(b.roomName)}</td>
+            <td>${b.checkIn}</td>
+            <td>${b.checkOut}</td>
+            <td>${b.nights}</td>
+            <td><strong style="font-family: 'JetBrains Mono', monospace;">$${b.totalPaid}</strong></td>
+            <td>${policyBadge}</td>
+            <td>
+              ${!isCancelled ? `
+                <div style="display: flex; gap: 6px;">
+                  <button class="btn btn-secondary btn-sm" onclick="userRequestEditBooking('${b.ref}')" ${!policy.isAllowed ? 'disabled style="opacity: 0.5; cursor: not-allowed;" title="Cannot change within 3 days of arrival"' : ''}>
+                    Change
+                  </button>
+                  <button class="btn btn-danger btn-sm" onclick="userRequestCancelBooking('${b.ref}')" ${!policy.isAllowed ? 'disabled style="opacity: 0.5; cursor: not-allowed;" title="Cannot cancel within 3 days of arrival"' : ''}>
+                    Cancel
+                  </button>
+                </div>
+              ` : `<span style="font-size: 0.8rem; color: var(--text-dim);">No action</span>`}
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // User Edit Booking (Requirement 4)
+    function userRequestEditBooking(ref) {
+      const b = getBookings().find(item => item.ref === ref);
+      if (!b) return;
+
+      const policy = checkThreeDayPolicy(b.checkIn);
+      if (!policy.isAllowed) {
+        alert(`❌ CANNOT MODIFY BOOKING:\nPer hotel policy, reservations can only be changed at least 3 days prior to the arrival date.\nToday is ${new Date().toLocaleDateString()}, and your arrival is on ${b.checkIn} (${policy.daysRemaining} days away). Please contact hotel administration for assistance.`);
+        return;
+      }
+
+      openEditModal(b);
+    }
+
+    // User Cancel Booking (Requirement 5)
+    function userRequestCancelBooking(ref) {
+      const b = getBookings().find(item => item.ref === ref);
+      if (!b) return;
+
+      const policy = checkThreeDayPolicy(b.checkIn);
+      if (!policy.isAllowed) {
+        alert(`❌ CANNOT CANCEL BOOKING:\nPer hotel policy, cancellations must be made at least 3 days prior to arrival date.\nYour arrival date is on ${b.checkIn} (${policy.daysRemaining} days away). Contact the front desk directly for emergency cancellations.`);
+        return;
+      }
+
+      if (confirm(`Are you sure you want to cancel booking ${ref}? As per policy, your payment of $${b.totalPaid} will be refunded.`)) {
+        b.status = 'Cancelled';
+        saveBookings(getBookings());
+        showToast(`Booking ${ref} cancelled successfully. Refund initiated.`, 'info');
+        refreshApp();
+      }
+    }
+
+    /* Modal for Editing Bookings (Used by both User and Admin) */
+    function openEditModal(booking) {
+      document.getElementById('editBookingRef').value = booking.ref;
+      document.getElementById('editBookingGuestName').value = booking.guestName;
+      document.getElementById('editBookingCheckIn').value = booking.checkIn;
+      document.getElementById('editBookingCheckOut').value = booking.checkOut;
+
+      const roomSelect = document.getElementById('editBookingRoomSelect');
+      const rooms = getRooms();
+      roomSelect.innerHTML = rooms.map(r => `
+        <option value="${r.id}" ${r.id === booking.roomId ? 'selected' : ''}>${r.name} ($${r.price}/night)</option>
+      `).join('');
+
+      openModal('editBookingModal');
+    }
+
+    function handleSaveEditedBooking(e) {
+      e.preventDefault();
+      const ref = document.getElementById('editBookingRef').value;
+      const guestName = document.getElementById('editBookingGuestName').value.trim();
+      const roomId = document.getElementById('editBookingRoomSelect').value;
+      const checkIn = document.getElementById('editBookingCheckIn').value;
+      const checkOut = document.getElementById('editBookingCheckOut').value;
+
+      if (checkOut <= checkIn) {
+        showToast('Check-out date must be strictly after Check-in date!', 'danger');
+        return;
+      }
+
+      const bookings = getBookings();
+      const b = bookings.find(item => item.ref === ref);
+      const room = getRooms().find(r => r.id === roomId);
+
+      if (!b || !room) return;
+
+      const d1 = new Date(checkIn);
+      const d2 = new Date(checkOut);
+      const nights = Math.max(1, Math.ceil((d2 - d1) / (1000 * 60 * 60 * 24)));
+
+      b.guestName = guestName;
+      b.roomId = room.id;
+      b.roomName = room.name;
+      b.checkIn = checkIn;
+      b.checkOut = checkOut;
+      b.nights = nights;
+      b.totalPaid = nights * room.price;
+
+      saveBookings(bookings);
+      closeModal('editBookingModal');
+      showToast(`Booking ${ref} updated successfully!`, 'success');
+      refreshApp();
+    }
+
+    /* ==========================================================================
+       6. USER PROFILE (REQUIREMENT 1)
+       ========================================================================== */
+    function renderProfile() {
+      const user = getCurrentUser();
+      if (!user) return;
+
+      document.getElementById('profName').value = user.name || '';
+      document.getElementById('profEmail').value = user.email || '';
+      document.getElementById('profPhone').value = user.phone || '';
+      document.getElementById('profAddress').value = user.address || '';
+      document.getElementById('profIdProof').value = user.idProof || '';
+    }
+
+    function handleSaveProfile(e) {
+      e.preventDefault();
+      const user = getCurrentUser();
+      if (!user) return;
+
+      user.name = document.getElementById('profName').value.trim();
+      user.email = document.getElementById('profEmail').value.trim();
+      user.phone = document.getElementById('profPhone').value.trim();
+      user.address = document.getElementById('profAddress').value.trim();
+      user.idProof = document.getElementById('profIdProof').value.trim();
+
+      setCurrentUser(user);
+
+      // Update in users database
+      const users = getUsers();
+      const idx = users.findIndex(u => u.id === user.id);
+      if (idx !== -1) {
+        users[idx] = user;
+        saveUsers(users);
+      }
+
+      showToast('Profile information successfully saved!', 'success');
+      updateAuthUI();
+    }
+
+    /* ==========================================================================
+       7. STATIC PAGES RENDERING (REQUIREMENT 10 & 11)
+       ========================================================================== */
+    function renderStaticPages() {
+      const s = getStaticContent();
+
+      // About
+      document.getElementById('staticAboutContent').innerHTML = `<p>${escapeHtml(s.about).replace(/\n/g, '<br>')}</p>`;
+      document.getElementById('staticRoomIntroContent').innerHTML = `<p>${escapeHtml(s.roomIntro).replace(/\n/g, '<br>')}</p>`;
+
+      // FAQ
+      document.getElementById('staticFaqContainer').innerHTML = escapeHtml(s.faq).split('\n\n').map(qaBlock => {
+        const lines = qaBlock.split('\n');
+        const q = lines[0] || '';
+        const a = lines.slice(1).join('<br>') || '';
+        return `
+          <div class="faq-item">
+            <div class="faq-q">${q}</div>
+            <div class="faq-a">${a}</div>
+          </div>
+        `;
+      }).join('');
+
+      // Travel
+      document.getElementById('staticTravelContent').innerHTML = `<p>${escapeHtml(s.travel).replace(/\n/g, '<br>')}</p>`;
+
+      // Contact
+      document.getElementById('staticContactContent').innerHTML = `<p>${escapeHtml(s.contact).replace(/\n/g, '<br>')}</p>`;
+
+      // Privacy
+      document.getElementById('staticPrivacyContent').innerHTML = `<p>${escapeHtml(s.privacy).replace(/\n/g, '<br>')}</p>`;
+    }
+
+    function handleContactSend(e) {
+      e.preventDefault();
+      const name = document.getElementById('contactMsgName').value;
+      document.getElementById('contactMsgText').value = '';
+      showToast(`Thank you, ${name}! Your inquiry has been routed to our front desk team.`, 'success');
+    }
+
+    /* ==========================================================================
+       8. ADMINISTRATOR PANEL (REQUIREMENTS 7, 8, 9, 10)
+       ========================================================================== */
+    function switchAdminTab(tabName, btn) {
+      document.querySelectorAll('.admin-subnav-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+
+      document.querySelectorAll('.admin-tab-pane').forEach(p => p.classList.remove('active'));
+      const target = document.getElementById(`admin-tab-${tabName}`);
+      if (target) target.classList.add('active');
+
+      if (tabName === 'rooms-mgr') renderAdminRooms();
+      if (tabName === 'bookings-mgr') renderAdminBookings();
+      if (tabName === 'static-mgr') renderAdminStaticEditor();
+    }
+
+    function renderAdminView() {
+      renderAdminRooms();
+      renderAdminBookings();
+      renderAdminStaticEditor();
+    }
+
+    // Admin Feature 1: Modify 4 Room Types Quantity & Price (Requirement 7)
+    function renderAdminRooms() {
+      const rooms = getRooms();
+      const tbody = document.getElementById('adminRoomsTableBody');
+
+      tbody.innerHTML = rooms.map(r => `
+        <tr>
+          <td><code>${r.id}</code></td>
+          <td><strong>${escapeHtml(r.name)}</strong></td>
+          <td>
+            <div style="display: flex; align-items: center; gap: 4px;">
+              <span>$</span>
+              <input type="number" id="admPrice_${r.id}" class="form-control" style="width: 100px; padding: 4px 8px;" value="${r.price}" min="10">
+            </div>
+          </td>
+          <td>
+            <input type="number" id="admQty_${r.id}" class="form-control" style="width: 90px; padding: 4px 8px;" value="${r.quantity}" min="1" max="100">
+          </td>
+          <td>
+            <button class="btn btn-primary btn-sm" onclick="adminSaveRoom('${r.id}')">
+              Save Updates
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function adminSaveRoom(roomId) {
+      const rooms = getRooms();
+      const room = rooms.find(r => r.id === roomId);
+      if (!room) return;
+
+      const newPrice = parseFloat(document.getElementById(`admPrice_${roomId}`).value);
+      const newQty = parseInt(document.getElementById(`admQty_${roomId}`).value, 10);
+
+      if (isNaN(newPrice) || newPrice <= 0 || isNaN(newQty) || newQty <= 0) {
+        showToast('Please enter valid positive values for price and quantity!', 'danger');
+        return;
+      }
+
+      room.price = newPrice;
+      room.quantity = newQty;
+
+      saveRooms(rooms);
+      showToast(`Updated ${room.name}: $${newPrice}/night, Quantity: ${newQty}`, 'success');
+      refreshApp();
+    }
+
+    // Admin Feature 2: Universal Booking Management (Requirements 8 & 9)
+    function renderAdminBookings() {
+      const bookings = getBookings();
+      const tbody = document.getElementById('adminBookingsTableBody');
+
+      if (bookings.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 1.5rem;">No bookings found.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = bookings.map(b => `
+        <tr>
+          <td><strong>${b.ref}</strong></td>
+          <td>${escapeHtml(b.guestName)}</td>
+          <td>${escapeHtml(b.roomName)}</td>
+          <td>${b.checkIn}</td>
+          <td>${b.checkOut}</td>
+          <td>
+            <span class="badge ${b.status === 'Confirmed' ? 'badge-success' : 'badge-danger'}">
+              ${b.status}
+            </span>
+          </td>
+          <td>
+            <div style="display: flex; gap: 6px;">
+              <button class="btn btn-secondary btn-sm" onclick="adminEditBooking('${b.ref}')" title="Admin override: change dates, guest, room">
+                Change Details
+              </button>
+              ${b.status !== 'Cancelled' ? `
+                <button class="btn btn-danger btn-sm" onclick="adminCancelBooking('${b.ref}')" title="Admin override: cancel any booking">
+                  Cancel Booking
+                </button>
+              ` : ''}
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function adminEditBooking(ref) {
+      const b = getBookings().find(item => item.ref === ref);
+      if (b) openEditModal(b);
+    }
+
+    function adminCancelBooking(ref) {
+      const bookings = getBookings();
+      const b = bookings.find(item => item.ref === ref);
+      if (!b) return;
+
+      if (confirm(`Administrator Override: Cancel booking ${ref} for ${b.guestName}?`)) {
+        b.status = 'Cancelled';
+        saveBookings(bookings);
+        showToast(`Administrator cancelled booking ${ref}.`, 'info');
+        refreshApp();
+      }
+    }
+
+    // Admin Feature 3: Modify Static Pages Details (Requirement 10)
+    function renderAdminStaticEditor() {
+      const s = getStaticContent();
+      document.getElementById('editStaticAbout').value = s.about || '';
+      document.getElementById('editStaticRoomIntro').value = s.roomIntro || '';
+      document.getElementById('editStaticContact').value = s.contact || '';
+      document.getElementById('editStaticFaq').value = s.faq || '';
+      document.getElementById('editStaticTravel').value = s.travel || '';
+      document.getElementById('editStaticPrivacy').value = s.privacy || '';
+    }
+
+    function handleSaveStaticPages(e) {
+      e.preventDefault();
+
+      const updatedStatic = {
+        about: document.getElementById('editStaticAbout').value.trim(),
+        roomIntro: document.getElementById('editStaticRoomIntro').value.trim(),
+        contact: document.getElementById('editStaticContact').value.trim(),
+        faq: document.getElementById('editStaticFaq').value.trim(),
+        travel: document.getElementById('editStaticTravel').value.trim(),
+        privacy: document.getElementById('editStaticPrivacy').value.trim()
+      };
+
+      saveStaticContent(updatedStatic);
+      showToast('Static page details saved and published across the website!', 'success');
+      renderStaticPages();
+    }
+
+    /* ==========================================================================
+       9. AUTHENTICATION & SESSION
+       ========================================================================== */
+    function openAuthModal(mode) {
+      switchAuthMode(mode);
+      openModal('authModal');
+    }
+
+    function switchAuthMode(mode) {
+      const loginBtn = document.getElementById('authTabLoginBtn');
+      const regBtn = document.getElementById('authTabRegBtn');
+      const loginForm = document.getElementById('loginForm');
+      const regForm = document.getElementById('regForm');
+      const title = document.getElementById('authModalTitle');
+
+      if (mode === 'login') {
+        loginBtn.className = 'btn btn-sm btn-primary';
+        regBtn.className = 'btn btn-sm btn-secondary';
+        loginForm.style.display = 'block';
+        regForm.style.display = 'none';
+        title.textContent = 'Sign In to Grand Horizon';
+      } else {
+        loginBtn.className = 'btn btn-sm btn-secondary';
+        regBtn.className = 'btn btn-sm btn-primary';
+        loginForm.style.display = 'none';
+        regForm.style.display = 'block';
+        title.textContent = 'Register New Guest Account';
+      }
+    }
+
+    function handleAuthLogin(e) {
+      e.preventDefault();
+      const username = document.getElementById('loginUsername').value.trim();
+      const password = document.getElementById('loginPassword').value.trim();
+
+      const users = getUsers();
+      const matched = users.find(u => (u.email.toLowerCase() === username.toLowerCase() || u.name.toLowerCase() === username.toLowerCase()) && u.password === password);
+
+      if (matched) {
+        setCurrentUser(matched);
+        closeModal('authModal');
+        showToast(`Welcome back, ${matched.name}!`, 'success');
+        updateAuthUI();
+        if (matched.role === 'admin') navigateTo('admin');
+        else navigateTo('rooms');
+      } else {
+        showToast('Invalid login credentials. Use demo credentials!', 'danger');
+      }
+    }
+
+    function handleAuthRegister(e) {
+      e.preventDefault();
+      const name = document.getElementById('regName').value.trim();
+      const email = document.getElementById('regEmail').value.trim();
+      const phone = document.getElementById('regPhone').value.trim();
+      const password = document.getElementById('regPassword').value.trim();
+
+      const users = getUsers();
+      if (users.some(u => u.email.toLowerCase() === email.toLowerCase())) {
+        showToast('An account with this email already exists!', 'danger');
+        return;
+      }
+
+      const newUser = {
+        id: `U${Date.now().toString().slice(-4)}`,
+        name,
+        email,
+        phone,
+        address: '',
+        idProof: '',
+        role: 'user',
+        password
+      };
+
+      users.push(newUser);
+      saveUsers(users);
+      setCurrentUser(newUser);
+
+      closeModal('authModal');
+      showToast(`Welcome to Grand Horizon, ${name}! Your account is registered.`, 'success');
+      updateAuthUI();
+      navigateTo('rooms');
+    }
+
+    function logout() {
+      localStorage.removeItem(STORAGE_KEY_HOTEL_CURRENT_USER);
+      showToast('You have been logged out.', 'info');
+      updateAuthUI();
+      navigateTo('rooms');
+    }
+
+    /* ==========================================================================
+       10. UTILITIES (MODALS, TOASTS, THEME, REFRESH)
+       ========================================================================== */
+    function openModal(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.add('open');
+    }
+
+    function closeModal(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.remove('open');
+    }
+
+    document.querySelectorAll('.modal-backdrop').forEach(modal => {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.classList.remove('open');
+      });
+    });
+
+    function showToast(msg, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast-msg ${type}`;
+      toast.textContent = msg;
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(10px)';
+        toast.style.transition = 'all 0.2s ease';
+        setTimeout(() => toast.remove(), 200);
+      }, 4000);
+    }
+
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme') || 'dark';
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem(STORAGE_KEY_THEME, next);
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function refreshApp() {
+      updateAuthUI();
+      renderRooms();
+      renderUserBookings();
+      renderProfile();
+      renderStaticPages();
+      if (getCurrentUser() && getCurrentUser().role === 'admin') {
+        renderAdminView();
+      }
+    }
+
+    /* DOM Ready */
+    document.addEventListener('DOMContentLoaded', () => {
+      initDatabase();
+      updateAuthUI();
+
+      // Pre-set search inputs with default dates (today and +2 days)
+      document.getElementById('searchCheckIn').value = getDateOffset(0);
+      document.getElementById('searchCheckOut').value = getDateOffset(2);
+
+      renderRooms();
+      renderStaticPages();
+    });
+  </script>
+</body>
+</html>
