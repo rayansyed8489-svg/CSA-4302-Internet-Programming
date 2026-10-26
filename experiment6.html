@@ -1,0 +1,2839 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Experiment 6 - Online Cake Ordering & Bakery E-Commerce System</title>
+  <meta name="description" content="Experiment 6: Comprehensive Online Cake Ordering System with Category Filters, Flavor Selection, Custom Cake Messages, Cart & Checkout, Address Management, Real-time Order Tracking, and Admin Product & Order Control.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* ==========================================================================
+       EXPERIMENT 6 - ONLINE CAKE ORDERING & BAKERY E-COMMERCE SYSTEM
+       Warm, Delightful, Professional, Responsive Artisan Bakery Theme
+       ========================================================================== */
+    :root {
+      --primary: #e11d48;
+      --primary-hover: #be123c;
+      --primary-light: rgba(225, 29, 72, 0.15);
+
+      --accent: #f59e0b;
+      --accent-hover: #d97706;
+      --accent-light: rgba(245, 158, 11, 0.15);
+
+      --success: #10b981;
+      --success-light: rgba(16, 185, 129, 0.15);
+
+      --danger: #ef4444;
+      --danger-light: rgba(239, 68, 68, 0.15);
+
+      --bg-body: #0f141c;
+      --bg-surface: #18202c;
+      --bg-card: #202b3b;
+      --bg-card-hover: #29374b;
+      --border: rgba(255, 255, 255, 0.1);
+
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.2);
+      --shadow-md: 0 4px 14px rgba(0,0,0,0.3);
+      --shadow-lg: 0 10px 25px rgba(0,0,0,0.4);
+
+      --transition: 0.2s ease;
+    }
+
+    [data-theme="light"] {
+      --bg-body: #fdf8f6;
+      --bg-surface: #ffffff;
+      --bg-card: #ffffff;
+      --bg-card-hover: #fff1f2;
+      --border: #f1e5e2;
+      --text-main: #1e1b18;
+      --text-muted: #645e5a;
+      --text-dim: #9a9490;
+      --shadow-sm: 0 1px 4px rgba(180, 83, 9, 0.06);
+      --shadow-md: 0 4px 14px rgba(225, 29, 72, 0.08);
+      --shadow-lg: 0 10px 25px rgba(225, 29, 72, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      transition: background-color var(--transition), color var(--transition);
+    }
+
+    /* Top Experiment Banner */
+    .exp-bar {
+      background: linear-gradient(90deg, #881337, #be123c, #881337);
+      color: #ffe4e6;
+      padding: 7px 1.5rem;
+      font-size: 0.82rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      border-bottom: 1px solid rgba(244, 63, 94, 0.3);
+    }
+
+    .exp-badge {
+      background: #e11d48;
+      color: #fff;
+      padding: 2px 8px;
+      border-radius: var(--radius-sm);
+      font-weight: 800;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.5px;
+    }
+
+    .exp-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .quick-btn {
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #fff;
+      padding: 3px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 0.75rem;
+      cursor: pointer;
+      font-family: inherit;
+      transition: var(--transition);
+    }
+
+    .quick-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Navbar */
+    .navbar {
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      text-decoration: none;
+      color: var(--text-main);
+    }
+
+    .nav-brand-logo {
+      width: 42px;
+      height: 42px;
+      background: linear-gradient(135deg, #e11d48, #f43f5e);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.45rem;
+      box-shadow: 0 4px 10px rgba(225, 29, 72, 0.35);
+    }
+
+    .nav-brand-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      line-height: 1.2;
+      letter-spacing: -0.2px;
+    }
+
+    .nav-brand-text span {
+      display: block;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      list-style: none;
+      overflow-x: auto;
+      padding: 4px 0;
+    }
+
+    .nav-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 8px 13px;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: inherit;
+      white-space: nowrap;
+      position: relative;
+    }
+
+    .nav-btn:hover {
+      color: var(--text-main);
+      background: var(--primary-light);
+    }
+
+    .nav-btn.active {
+      color: #fb7185;
+      background: var(--primary-light);
+      font-weight: 700;
+    }
+
+    .cart-badge-pill {
+      background: var(--primary);
+      color: white;
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 1px 6px;
+      border-radius: 10px;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .theme-toggle {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 6px 10px;
+      color: var(--text-main);
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .user-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 4px 12px 4px 6px;
+      border-radius: 30px;
+      cursor: pointer;
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+
+    .user-avatar {
+      width: 28px;
+      height: 28px;
+      background: var(--primary);
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.78rem;
+    }
+
+    /* Main Container */
+    .container {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 1.5rem 1rem 3rem;
+      width: 100%;
+      flex: 1;
+    }
+
+    .view-section {
+      display: none;
+      animation: fadeIn 0.25s ease-in-out;
+    }
+
+    .view-section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Hero Banner */
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(225, 29, 72, 0.2) 0%, rgba(32, 43, 59, 0.85) 100%), var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 2.25rem 2rem;
+      margin-bottom: 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-banner::after {
+      content: '🎂';
+      position: absolute;
+      right: 3%;
+      bottom: -15px;
+      font-size: 7.5rem;
+      opacity: 0.08;
+      pointer-events: none;
+      transform: rotate(-10deg);
+    }
+
+    .hero-banner h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.3rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 0.4rem;
+      letter-spacing: -0.5px;
+    }
+
+    .hero-banner p {
+      color: var(--text-muted);
+      font-size: 0.98rem;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    /* Card */
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 1.5rem;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .card-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Form Controls */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .form-control {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 9px 12px;
+      color: var(--text-main);
+      font-size: 0.9rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color var(--transition);
+    }
+
+    .form-control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px var(--primary-light);
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 9px 18px;
+      border-radius: var(--radius-sm);
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: var(--transition);
+      font-family: inherit;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-secondary {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-card-hover);
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: #dc2626;
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 0.78rem;
+    }
+
+    .btn-block {
+      width: 100%;
+    }
+
+    /* Cake Catalog Filter Sidebar & Grid Layout */
+    .shop-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 1.5rem;
+      align-items: start;
+    }
+
+    .filter-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      position: sticky;
+      top: 80px;
+    }
+
+    .filter-section {
+      margin-bottom: 1.25rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .filter-section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .filter-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .filter-pill-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .filter-pill {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      color: var(--text-muted);
+      transition: var(--transition);
+    }
+
+    .filter-pill:hover,
+    .filter-pill.active {
+      background: var(--primary-light);
+      border-color: var(--primary);
+      color: #fb7185;
+      font-weight: 700;
+    }
+
+    /* Cake Product Cards */
+    .cake-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .cake-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: var(--transition);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .cake-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+      border-color: rgba(225, 29, 72, 0.4);
+    }
+
+    .cake-thumb-box {
+      height: 180px;
+      background: var(--bg-card);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cake-badge-top {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      display: flex;
+      gap: 6px;
+    }
+
+    .cake-content {
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .cake-category {
+      font-size: 0.72rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .cake-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin: 4px 0 6px;
+      line-height: 1.3;
+    }
+
+    .cake-flavor {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .cake-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: auto;
+      padding-top: 10px;
+      border-top: 1px solid var(--border);
+    }
+
+    .cake-price {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #fb7185;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    .badge-success { background: var(--success-light); color: #34d399; }
+    .badge-warning { background: var(--accent-light); color: #fbbf24; }
+    .badge-danger  { background: var(--danger-light); color: #f87171; }
+    .badge-info    { background: var(--primary-light); color: #fb7185; }
+
+    /* Cart Layout */
+    .cart-layout {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 1.5rem;
+      align-items: start;
+    }
+
+    .cart-item-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--border);
+      gap: 1rem;
+    }
+
+    .cart-item-thumb {
+      width: 60px;
+      height: 60px;
+      background: var(--bg-card);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+    }
+
+    .qty-control {
+      display: flex;
+      align-items: center;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--bg-card);
+    }
+
+    .qty-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-main);
+      width: 28px;
+      height: 28px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .qty-display {
+      width: 32px;
+      text-align: center;
+      font-size: 0.85rem;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Order Tracking Stepper */
+    .tracking-stepper {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      margin: 1.5rem 0;
+      padding: 0 1rem;
+    }
+
+    .tracking-stepper::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 3rem;
+      right: 3rem;
+      height: 3px;
+      background: var(--border);
+      z-index: 1;
+      transform: translateY(-50%);
+    }
+
+    .track-step {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      text-align: center;
+    }
+
+    .track-icon-box {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--bg-surface);
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      color: var(--text-muted);
+      transition: var(--transition);
+    }
+
+    .track-step.done .track-icon-box {
+      border-color: var(--success);
+      background: var(--success);
+      color: white;
+    }
+
+    .track-step.active .track-icon-box {
+      border-color: var(--primary);
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 0 12px rgba(225, 29, 72, 0.45);
+    }
+
+    .track-label {
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: var(--text-muted);
+    }
+
+    .track-step.active .track-label,
+    .track-step.done .track-label {
+      color: var(--text-main);
+    }
+
+    /* Admin Tabs */
+    .admin-tab-nav {
+      display: flex;
+      gap: 8px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1.5rem;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .admin-tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 8px 16px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+
+    .admin-tab-btn.active {
+      color: #fb7185;
+      border-bottom-color: #fb7185;
+    }
+
+    .admin-pane {
+      display: none;
+    }
+
+    .admin-pane.active {
+      display: block;
+    }
+
+    /* Tables */
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.86rem;
+    }
+
+    .data-table th {
+      background: var(--bg-card);
+      color: var(--text-muted);
+      padding: 10px 14px;
+      font-weight: 700;
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .data-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-main);
+    }
+
+    .data-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    /* Modal Overlay */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      backdrop-filter: blur(4px);
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 580px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: var(--shadow-lg);
+      animation: modalSlide 0.2s ease-out;
+    }
+
+    @keyframes modalSlide {
+      from { transform: scale(0.95); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .modal-header {
+      padding: 1.1rem 1.4rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h3 {
+      font-size: 1.18rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .modal-close-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 1.35rem;
+      line-height: 1;
+    }
+
+    .modal-close-btn:hover {
+      color: var(--text-main);
+    }
+
+    .modal-body {
+      padding: 1.4rem;
+    }
+
+    .modal-footer {
+      padding: 1rem 1.4rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    /* Toast */
+    .toast-box {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 300;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .toast-msg {
+      background: var(--bg-surface);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      padding: 10px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 0.88rem;
+      font-weight: 500;
+      box-shadow: var(--shadow-md);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: toastIn 0.2s ease-out;
+    }
+
+    @keyframes toastIn {
+      from { transform: translateX(50px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    .toast-msg.success { border-left: 4px solid var(--success); }
+    .toast-msg.danger  { border-left: 4px solid var(--danger); }
+    .toast-msg.info    { border-left: 4px solid var(--primary); }
+    .toast-msg.warning { border-left: 4px solid var(--accent); }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      background: var(--bg-surface);
+      padding: 1.5rem;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      margin-top: auto;
+    }
+
+    @media (max-width: 850px) {
+      .shop-layout {
+        grid-template-columns: 1fr;
+      }
+      .filter-panel {
+        position: static;
+      }
+      .cart-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========================================================================
+       EXPERIMENT 6 TOP BAR: FAST ROLE SWITCHER & LAB INFO
+       ======================================================================== -->
+  <div class="exp-bar">
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <span class="exp-badge">Experiment 6</span>
+      <span>Online Cake Ordering System & Bakery E-Commerce Portal</span>
+    </div>
+    <div class="exp-actions">
+      <span style="opacity: 0.85; font-size: 0.76rem;">Quick Demo Switcher:</span>
+      <button class="quick-btn" onclick="demoSwitch('user')">👤 Customer: Ananya Roy</button>
+      <button class="quick-btn" onclick="demoSwitch('admin')">🔑 Bakery Admin</button>
+      <button class="quick-btn" onclick="resetDemoData()">🔄 Reset Bakery Data</button>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       NAVBAR
+       ======================================================================== -->
+  <nav class="navbar">
+    <div class="nav-brand" onclick="navigate('shop')">
+      <div class="nav-brand-logo">🎂</div>
+      <div class="nav-brand-text">
+        SweetDelight Bakery
+        <span>Artisan Cake Store • Exp 6</span>
+      </div>
+    </div>
+
+    <ul class="nav-links">
+      <li><button class="nav-btn active" id="nav-btn-shop" onclick="navigate('shop')">🍰 Browse Cakes</button></li>
+      <li>
+        <button class="nav-btn" id="nav-btn-cart" onclick="navigate('cart')">
+          🛒 Cart <span class="cart-badge-pill" id="navCartCount">0</span>
+        </button>
+      </li>
+      <li><button class="nav-btn" id="nav-btn-orders" onclick="navigate('orders')">📦 My Orders</button></li>
+      <li><button class="nav-btn" id="nav-btn-address" onclick="navigate('address')">📍 Shipping Address</button></li>
+      <li id="adminNavTab" style="display: none;">
+        <button class="nav-btn" id="nav-btn-admin" onclick="navigate('admin')" style="color: #fb7185;">⚙️ Bakery Admin</button>
+      </li>
+    </ul>
+
+    <div class="nav-actions">
+      <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Light/Dark Theme">🌓</button>
+
+      <div id="authLoggedOut" style="display: none;">
+        <button class="btn btn-primary btn-sm" onclick="openAuthModal('login')">Sign In</button>
+      </div>
+
+      <div id="authLoggedIn" style="display: flex;">
+        <div class="user-pill" onclick="handleUserPillClick()">
+          <div class="user-avatar" id="navUserInitial">A</div>
+          <span id="navUserName">Ananya Roy</span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ========================================================================
+       MAIN APPLICATION VIEW CONTAINER
+       ======================================================================== -->
+  <main class="container">
+
+    <!-- ======================================================================
+         PAGE 1: CAKE BROWSE & FILTER (STUDENT / USER VIEW)
+         ====================================================================== -->
+    <section id="view-shop" class="view-section active">
+      <div class="hero-banner">
+        <h1>Freshly Baked Artisan Delights</h1>
+        <p>Connecting master bakers and rural artisanal confectioners to sweet lovers worldwide. Handcrafted with organic ingredients and delivered fresh to your doorstep.</p>
+      </div>
+
+      <div class="shop-layout">
+        <!-- Sidebar Filters -->
+        <aside class="filter-panel">
+          <div class="filter-section">
+            <div class="filter-title">🔍 Search Cakes</div>
+            <input type="text" id="searchKeyword" class="form-control" placeholder="Search by name or flavor..." oninput="applyFilters()">
+          </div>
+
+          <div class="filter-section">
+            <div class="filter-title">🎂 Occasion / Category</div>
+            <div class="filter-pill-list">
+              <span class="filter-pill active" onclick="setCategoryFilter('all', this)">All</span>
+              <span class="filter-pill" onclick="setCategoryFilter('Birthday', this)">Birthday</span>
+              <span class="filter-pill" onclick="setCategoryFilter('Wedding', this)">Wedding & Anniv</span>
+              <span class="filter-pill" onclick="setCategoryFilter('Designer', this)">Designer</span>
+              <span class="filter-pill" onclick="setCategoryFilter('Cupcakes', this)">Pastries & Cupcakes</span>
+            </div>
+          </div>
+
+          <div class="filter-section">
+            <div class="filter-title">🍫 Sub-Category / Flavor</div>
+            <select id="flavorFilter" class="form-control" onchange="applyFilters()">
+              <option value="all">All Flavors</option>
+              <option value="Belgian Chocolate">Belgian / Dutch Chocolate</option>
+              <option value="Red Velvet">Red Velvet with Cream Cheese</option>
+              <option value="Black Forest">Classic Black Forest</option>
+              <option value="Fresh Mango">Alphonso Mango & Fruit</option>
+              <option value="Vanilla Caramel">Vanilla & Salted Caramel</option>
+              <option value="Blueberry Cheesecake">Blueberry Cheesecake</option>
+            </select>
+          </div>
+
+          <div class="filter-section">
+            <div class="filter-title">🌱 Dietary Preference</div>
+            <div class="filter-pill-list">
+              <span class="filter-pill active" onclick="setDietaryFilter('all', this)">All</span>
+              <span class="filter-pill" onclick="setDietaryFilter('eggless', this)">100% Eggless 🌱</span>
+              <span class="filter-pill" onclick="setDietaryFilter('regular', this)">Contains Egg 🥚</span>
+            </div>
+          </div>
+
+          <div class="filter-section">
+            <div class="filter-title">
+              <span>💰 Price Range</span>
+              <span id="priceRangeLabel" style="font-size: 0.78rem; color: #fb7185; font-family: monospace;">Up to ₹2,500</span>
+            </div>
+            <input type="range" id="priceRange" min="300" max="2500" step="50" value="2500" style="width: 100%; accent-color: var(--primary);" oninput="handlePriceRangeChange(this.value)">
+          </div>
+
+          <div class="filter-section">
+            <div class="filter-title">⚡ Sort By</div>
+            <select id="sortFilter" class="form-control" onchange="applyFilters()">
+              <option value="featured">Featured / Popular</option>
+              <option value="price-asc">Price: Low to High</option>
+              <option value="price-desc">Price: High to Low</option>
+              <option value="rating">Customer Rating</option>
+            </select>
+          </div>
+
+          <button class="btn btn-secondary btn-block btn-sm" onclick="resetAllFilters()">Reset All Filters</button>
+        </aside>
+
+        <!-- Product Cards Grid -->
+        <main>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <div style="font-size: 0.9rem; color: var(--text-muted);" id="resultsCount">Showing all cakes</div>
+            <div class="badge badge-success">🛵 Express 2-Hour Delivery Available</div>
+          </div>
+
+          <div id="cakeGridContainer" class="cake-grid">
+            <!-- Populated via JavaScript -->
+          </div>
+        </main>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         PAGE 2: CART & CHECKOUT
+         ====================================================================== -->
+    <section id="view-cart" class="view-section">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🛒 Shopping Cart & Checkout</div>
+          <button class="btn btn-secondary btn-sm" onclick="navigate('shop')">← Continue Shopping</button>
+        </div>
+
+        <div id="emptyCartBox" style="display: none; text-align: center; padding: 3rem 1rem;">
+          <div style="font-size: 3rem; margin-bottom: 0.5rem;">🍰</div>
+          <h3>Your Bakery Cart is Empty</h3>
+          <p style="color: var(--text-muted); font-size: 0.88rem; margin: 6px 0 1.25rem;">
+            Explore our artisanal cakes, customize your personal message, and place your order!
+          </p>
+          <button class="btn btn-primary" onclick="navigate('shop')">Browse Fresh Cakes Now</button>
+        </div>
+
+        <div id="activeCartBox" class="cart-layout">
+          <!-- Cart Items List -->
+          <div>
+            <h3 style="font-size: 1rem; margin-bottom: 0.75rem;">Your Selected Treats</h3>
+            <div id="cartItemsList">
+              <!-- Rendered dynamically -->
+            </div>
+          </div>
+
+          <!-- Checkout & Order Summary -->
+          <div style="background: var(--bg-card); padding: 1.25rem; border-radius: var(--radius-md); border: 1px solid var(--border);">
+            <h3 style="font-size: 1rem; margin-bottom: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;">
+              Order Summary
+            </h3>
+
+            <!-- Delivery Address Snapshot -->
+            <div style="margin-bottom: 1rem; background: var(--bg-surface); padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--border);">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <span style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; color: var(--text-muted);">Delivery Address</span>
+                <a href="javascript:void(0)" onclick="navigate('address')" style="font-size: 0.75rem; color: #fb7185; text-decoration: none;">Change</a>
+              </div>
+              <div id="checkoutAddressSummary" style="font-size: 0.82rem; color: var(--text-main);">
+                <!-- Populated via JS -->
+              </div>
+            </div>
+
+            <!-- Price Breakdown -->
+            <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px;">
+              <span>Cakes Subtotal:</span>
+              <span id="cartSubtotal">₹0</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px;">
+              <span>Artisan Packaging:</span>
+              <span style="color: #34d399;">FREE</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px;">
+              <span>Express Delivery:</span>
+              <span id="cartDeliveryFee">₹50</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px;">
+              <span>GST (5%):</span>
+              <span id="cartTax">₹0</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-weight: 800; font-size: 1.2rem; color: #fb7185; border-top: 1px solid var(--border); padding-top: 8px; margin-bottom: 1.25rem;">
+              <span>Total Payable:</span>
+              <span id="cartTotal">₹0</span>
+            </div>
+
+            <!-- Payment Method -->
+            <div class="form-group" style="margin-bottom: 1rem;">
+              <label class="form-label">Payment Method</label>
+              <select id="checkoutPaymentMethod" class="form-control">
+                <option value="UPI">📱 Instant UPI / QR Code</option>
+                <option value="Card">💳 Credit / Debit Card</option>
+                <option value="COD">💵 Cash on Delivery (COD)</option>
+              </select>
+            </div>
+
+            <button class="btn btn-primary btn-block" style="padding: 12px; font-size: 0.95rem;" onclick="handlePlaceOrder()">
+              Place Order & Bake Now 🚀
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         PAGE 3: MY ORDERS & REAL-TIME SHIPPING STATUS
+         ====================================================================== -->
+    <section id="view-orders" class="view-section">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📦 My Cake Orders & Live Shipping Status</div>
+          <button class="btn btn-primary btn-sm" onclick="navigate('shop')">+ Order More Cakes</button>
+        </div>
+
+        <div id="userOrdersContainer">
+          <!-- Populated via JavaScript -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         PAGE 4: SHIPPING ADDRESS MANAGEMENT
+         ====================================================================== -->
+    <section id="view-address" class="view-section">
+      <div class="card" style="max-width: 650px; margin: 0 auto;">
+        <div class="card-header">
+          <div class="card-title">📍 Manage Shipping & Delivery Address</div>
+          <span class="badge badge-info">Serviceable Across All City Hubs</span>
+        </div>
+
+        <form id="shippingAddressForm" onsubmit="handleSaveAddress(event)">
+          <div class="form-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 1rem;">
+            <div class="form-group">
+              <label class="form-label">Recipient Full Name</label>
+              <input type="text" id="addrFullName" class="form-control" placeholder="Ananya Roy" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Contact Phone Number</label>
+              <input type="tel" id="addrPhone" class="form-control" placeholder="+91 98765 43210" required>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label class="form-label">Flat / House No. & Apartment Name</label>
+            <input type="text" id="addrStreet" class="form-control" placeholder="A-402, Rosewood Garden Apartments" required>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label class="form-label">Street / Area / Landmark</label>
+            <input type="text" id="addrLandmark" class="form-control" placeholder="Opposite City Mall, Near Metro Pillar 12" required>
+          </div>
+
+          <div class="form-grid" style="grid-template-columns: 1fr 1fr 1fr; margin-bottom: 1.25rem;">
+            <div class="form-group">
+              <label class="form-label">City</label>
+              <input type="text" id="addrCity" class="form-control" placeholder="Bengaluru" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">State</label>
+              <input type="text" id="addrState" class="form-control" placeholder="Karnataka" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Postal PIN Code</label>
+              <input type="text" id="addrPincode" class="form-control" placeholder="560001" maxlength="6" required>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1.5rem;">
+            <label class="form-label">Address Type</label>
+            <select id="addrType" class="form-control">
+              <option value="Home">Home (Anytime Delivery)</option>
+              <option value="Office">Office / Work (9 AM - 6 PM)</option>
+              <option value="Celebration Venue">Party Hall / Event Venue</option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block" style="padding: 11px;">
+            Save & Update Shipping Address 📍
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         PAGE 5: ADMINISTRATOR PANEL (MANAGE PRODUCTS & ORDERS)
+         ====================================================================== -->
+    <section id="view-admin" class="view-section">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">⚙️ Bakery Administration & Rural Artisan Portal</div>
+          <button class="btn btn-primary btn-sm" onclick="openAddCakeModal()">+ Post New Cake Details</button>
+        </div>
+
+        <!-- Admin KPI Metrics -->
+        <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 1.5rem;">
+          <div style="background: var(--bg-card); padding: 1.25rem; border-radius: var(--radius-md); border-left: 4px solid var(--primary);">
+            <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Total Cakes Listed</div>
+            <div style="font-size: 1.6rem; font-weight: 800;" id="kpiTotalCakes">0</div>
+          </div>
+          <div style="background: var(--bg-card); padding: 1.25rem; border-radius: var(--radius-md); border-left: 4px solid var(--success);">
+            <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Active Orders</div>
+            <div style="font-size: 1.6rem; font-weight: 800; color: #34d399;" id="kpiActiveOrders">0</div>
+          </div>
+          <div style="background: var(--bg-card); padding: 1.25rem; border-radius: var(--radius-md); border-left: 4px solid var(--accent);">
+            <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Total Sales Revenue</div>
+            <div style="font-size: 1.6rem; font-weight: 800; color: #fbbf24;" id="kpiTotalRevenue">₹0</div>
+          </div>
+          <div style="background: var(--bg-card); padding: 1.25rem; border-radius: var(--radius-md); border-left: 4px solid #a855f7;">
+            <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Serviceable PIN Zones</div>
+            <div style="font-size: 1.6rem; font-weight: 800;" id="kpiLocations">0</div>
+          </div>
+        </div>
+
+        <!-- Admin Sub Tabs -->
+        <div class="admin-tab-nav">
+          <button class="admin-tab-btn active" onclick="switchAdminTab('products', this)">🎂 Manage Products (Cakes)</button>
+          <button class="admin-tab-btn" onclick="switchAdminTab('orders', this)">📋 Manage Orders & Shipping Status</button>
+          <button class="admin-tab-btn" onclick="switchAdminTab('locations', this)">📍 Serviceable Locations</button>
+          <button class="admin-tab-btn" onclick="switchAdminTab('users', this)">👥 Customer Accounts</button>
+        </div>
+
+        <!-- Tab 1: Manage Products -->
+        <div id="adminTabProducts" class="admin-pane active">
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Visual</th>
+                  <th>Cake Title</th>
+                  <th>Category</th>
+                  <th>Flavor</th>
+                  <th>Base Price</th>
+                  <th>Dietary</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="adminCakesTableBody">
+                <!-- Injected via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Tab 2: Manage Orders -->
+        <div id="adminTabOrders" class="admin-pane">
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Order ID</th>
+                  <th>Customer</th>
+                  <th>Item & Message</th>
+                  <th>Total</th>
+                  <th>Delivery Address</th>
+                  <th>Current Shipping Status</th>
+                  <th>Update Status</th>
+                </tr>
+              </thead>
+              <tbody id="adminOrdersTableBody">
+                <!-- Injected via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Tab 3: Serviceable Locations -->
+        <div id="adminTabLocations" class="admin-pane">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <div style="font-size: 0.9rem; color: var(--text-muted);">Manage delivery hubs and enabled pincodes for rural & urban deliveries.</div>
+            <button class="btn btn-secondary btn-sm" onclick="openAddLocationPrompt()">+ Add Service Area</button>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Zone / Hub Name</th>
+                  <th>PIN Code</th>
+                  <th>Delivery Speed</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="adminLocationsTableBody">
+                <!-- Injected via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Tab 4: Users -->
+        <div id="adminTabUsers" class="admin-pane">
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Role</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="adminUsersTableBody">
+                <!-- Injected via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================================================
+       MODAL 1: VIEW CAKE DESCRIPTION & CUSTOMIZE
+       ======================================================================== -->
+  <div id="cakeDetailModal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modalCakeTitle">🍰 Cake Details & Customization</h3>
+        <button class="modal-close-btn" onclick="closeModal('cakeDetailModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="display: flex; gap: 1.25rem; align-items: center; margin-bottom: 1.25rem;">
+          <div id="modalCakeEmoji" style="width: 80px; height: 80px; background: var(--bg-card); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; font-size: 3rem;">
+            🎂
+          </div>
+          <div>
+            <div id="modalCakeCategory" class="badge badge-info" style="margin-bottom: 4px;">Birthday Special</div>
+            <h4 id="modalCakeHeading" style="font-size: 1.25rem; font-weight: 700;">Artisan Belgian Chocolate Cake</h4>
+            <div style="font-size: 0.85rem; color: var(--text-muted);" id="modalCakeFlavor">Flavor: Dutch Dark Ganache</div>
+          </div>
+        </div>
+
+        <p id="modalCakeDesc" style="font-size: 0.88rem; color: var(--text-main); margin-bottom: 1.25rem; line-height: 1.5;">
+          Rich, velvety Belgian cocoa sponge layered with molten chocolate ganache and adorned with golden chocolate curls. Handcrafted by master confectioners.
+        </p>
+
+        <!-- Customization Controls -->
+        <div class="card" style="padding: 1rem; margin-bottom: 1rem; background: var(--bg-card);">
+          <div style="font-weight: 700; font-size: 0.85rem; text-transform: uppercase; margin-bottom: 8px; color: var(--text-muted);">
+            Customization Options
+          </div>
+
+          <div class="form-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 10px;">
+            <div class="form-group">
+              <label class="form-label">Cake Size / Weight</label>
+              <select id="modalCakeWeight" class="form-control" onchange="recalculateModalPrice()">
+                <option value="0.5">0.5 kg (Small - 4 Servings)</option>
+                <option value="1.0" selected>1.0 kg (Standard - 8 Servings) (+₹400)</option>
+                <option value="2.0">2.0 kg (Party - 16 Servings) (+₹1,100)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Eggless Option</label>
+              <select id="modalCakeEggless" class="form-control">
+                <option value="true">100% Eggless 🌱 (Standard)</option>
+                <option value="false">Contains Egg 🥚 (Classic Texture)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 10px;">
+            <label class="form-label">Custom Message on Cake (Icing text)</label>
+            <input type="text" id="modalCakeMessage" class="form-control" placeholder="e.g. Happy Birthday Sneha! 🎉" maxlength="35">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Preferred Delivery Slot</label>
+            <select id="modalDeliverySlot" class="form-control">
+              <option value="Standard Daytime">Standard Daytime (10:00 AM - 01:00 PM)</option>
+              <option value="Evening Celebration">Evening Celebration (05:00 PM - 08:00 PM)</option>
+              <option value="Midnight Surprise">Midnight Surprise (11:00 PM - 12:00 AM)</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <div style="font-size: 0.75rem; color: var(--text-muted);">Total Price for Customized Cake:</div>
+            <div id="modalCalculatedPrice" style="font-size: 1.5rem; font-weight: 800; color: #fb7185; font-family: 'JetBrains Mono', monospace;">₹850</div>
+          </div>
+          <button class="btn btn-primary" onclick="handleAddModalCakeToCart()">Add to Cart 🛒</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       MODAL 2: ADMIN ADD / EDIT CAKE DETAILS
+       ======================================================================== -->
+  <div id="adminCakeModal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="adminCakeModalTitle">🎂 Post New Cake Details</h3>
+        <button class="modal-close-btn" onclick="closeModal('adminCakeModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="adminCakeForm" onsubmit="handleSaveCake(event)">
+          <input type="hidden" id="adminCakeId">
+
+          <div class="form-group" style="margin-bottom: 0.8rem;">
+            <label class="form-label">Cake Title / Name</label>
+            <input type="text" id="acTitle" class="form-control" placeholder="e.g. Royal Red Velvet Truffle" required>
+          </div>
+
+          <div class="form-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 0.8rem;">
+            <div class="form-group">
+              <label class="form-label">Occasion / Category</label>
+              <select id="acCategory" class="form-control" required>
+                <option value="Birthday">Birthday</option>
+                <option value="Wedding">Wedding</option>
+                <option value="Designer">Designer</option>
+                <option value="Cupcakes">Cupcakes & Pastries</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Flavor / Sub-Category</label>
+              <select id="acFlavor" class="form-control" required>
+                <option value="Belgian Chocolate">Belgian Chocolate</option>
+                <option value="Red Velvet">Red Velvet</option>
+                <option value="Black Forest">Black Forest</option>
+                <option value="Fresh Mango">Fresh Mango</option>
+                <option value="Vanilla Caramel">Vanilla Caramel</option>
+                <option value="Blueberry Cheesecake">Blueberry Cheesecake</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 0.8rem;">
+            <div class="form-group">
+              <label class="form-label">Base Price (₹ for 0.5kg)</label>
+              <input type="number" id="acBasePrice" class="form-control" min="200" step="10" value="550" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Visual Emoji / Icon</label>
+              <select id="acEmoji" class="form-control" required>
+                <option value="🎂">🎂 Traditional Birthday Cake</option>
+                <option value="🍰">🍰 Chocolate Slice</option>
+                <option value="🧁">🧁 Gourmet Cupcake</option>
+                <option value="🍓">🍓 Strawberry Gateau</option>
+                <option value="🍫">🍫 Dark Chocolate Truffle</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 0.8rem;">
+            <label class="form-label">Product Description</label>
+            <textarea id="acDesc" class="form-control" rows="3" placeholder="Describe the texture, cream, and handcrafted ingredients..." required></textarea>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 1.25rem;">
+            <label class="form-label">Dietary Badge</label>
+            <select id="acDietary" class="form-control">
+              <option value="eggless">100% Eggless</option>
+              <option value="regular">Contains Egg</option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block">Save Cake Details 🚀</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       MODAL 3: AUTHENTICATION (STUDENT / USER / ADMIN LOGIN & REGISTER)
+       ======================================================================== -->
+  <div id="authModal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="authModalTitle">🔐 Sign In to Bakery Portal</h3>
+        <button class="modal-close-btn" onclick="closeModal('authModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div style="display: flex; gap: 8px; border-bottom: 1px solid var(--border); margin-bottom: 1.25rem;">
+          <button id="authTabLogin" class="btn btn-secondary btn-sm" style="flex: 1; border-bottom: 2px solid var(--primary);" onclick="switchAuthTab('login')">Sign In</button>
+          <button id="authTabRegister" class="btn btn-secondary btn-sm" style="flex: 1;" onclick="switchAuthTab('register')">New Registration</button>
+        </div>
+
+        <!-- Sign In Form -->
+        <form id="formSignIn" onsubmit="handleSignIn(event)">
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label class="form-label">Email or Username</label>
+            <input type="text" id="loginUsername" class="form-control" placeholder="ananya@example.com or admin" required>
+          </div>
+          <div class="form-group" style="margin-bottom: 1.25rem;">
+            <label class="form-label">Password</label>
+            <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" required>
+          </div>
+          <div style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+            Demo Accounts: <code>ananya@example.com / password</code> or <code>admin / admin123</code>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Sign In To Account</button>
+        </form>
+
+        <!-- Register Form -->
+        <form id="formRegister" onsubmit="handleRegister(event)" style="display: none;">
+          <div class="form-group" style="margin-bottom: 0.8rem;">
+            <label class="form-label">Full Name</label>
+            <input type="text" id="regName" class="form-control" placeholder="Sneha Kapur" required>
+          </div>
+          <div class="form-group" style="margin-bottom: 0.8rem;">
+            <label class="form-label">Email Address</label>
+            <input type="email" id="regEmail" class="form-control" placeholder="sneha@example.com" required>
+          </div>
+          <div class="form-group" style="margin-bottom: 0.8rem;">
+            <label class="form-label">Contact Phone</label>
+            <input type="tel" id="regPhone" class="form-control" placeholder="+91 98765 00000" required>
+          </div>
+          <div class="form-group" style="margin-bottom: 1.25rem;">
+            <label class="form-label">Create Password</label>
+            <input type="password" id="regPassword" class="form-control" placeholder="••••••••" minlength="4" required>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Create Customer Account</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       MODAL 4: SIMULATED ORDER CONFIRMATION EMAIL
+       ======================================================================== -->
+  <div id="orderEmailModal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>✉️ Simulated Order Confirmation Email</h3>
+        <button class="modal-close-btn" onclick="closeModal('orderEmailModal')">&times;</button>
+      </div>
+      <div class="modal-body" style="background: var(--bg-card); border-radius: var(--radius-md); padding: 1.25rem;">
+        <div style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 8px;">
+          <strong>From:</strong> orders@sweetdelight-bakery.com<br>
+          <strong>To:</strong> <span id="emailCustomerAddress">ananya@example.com</span><br>
+          <strong>Subject:</strong> 🎂 Your SweetDelight Order is Confirmed! — <span id="emailOrderNumber">#CK-98421</span>
+        </div>
+        <hr style="border: 0; border-top: 1px solid var(--border); margin: 10px 0;">
+        <div style="font-size: 0.88rem;">
+          <p>Dear <strong id="emailCustomerName">Ananya Roy</strong>,</p><br>
+          <p>Thank you for supporting artisanal and rural bakers! Your cake order has been received and dispatched to our kitchen oven.</p>
+          <div style="margin: 12px 0; background: var(--bg-surface); padding: 12px; border-radius: 6px; border: 1px solid var(--border);" id="emailOrderDetailsBox">
+            <!-- Injected via JS -->
+          </div>
+          <p style="font-size: 0.78rem; color: var(--text-muted);">
+            Our master chef is preparing your cake with fresh cream and finest chocolate. You can track real-time delivery status on your dashboard.
+          </p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary btn-block" onclick="closeModal('orderEmailModal'); navigate('orders');">
+          Track Live Delivery Status 🛵
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="toast-box"></div>
+
+  <!-- Footer -->
+  <footer>
+    <p><strong>Internet Programming Laboratory (IP Lab) — Experiment 6</strong></p>
+    <p style="margin-top: 4px;">Online Cake Ordering & Artisanal Bakery E-Commerce Architecture</p>
+  </footer>
+
+  <!-- ========================================================================
+       JAVASCRIPT LOGIC & LOCALSTORAGE DATABASE ENGINE
+       ======================================================================== -->
+  <script>
+    /* ==========================================================================
+       1. DATABASE SCHEMA & SEED DATA INITIALIZATION
+       ========================================================================== */
+    const STORAGE_KEY_CAKES = 'iplab_exp6_cakes';
+    const STORAGE_KEY_ORDERS = 'iplab_exp6_orders';
+    const STORAGE_KEY_CART = 'iplab_exp6_cart';
+    const STORAGE_KEY_USERS = 'iplab_exp6_users';
+    const STORAGE_KEY_ADDRESS = 'iplab_exp6_address';
+    const STORAGE_KEY_LOCATIONS = 'iplab_exp6_locations';
+    const STORAGE_KEY_CURRENT_USER = 'iplab_exp6_current_user';
+    const STORAGE_KEY_THEME = 'iplab_exp6_theme';
+
+    const INITIAL_CAKES = [
+      {
+        id: 'CK-001',
+        title: 'Belgian Dark Truffle Cake',
+        category: 'Birthday',
+        flavor: 'Belgian Chocolate',
+        emoji: '🍫',
+        basePrice: 650,
+        dietary: 'eggless',
+        rating: 4.9,
+        reviewsCount: 142,
+        desc: 'Decadent Belgian 70% dark chocolate mousse layered between moist cocoa sponge and glazed with mirror ganache.'
+      },
+      {
+        id: 'CK-002',
+        title: 'Royal Red Velvet & Cream Cheese',
+        category: 'Wedding',
+        flavor: 'Red Velvet',
+        emoji: '🎂',
+        basePrice: 750,
+        dietary: 'eggless',
+        rating: 4.8,
+        reviewsCount: 98,
+        desc: 'Traditional crimson buttermilk sponge infused with real vanilla bean and frosted with Philadelphia cream cheese.'
+      },
+      {
+        id: 'CK-003',
+        title: 'Black Forest Royale Gateau',
+        category: 'Birthday',
+        flavor: 'Black Forest',
+        emoji: '🍰',
+        basePrice: 580,
+        dietary: 'regular',
+        rating: 4.7,
+        reviewsCount: 84,
+        desc: 'Classic Bavarian style cake loaded with tart dark cherries, fresh whipped cream rosettes, and shaved bittersweet curls.'
+      },
+      {
+        id: 'CK-004',
+        title: 'Fresh Alphonso Mango Bliss',
+        category: 'Designer',
+        flavor: 'Fresh Mango',
+        emoji: '🥭',
+        basePrice: 720,
+        dietary: 'eggless',
+        rating: 5.0,
+        reviewsCount: 110,
+        desc: 'Handcrafted seasonal treat featuring real Ratnagiri Alphonso mango compote layered on light chiffon sponge.'
+      },
+      {
+        id: 'CK-005',
+        title: 'Salted Caramel Crunch Pastry Set',
+        category: 'Cupcakes',
+        flavor: 'Vanilla Caramel',
+        emoji: '🧁',
+        basePrice: 420,
+        dietary: 'eggless',
+        rating: 4.6,
+        reviewsCount: 52,
+        desc: 'Box of 4 artisanal cupcakes infused with Fleur de Sel caramel and topped with butterscotch crunch praline.'
+      },
+      {
+        id: 'CK-006',
+        title: 'New York Blueberry Cheesecake',
+        category: 'Designer',
+        flavor: 'Blueberry Cheesecake',
+        emoji: '🫐',
+        basePrice: 890,
+        dietary: 'eggless',
+        rating: 4.9,
+        reviewsCount: 76,
+        desc: 'Authentic dense baked cheesecake sitting on a buttery Graham cracker crust, crowned with wild blueberry glaze.'
+      }
+    ];
+
+    const INITIAL_USERS = [
+      {
+        id: 'USR-CUST',
+        name: 'Ananya Roy',
+        email: 'ananya@example.com',
+        phone: '+91 98765 43210',
+        role: 'user',
+        password: 'password'
+      },
+      {
+        id: 'USR-ADMIN',
+        name: 'Master Baker & Store Admin',
+        email: 'admin',
+        phone: '+91 91234 56789',
+        role: 'admin',
+        password: 'admin123'
+      }
+    ];
+
+    const INITIAL_ADDRESS = {
+      fullName: 'Ananya Roy',
+      phone: '+91 98765 43210',
+      street: 'Flat 402, Rosewood Garden Apartments',
+      landmark: 'Near Indiranagar Metro Pillar 12',
+      city: 'Bengaluru',
+      state: 'Karnataka',
+      pincode: '560038',
+      type: 'Home'
+    };
+
+    const INITIAL_LOCATIONS = [
+      { name: 'Central City & Downtown', pincode: '560001', speed: '60 Mins Express', status: 'Active' },
+      { name: 'Indiranagar & Tech Park', pincode: '560038', speed: '90 Mins Express', status: 'Active' },
+      { name: 'Koramangala Hub', pincode: '560034', speed: 'Same Day', status: 'Active' },
+      { name: 'Suburban Green Belt (Rural)', pincode: '562125', speed: 'Next Day Delivery', status: 'Active' }
+    ];
+
+    const INITIAL_ORDERS = [
+      {
+        orderId: 'CK-98421',
+        userId: 'USR-CUST',
+        customerName: 'Ananya Roy',
+        customerEmail: 'ananya@example.com',
+        customerPhone: '+91 98765 43210',
+        cakeId: 'CK-001',
+        cakeTitle: 'Belgian Dark Truffle Cake',
+        flavor: 'Belgian Chocolate',
+        weight: '1.0 kg',
+        eggless: true,
+        customMessage: 'Happy 22nd Birthday Sneha! 🎉',
+        slot: 'Evening Celebration',
+        quantity: 1,
+        totalAmount: 1102,
+        orderDate: '2026-10-25 16:30',
+        status: 'Baking', // Placed -> Baking -> Out for Delivery -> Delivered
+        shippingAddress: 'Flat 402, Rosewood Garden Apartments, Indiranagar, Bengaluru - 560038'
+      }
+    ];
+
+    function initDatabase() {
+      if (!localStorage.getItem(STORAGE_KEY_CAKES)) {
+        localStorage.setItem(STORAGE_KEY_CAKES, JSON.stringify(INITIAL_CAKES));
+      }
+      if (!localStorage.getItem(STORAGE_KEY_ORDERS)) {
+        localStorage.setItem(STORAGE_KEY_ORDERS, JSON.stringify(INITIAL_ORDERS));
+      }
+      if (!localStorage.getItem(STORAGE_KEY_USERS)) {
+        localStorage.setItem(STORAGE_KEY_USERS, JSON.stringify(INITIAL_USERS));
+      }
+      if (!localStorage.getItem(STORAGE_KEY_ADDRESS)) {
+        localStorage.setItem(STORAGE_KEY_ADDRESS, JSON.stringify(INITIAL_ADDRESS));
+      }
+      if (!localStorage.getItem(STORAGE_KEY_LOCATIONS)) {
+        localStorage.setItem(STORAGE_KEY_LOCATIONS, JSON.stringify(INITIAL_LOCATIONS));
+      }
+      if (!localStorage.getItem(STORAGE_KEY_CART)) {
+        localStorage.setItem(STORAGE_KEY_CART, JSON.stringify([]));
+      }
+      if (!localStorage.getItem(STORAGE_KEY_CURRENT_USER)) {
+        localStorage.setItem(STORAGE_KEY_CURRENT_USER, JSON.stringify(INITIAL_USERS[0]));
+      }
+
+      const savedTheme = localStorage.getItem(STORAGE_KEY_THEME) || 'dark';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    }
+
+    function resetDemoData() {
+      if (confirm('Reset cake catalog, orders, and addresses to initial demonstration state?')) {
+        localStorage.setItem(STORAGE_KEY_CAKES, JSON.stringify(INITIAL_CAKES));
+        localStorage.setItem(STORAGE_KEY_ORDERS, JSON.stringify(INITIAL_ORDERS));
+        localStorage.setItem(STORAGE_KEY_USERS, JSON.stringify(INITIAL_USERS));
+        localStorage.setItem(STORAGE_KEY_ADDRESS, JSON.stringify(INITIAL_ADDRESS));
+        localStorage.setItem(STORAGE_KEY_LOCATIONS, JSON.stringify(INITIAL_LOCATIONS));
+        localStorage.setItem(STORAGE_KEY_CART, JSON.stringify([]));
+        localStorage.setItem(STORAGE_KEY_CURRENT_USER, JSON.stringify(INITIAL_USERS[0]));
+        showToast('System data reset to initial state!', 'info');
+        refreshApp();
+      }
+    }
+
+    function getCakes() { return JSON.parse(localStorage.getItem(STORAGE_KEY_CAKES) || '[]'); }
+    function saveCakes(c) { localStorage.setItem(STORAGE_KEY_CAKES, JSON.stringify(c)); }
+
+    function getOrders() { return JSON.parse(localStorage.getItem(STORAGE_KEY_ORDERS) || '[]'); }
+    function saveOrders(o) { localStorage.setItem(STORAGE_KEY_ORDERS, JSON.stringify(o)); }
+
+    function getCart() { return JSON.parse(localStorage.getItem(STORAGE_KEY_CART) || '[]'); }
+    function saveCart(cart) { localStorage.setItem(STORAGE_KEY_CART, JSON.stringify(cart)); }
+
+    function getUsers() { return JSON.parse(localStorage.getItem(STORAGE_KEY_USERS) || '[]'); }
+    function saveUsers(u) { localStorage.setItem(STORAGE_KEY_USERS, JSON.stringify(u)); }
+
+    function getAddress() { return JSON.parse(localStorage.getItem(STORAGE_KEY_ADDRESS) || 'null'); }
+    function saveAddress(a) { localStorage.setItem(STORAGE_KEY_ADDRESS, JSON.stringify(a)); }
+
+    function getLocations() { return JSON.parse(localStorage.getItem(STORAGE_KEY_LOCATIONS) || '[]'); }
+    function saveLocations(l) { localStorage.setItem(STORAGE_KEY_LOCATIONS, JSON.stringify(l)); }
+
+    function getCurrentUser() { return JSON.parse(localStorage.getItem(STORAGE_KEY_CURRENT_USER) || 'null'); }
+    function setCurrentUser(u) { localStorage.setItem(STORAGE_KEY_CURRENT_USER, JSON.stringify(u)); }
+
+    /* ==========================================================================
+       2. VIEW NAVIGATION & ROLE SWITCHING
+       ========================================================================== */
+    let currentView = 'shop';
+    let filterCategory = 'all';
+    let filterDietary = 'all';
+    let activeModalCake = null;
+
+    function navigate(viewId) {
+      const user = getCurrentUser();
+
+      if (viewId === 'admin' && (!user || user.role !== 'admin')) {
+        showToast('Administrator privileges required. Please sign in as Admin.', 'danger');
+        openAuthModal('login');
+        return;
+      }
+
+      document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+
+      const target = document.getElementById(`view-${viewId}`);
+      if (target) {
+        target.classList.add('active');
+        currentView = viewId;
+      }
+
+      const btn = document.getElementById(`nav-btn-${viewId}`);
+      if (btn) btn.classList.add('active');
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      if (viewId === 'shop') applyFilters();
+      if (viewId === 'cart') renderCartView();
+      if (viewId === 'orders') renderUserOrders();
+      if (viewId === 'address') populateAddressForm();
+      if (viewId === 'admin') renderAdminView();
+    }
+
+    function demoSwitch(role) {
+      const users = getUsers();
+      if (role === 'admin') {
+        const adminUser = users.find(u => u.role === 'admin');
+        if (adminUser) {
+          setCurrentUser(adminUser);
+          showToast('Switched role to Bakery Store Administrator', 'info');
+          updateAuthUI();
+          navigate('admin');
+        }
+      } else {
+        const user = users.find(u => u.role === 'user');
+        if (user) {
+          setCurrentUser(user);
+          showToast(`Switched role to Customer: ${user.name}`, 'success');
+          updateAuthUI();
+          navigate('shop');
+        }
+      }
+    }
+
+    function updateAuthUI() {
+      const user = getCurrentUser();
+      const authLoggedOut = document.getElementById('authLoggedOut');
+      const authLoggedIn = document.getElementById('authLoggedIn');
+      const adminNavTab = document.getElementById('adminNavTab');
+
+      if (user) {
+        authLoggedOut.style.display = 'none';
+        authLoggedIn.style.display = 'flex';
+        document.getElementById('navUserName').textContent = user.name;
+        document.getElementById('navUserInitial').textContent = user.name.charAt(0).toUpperCase();
+
+        if (user.role === 'admin') {
+          adminNavTab.style.display = 'block';
+        } else {
+          adminNavTab.style.display = 'none';
+        }
+      } else {
+        authLoggedOut.style.display = 'flex';
+        authLoggedIn.style.display = 'none';
+        adminNavTab.style.display = 'none';
+      }
+      updateCartBadge();
+    }
+
+    function handleUserPillClick() {
+      const user = getCurrentUser();
+      if (!user) return;
+      if (confirm(`Currently signed in as ${user.name} (${user.role.toUpperCase()}).\nDo you want to sign out?`)) {
+        logout();
+      }
+    }
+
+    function updateCartBadge() {
+      const cart = getCart();
+      const count = cart.reduce((acc, item) => acc + item.quantity, 0);
+      const el = document.getElementById('navCartCount');
+      if (el) el.textContent = count;
+    }
+
+    /* ==========================================================================
+       3. CAKE SEARCH, CATEGORY, FLAVOR & PRICE FILTERS (PAGE 1)
+       ========================================================================== */
+    function setCategoryFilter(category, el) {
+      filterCategory = category;
+      el.parentElement.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+      el.classList.add('active');
+      applyFilters();
+    }
+
+    function setDietaryFilter(dietary, el) {
+      filterDietary = dietary;
+      el.parentElement.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+      el.classList.add('active');
+      applyFilters();
+    }
+
+    function handlePriceRangeChange(val) {
+      document.getElementById('priceRangeLabel').textContent = `Up to ₹${parseInt(val).toLocaleString('en-IN')}`;
+      applyFilters();
+    }
+
+    function resetAllFilters() {
+      document.getElementById('searchKeyword').value = '';
+      document.getElementById('flavorFilter').value = 'all';
+      document.getElementById('priceRange').value = '2500';
+      document.getElementById('priceRangeLabel').textContent = 'Up to ₹2,500';
+      document.getElementById('sortFilter').value = 'featured';
+      filterCategory = 'all';
+      filterDietary = 'all';
+
+      document.querySelectorAll('.filter-pill-list').forEach(list => {
+        list.querySelectorAll('.filter-pill').forEach((pill, idx) => {
+          if (idx === 0) pill.classList.add('active');
+          else pill.classList.remove('active');
+        });
+      });
+
+      applyFilters();
+    }
+
+    function applyFilters() {
+      const keyword = (document.getElementById('searchKeyword').value || '').trim().toLowerCase();
+      const flavor = document.getElementById('flavorFilter').value;
+      const maxPrice = parseInt(document.getElementById('priceRange').value || '2500', 10);
+      const sort = document.getElementById('sortFilter').value;
+
+      let cakes = getCakes();
+
+      // Filter by Keyword
+      if (keyword) {
+        cakes = cakes.filter(c => 
+          c.title.toLowerCase().includes(keyword) || 
+          c.flavor.toLowerCase().includes(keyword) || 
+          c.desc.toLowerCase().includes(keyword)
+        );
+      }
+
+      // Filter by Category
+      if (filterCategory !== 'all') {
+        cakes = cakes.filter(c => c.category === filterCategory);
+      }
+
+      // Filter by Flavor
+      if (flavor !== 'all') {
+        cakes = cakes.filter(c => c.flavor === flavor);
+      }
+
+      // Filter by Dietary
+      if (filterDietary !== 'all') {
+        cakes = cakes.filter(c => c.dietary === filterDietary);
+      }
+
+      // Filter by Price
+      cakes = cakes.filter(c => c.basePrice <= maxPrice);
+
+      // Sorting
+      if (sort === 'price-asc') {
+        cakes.sort((a, b) => a.basePrice - b.basePrice);
+      } else if (sort === 'price-desc') {
+        cakes.sort((a, b) => b.basePrice - a.basePrice);
+      } else if (sort === 'rating') {
+        cakes.sort((a, b) => b.rating - a.rating);
+      }
+
+      // Render Results
+      document.getElementById('resultsCount').textContent = `Showing ${cakes.length} artisan cake${cakes.length === 1 ? '' : 's'}`;
+      const container = document.getElementById('cakeGridContainer');
+
+      if (cakes.length === 0) {
+        container.innerHTML = `
+          <div style="grid-column: 1 / -1; text-align: center; padding: 3rem; background: var(--bg-surface); border-radius: var(--radius-lg); border: 1px solid var(--border);">
+            <div style="font-size: 3rem; margin-bottom: 0.5rem;">🍰</div>
+            <h3>No Cakes Matched Your Filters</h3>
+            <p style="color: var(--text-muted); font-size: 0.88rem; margin: 4px 0 1rem;">Try clearing your flavor or price range filters.</p>
+            <button class="btn btn-secondary btn-sm" onclick="resetAllFilters()">Clear Filters</button>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = cakes.map(c => `
+        <div class="cake-card">
+          <div class="cake-thumb-box">
+            ${c.emoji}
+            <div class="cake-badge-top">
+              <span class="badge ${c.dietary === 'eggless' ? 'badge-success' : 'badge-warning'}">
+                ${c.dietary === 'eggless' ? '🌱 Eggless' : '🥚 Contains Egg'}
+              </span>
+            </div>
+          </div>
+          <div class="cake-content">
+            <div class="cake-category">${escapeHtml(c.category)} • ★ ${c.rating.toFixed(1)}</div>
+            <h3 class="cake-title">${escapeHtml(c.title)}</h3>
+            <div class="cake-flavor">Flavor: ${escapeHtml(c.flavor)}</div>
+            <p style="font-size: 0.82rem; color: var(--text-dim); line-height: 1.4; margin-bottom: 12px;">
+              ${escapeHtml(c.desc.substring(0, 75))}...
+            </p>
+            <div class="cake-footer">
+              <div>
+                <span style="font-size: 0.7rem; color: var(--text-muted); display: block;">From (0.5kg)</span>
+                <span class="cake-price">₹${c.basePrice}</span>
+              </div>
+              <button class="btn btn-primary btn-sm" onclick="openCakeDetailModal('${c.id}')">
+                Customize & Order 🍰
+              </button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    /* ==========================================================================
+       4. CAKE DESCRIPTION & CUSTOMIZATION MODAL (PAGE 1 MODAL)
+       ========================================================================== */
+    function openCakeDetailModal(cakeId) {
+      const cake = getCakes().find(c => c.id === cakeId);
+      if (!cake) return;
+
+      activeModalCake = cake;
+
+      document.getElementById('modalCakeEmoji').textContent = cake.emoji;
+      document.getElementById('modalCakeHeading').textContent = cake.title;
+      document.getElementById('modalCakeCategory').textContent = `${cake.category} Special`;
+      document.getElementById('modalCakeFlavor').textContent = `Flavor: ${cake.flavor}`;
+      document.getElementById('modalCakeDesc').textContent = cake.desc;
+      document.getElementById('modalCakeWeight').value = '1.0';
+      document.getElementById('modalCakeEggless').value = cake.dietary === 'eggless' ? 'true' : 'false';
+      document.getElementById('modalCakeMessage').value = '';
+
+      recalculateModalPrice();
+      openModal('cakeDetailModal');
+    }
+
+    function recalculateModalPrice() {
+      if (!activeModalCake) return;
+      const weight = parseFloat(document.getElementById('modalCakeWeight').value);
+      let price = activeModalCake.basePrice;
+
+      if (weight === 1.0) price += 400;
+      else if (weight === 2.0) price += 1100;
+
+      document.getElementById('modalCalculatedPrice').textContent = `₹${price.toLocaleString('en-IN')}`;
+    }
+
+    function handleAddModalCakeToCart() {
+      if (!activeModalCake) return;
+
+      const weight = parseFloat(document.getElementById('modalCakeWeight').value);
+      const isEggless = document.getElementById('modalCakeEggless').value === 'true';
+      const message = document.getElementById('modalCakeMessage').value.trim();
+      const slot = document.getElementById('modalDeliverySlot').value;
+
+      let itemPrice = activeModalCake.basePrice;
+      if (weight === 1.0) itemPrice += 400;
+      else if (weight === 2.0) itemPrice += 1100;
+
+      const cartItem = {
+        cartItemId: 'ITEM-' + Date.now().toString().slice(-5),
+        cakeId: activeModalCake.id,
+        title: activeModalCake.title,
+        emoji: activeModalCake.emoji,
+        flavor: activeModalCake.flavor,
+        weight: `${weight} kg`,
+        eggless: isEggless,
+        customMessage: message || 'Fresh & Sweet',
+        slot: slot,
+        unitPrice: itemPrice,
+        quantity: 1
+      };
+
+      const cart = getCart();
+      cart.push(cartItem);
+      saveCart(cart);
+
+      closeModal('cakeDetailModal');
+      updateCartBadge();
+      showToast(`Added "${activeModalCake.title}" to cart!`, 'success');
+    }
+
+    /* ==========================================================================
+       5. CART & CHECKOUT (PAGE 2)
+       ========================================================================== */
+    function renderCartView() {
+      const cart = getCart();
+      const emptyBox = document.getElementById('emptyCartBox');
+      const activeBox = document.getElementById('activeCartBox');
+      const listContainer = document.getElementById('cartItemsList');
+
+      if (cart.length === 0) {
+        emptyBox.style.display = 'block';
+        activeBox.style.display = 'none';
+        return;
+      }
+
+      emptyBox.style.display = 'none';
+      activeBox.style.display = 'grid';
+
+      // Address snapshot
+      const addr = getAddress();
+      if (addr) {
+        document.getElementById('checkoutAddressSummary').innerHTML = `
+          <strong>${escapeHtml(addr.fullName)}</strong> (${escapeHtml(addr.phone)})<br>
+          ${escapeHtml(addr.street)}, ${escapeHtml(addr.city)} - ${escapeHtml(addr.pincode)}
+        `;
+      } else {
+        document.getElementById('checkoutAddressSummary').innerHTML = `
+          <span style="color: #f87171;">No delivery address found. Please add an address!</span>
+        `;
+      }
+
+      let subtotal = 0;
+      listContainer.innerHTML = cart.map((item, index) => {
+        const itemTotal = item.unitPrice * item.quantity;
+        subtotal += itemTotal;
+        return `
+          <div class="cart-item-row">
+            <div class="cart-item-thumb">${item.emoji}</div>
+            <div style="flex: 1;">
+              <div style="font-weight: 700; font-size: 0.95rem;">${escapeHtml(item.title)}</div>
+              <div style="font-size: 0.78rem; color: var(--text-muted);">
+                ${item.weight} • ${item.eggless ? '🌱 Eggless' : '🥚 Regular'} • Slot: ${escapeHtml(item.slot)}
+              </div>
+              <div style="font-size: 0.78rem; color: #fb7185; margin-top: 2px;">
+                Message: "<em>${escapeHtml(item.customMessage)}</em>"
+              </div>
+            </div>
+
+            <div class="qty-control">
+              <button class="qty-btn" onclick="updateCartItemQty(${index}, -1)">-</button>
+              <div class="qty-display">${item.quantity}</div>
+              <button class="qty-btn" onclick="updateCartItemQty(${index}, 1)">+</button>
+            </div>
+
+            <div style="text-align: right; min-width: 80px;">
+              <div style="font-weight: 800; font-family: 'JetBrains Mono', monospace; font-size: 1rem;">₹${itemTotal}</div>
+              <button class="btn btn-secondary btn-sm" style="padding: 2px 6px; font-size: 0.7rem; color: #f87171; border: none; margin-top: 4px;" onclick="removeCartItem(${index})">Remove</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      const deliveryFee = subtotal > 799 ? 0 : 50;
+      const tax = Math.round(subtotal * 0.05);
+      const total = subtotal + deliveryFee + tax;
+
+      document.getElementById('cartSubtotal').textContent = `₹${subtotal.toLocaleString('en-IN')}`;
+      document.getElementById('cartDeliveryFee').textContent = deliveryFee === 0 ? 'FREE' : `₹${deliveryFee}`;
+      document.getElementById('cartTax').textContent = `₹${tax.toLocaleString('en-IN')}`;
+      document.getElementById('cartTotal').textContent = `₹${total.toLocaleString('en-IN')}`;
+    }
+
+    function updateCartItemQty(index, change) {
+      const cart = getCart();
+      if (!cart[index]) return;
+      cart[index].quantity += change;
+      if (cart[index].quantity <= 0) {
+        cart.splice(index, 1);
+      }
+      saveCart(cart);
+      updateCartBadge();
+      renderCartView();
+    }
+
+    function removeCartItem(index) {
+      const cart = getCart();
+      cart.splice(index, 1);
+      saveCart(cart);
+      updateCartBadge();
+      renderCartView();
+      showToast('Item removed from cart', 'info');
+    }
+
+    function handlePlaceOrder() {
+      const cart = getCart();
+      if (cart.length === 0) return;
+
+      const addr = getAddress();
+      if (!addr || !addr.street) {
+        showToast('Please specify a delivery address before placing your order!', 'danger');
+        navigate('address');
+        return;
+      }
+
+      const user = getCurrentUser() || { name: 'Customer', email: 'customer@example.com', phone: '+91 99999 00000' };
+      const orders = getOrders();
+      const newOrders = [];
+
+      let totalOverall = 0;
+
+      cart.forEach(item => {
+        const itemTotal = (item.unitPrice * item.quantity);
+        totalOverall += itemTotal;
+        const orderId = 'CK-' + Math.floor(10000 + Math.random() * 90000);
+
+        const newOrder = {
+          orderId: orderId,
+          userId: user.id || 'USR-CUST',
+          customerName: user.name,
+          customerEmail: user.email,
+          customerPhone: addr.phone || user.phone,
+          cakeId: item.cakeId,
+          cakeTitle: item.title,
+          flavor: item.flavor,
+          weight: item.weight,
+          eggless: item.eggless,
+          customMessage: item.customMessage,
+          slot: item.slot,
+          quantity: item.quantity,
+          totalAmount: Math.round(itemTotal * 1.05), // with GST
+          orderDate: new Date().toISOString().replace('T', ' ').substring(0, 16),
+          status: 'Placed',
+          shippingAddress: `${addr.street}, ${addr.landmark}, ${addr.city} - ${addr.pincode}`
+        };
+
+        orders.unshift(newOrder);
+        newOrders.push(newOrder);
+      });
+
+      saveOrders(orders);
+      saveCart([]);
+      updateCartBadge();
+
+      // Trigger simulated confirmation email modal
+      triggerOrderConfirmationEmail(newOrders[0]);
+    }
+
+    function triggerOrderConfirmationEmail(order) {
+      document.getElementById('emailCustomerAddress').textContent = order.customerEmail;
+      document.getElementById('emailOrderNumber').textContent = `#${order.orderId}`;
+      document.getElementById('emailCustomerName').textContent = order.customerName;
+
+      document.getElementById('emailOrderDetailsBox').innerHTML = `
+        <div><strong>Cake:</strong> ${escapeHtml(order.cakeTitle)} (${order.weight})</div>
+        <div><strong>Dietary:</strong> ${order.eggless ? '100% Eggless 🌱' : 'Contains Egg 🥚'}</div>
+        <div><strong>Icing Message:</strong> "${escapeHtml(order.customMessage)}"</div>
+        <div><strong>Delivery Slot:</strong> ${escapeHtml(order.slot)}</div>
+        <div><strong>Total Paid:</strong> ₹${order.totalAmount.toLocaleString('en-IN')}</div>
+        <div><strong>Shipping To:</strong> ${escapeHtml(order.shippingAddress)}</div>
+      `;
+
+      openModal('orderEmailModal');
+    }
+
+    /* ==========================================================================
+       6. MY ORDERS & REAL-TIME SHIPPING STATUS (PAGE 3)
+       ========================================================================== */
+    function renderUserOrders() {
+      const user = getCurrentUser();
+      let orders = getOrders();
+      const container = document.getElementById('userOrdersContainer');
+
+      if (user && user.role !== 'admin') {
+        orders = orders.filter(o => o.userId === user.id || o.customerEmail === user.email);
+      }
+
+      if (orders.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 3rem; color: var(--text-muted);">
+            <div style="font-size: 3rem; margin-bottom: 0.5rem;">📦</div>
+            <h3>No Cake Orders Placed Yet</h3>
+            <p style="font-size: 0.88rem; margin: 4px 0 1rem;">Satisfy your sweet cravings today.</p>
+            <button class="btn btn-primary btn-sm" onclick="navigate('shop')">Browse & Order Cakes</button>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = orders.map(o => {
+        // Status tracking steps: Placed -> Baking -> Out for Delivery -> Delivered
+        const isPlaced = true;
+        const isBaking = o.status === 'Baking' || o.status === 'Out for Delivery' || o.status === 'Delivered';
+        const isOut = o.status === 'Out for Delivery' || o.status === 'Delivered';
+        const isDelivered = o.status === 'Delivered';
+
+        return `
+          <div class="card" style="margin-bottom: 1.5rem; background: var(--bg-card); border-color: var(--border);">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 0.75rem; margin-bottom: 1rem; flex-wrap: wrap; gap: 8px;">
+              <div>
+                <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700;">ORDER NUMBER</span>
+                <div style="font-weight: 800; font-size: 1.15rem; color: #fb7185; font-family: 'JetBrains Mono', monospace;">#${escapeHtml(o.orderId)}</div>
+              </div>
+              <div style="text-align: right;">
+                <span class="badge ${o.status === 'Delivered' ? 'badge-success' : (o.status === 'Cancelled' ? 'badge-danger' : 'badge-warning')}" style="padding: 5px 10px; font-size: 0.82rem;">
+                  ${escapeHtml(o.status)}
+                </span>
+                <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 3px;">Placed on: ${escapeHtml(o.orderDate)}</div>
+              </div>
+            </div>
+
+            <!-- Visual Real-Time Order Stepper -->
+            <div class="tracking-stepper">
+              <div class="track-step ${isPlaced ? 'done' : ''}">
+                <div class="track-icon-box">📝</div>
+                <div class="track-label">Order Placed</div>
+              </div>
+              <div class="track-step ${isBaking ? 'done' : (o.status === 'Placed' ? 'active' : '')}">
+                <div class="track-icon-box">🥣</div>
+                <div class="track-label">In Oven / Baking</div>
+              </div>
+              <div class="track-step ${isOut ? 'done' : (o.status === 'Baking' ? 'active' : '')}">
+                <div class="track-icon-box">🛵</div>
+                <div class="track-label">Out for Delivery</div>
+              </div>
+              <div class="track-step ${isDelivered ? 'done' : (o.status === 'Out for Delivery' ? 'active' : '')}">
+                <div class="track-icon-box">🎁</div>
+                <div class="track-label">Delivered</div>
+              </div>
+            </div>
+
+            <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); font-size: 0.85rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+              <div>
+                <span style="color: var(--text-muted);">Cake Ordered:</span><br>
+                <strong>${escapeHtml(o.cakeTitle)}</strong> (${escapeHtml(o.weight)})
+              </div>
+              <div>
+                <span style="color: var(--text-muted);">Custom Message:</span><br>
+                <span style="color: #fb7185;">"${escapeHtml(o.customMessage)}"</span>
+              </div>
+              <div>
+                <span style="color: var(--text-muted);">Delivery Address:</span><br>
+                <span>${escapeHtml(o.shippingAddress)}</span>
+              </div>
+              <div>
+                <span style="color: var(--text-muted);">Amount Paid:</span><br>
+                <strong style="font-family: 'JetBrains Mono', monospace; font-size: 1rem;">₹${o.totalAmount.toLocaleString('en-IN')}</strong>
+              </div>
+            </div>
+
+            ${o.status === 'Placed' ? `
+              <div style="margin-top: 1rem; text-align: right;">
+                <button class="btn btn-danger btn-sm" onclick="cancelOrder('${o.orderId}')">Cancel Order ❌</button>
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function cancelOrder(orderId) {
+      if (!confirm(`Cancel order #${orderId}? Full refund will be initiated to your payment method.`)) return;
+      const orders = getOrders();
+      const o = orders.find(x => x.orderId === orderId);
+      if (o) {
+        o.status = 'Cancelled';
+        saveOrders(orders);
+        showToast(`Order #${orderId} has been cancelled.`, 'info');
+        renderUserOrders();
+      }
+    }
+
+    /* ==========================================================================
+       7. SHIPPING ADDRESS MANAGEMENT (PAGE 4)
+       ========================================================================== */
+    function populateAddressForm() {
+      const addr = getAddress();
+      if (!addr) return;
+      document.getElementById('addrFullName').value = addr.fullName || '';
+      document.getElementById('addrPhone').value = addr.phone || '';
+      document.getElementById('addrStreet').value = addr.street || '';
+      document.getElementById('addrLandmark').value = addr.landmark || '';
+      document.getElementById('addrCity').value = addr.city || '';
+      document.getElementById('addrState').value = addr.state || '';
+      document.getElementById('addrPincode').value = addr.pincode || '';
+      document.getElementById('addrType').value = addr.type || 'Home';
+    }
+
+    function handleSaveAddress(e) {
+      e.preventDefault();
+      const updated = {
+        fullName: document.getElementById('addrFullName').value.trim(),
+        phone: document.getElementById('addrPhone').value.trim(),
+        street: document.getElementById('addrStreet').value.trim(),
+        landmark: document.getElementById('addrLandmark').value.trim(),
+        city: document.getElementById('addrCity').value.trim(),
+        state: document.getElementById('addrState').value.trim(),
+        pincode: document.getElementById('addrPincode').value.trim(),
+        type: document.getElementById('addrType').value
+      };
+
+      saveAddress(updated);
+      showToast('Shipping address updated successfully! 📍', 'success');
+      navigate('shop');
+    }
+
+    /* ==========================================================================
+       8. ADMINISTRATOR PANEL: PRODUCTS, ORDERS & SERVICE LOCATIONS (PAGE 5)
+       ========================================================================== */
+    function switchAdminTab(tab, btn) {
+      document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.admin-pane').forEach(p => p.classList.remove('active'));
+
+      if (btn) btn.classList.add('active');
+
+      if (tab === 'products') document.getElementById('adminTabProducts').classList.add('active');
+      if (tab === 'orders') document.getElementById('adminTabOrders').classList.add('active');
+      if (tab === 'locations') document.getElementById('adminTabLocations').classList.add('active');
+      if (tab === 'users') document.getElementById('adminTabUsers').classList.add('active');
+    }
+
+    function renderAdminView() {
+      const cakes = getCakes();
+      const orders = getOrders();
+      const locations = getLocations();
+      const users = getUsers();
+
+      // KPIs
+      document.getElementById('kpiTotalCakes').textContent = cakes.length;
+      const activeOrd = orders.filter(o => o.status !== 'Delivered' && o.status !== 'Cancelled');
+      document.getElementById('kpiActiveOrders').textContent = activeOrd.length;
+      const totalRev = orders.filter(o => o.status !== 'Cancelled').reduce((acc, o) => acc + o.totalAmount, 0);
+      document.getElementById('kpiTotalRevenue').textContent = `₹${totalRev.toLocaleString('en-IN')}`;
+      document.getElementById('kpiLocations').textContent = locations.length;
+
+      // Table 1: Cakes
+      const cakesTbody = document.getElementById('adminCakesTableBody');
+      cakesTbody.innerHTML = cakes.map(c => `
+        <tr>
+          <td style="font-size: 1.5rem;">${c.emoji}</td>
+          <td><strong>${escapeHtml(c.title)}</strong></td>
+          <td><span class="badge badge-info">${escapeHtml(c.category)}</span></td>
+          <td>${escapeHtml(c.flavor)}</td>
+          <td style="font-family: 'JetBrains Mono', monospace; font-weight: 700;">₹${c.basePrice}</td>
+          <td><span class="badge ${c.dietary === 'eggless' ? 'badge-success' : 'badge-warning'}">${escapeHtml(c.dietary)}</span></td>
+          <td>
+            <button class="btn btn-secondary btn-sm" onclick="editCake('${c.id}')">Edit</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteCake('${c.id}')">Delete</button>
+          </td>
+        </tr>
+      `).join('');
+
+      // Table 2: Orders & Status Update
+      const ordersTbody = document.getElementById('adminOrdersTableBody');
+      ordersTbody.innerHTML = orders.map(o => `
+        <tr>
+          <td><strong style="color: #fb7185; font-family: monospace;">#${escapeHtml(o.orderId)}</strong></td>
+          <td>${escapeHtml(o.customerName)}<br><span style="font-size: 0.75rem; color: var(--text-muted);">${escapeHtml(o.customerPhone)}</span></td>
+          <td>${escapeHtml(o.cakeTitle)} (${escapeHtml(o.weight)})<br><span style="font-size: 0.75rem; color: #fb7185;">"${escapeHtml(o.customMessage)}"</span></td>
+          <td style="font-family: monospace; font-weight: bold;">₹${o.totalAmount}</td>
+          <td style="font-size: 0.78rem; max-width: 200px;">${escapeHtml(o.shippingAddress)}</td>
+          <td>
+            <span class="badge ${o.status === 'Delivered' ? 'badge-success' : (o.status === 'Cancelled' ? 'badge-danger' : 'badge-warning')}">
+              ${escapeHtml(o.status)}
+            </span>
+          </td>
+          <td>
+            <select class="form-control" style="font-size: 0.78rem; padding: 4px;" onchange="updateOrderStatus('${o.orderId}', this.value)">
+              <option value="Placed" ${o.status === 'Placed' ? 'selected' : ''}>Placed</option>
+              <option value="Baking" ${o.status === 'Baking' ? 'selected' : ''}>In Oven / Baking</option>
+              <option value="Out for Delivery" ${o.status === 'Out for Delivery' ? 'selected' : ''}>Out for Delivery</option>
+              <option value="Delivered" ${o.status === 'Delivered' ? 'selected' : ''}>Delivered</option>
+              <option value="Cancelled" ${o.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+            </select>
+          </td>
+        </tr>
+      `).join('');
+
+      // Table 3: Locations
+      const locTbody = document.getElementById('adminLocationsTableBody');
+      locTbody.innerHTML = locations.map((loc, idx) => `
+        <tr>
+          <td><strong>${escapeHtml(loc.name)}</strong></td>
+          <td style="font-family: monospace;">${escapeHtml(loc.pincode)}</td>
+          <td><span class="badge badge-info">${escapeHtml(loc.speed)}</span></td>
+          <td><span class="badge badge-success">${escapeHtml(loc.status)}</span></td>
+          <td>
+            <button class="btn btn-danger btn-sm" onclick="removeLocation(${idx})">Remove</button>
+          </td>
+        </tr>
+      `).join('');
+
+      // Table 4: Users
+      const usersTbody = document.getElementById('adminUsersTableBody');
+      usersTbody.innerHTML = users.map(u => `
+        <tr>
+          <td><strong>${escapeHtml(u.name)}</strong></td>
+          <td>${escapeHtml(u.email)}</td>
+          <td>${escapeHtml(u.phone)}</td>
+          <td><span class="badge ${u.role === 'admin' ? 'badge-warning' : 'badge-info'}">${escapeHtml(u.role.toUpperCase())}</span></td>
+          <td>
+            <button class="btn btn-secondary btn-sm" onclick="toggleUserRole('${u.id}')">Toggle Role</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function openAddCakeModal() {
+      document.getElementById('adminCakeId').value = '';
+      document.getElementById('acTitle').value = '';
+      document.getElementById('acCategory').value = 'Birthday';
+      document.getElementById('acFlavor').value = 'Belgian Chocolate';
+      document.getElementById('acBasePrice').value = '600';
+      document.getElementById('acEmoji').value = '🎂';
+      document.getElementById('acDesc').value = '';
+      document.getElementById('acDietary').value = 'eggless';
+      document.getElementById('adminCakeModalTitle').textContent = '🎂 Post New Cake Details';
+      openModal('adminCakeModal');
+    }
+
+    function editCake(cakeId) {
+      const cake = getCakes().find(c => c.id === cakeId);
+      if (!cake) return;
+
+      document.getElementById('adminCakeId').value = cake.id;
+      document.getElementById('acTitle').value = cake.title;
+      document.getElementById('acCategory').value = cake.category;
+      document.getElementById('acFlavor').value = cake.flavor;
+      document.getElementById('acBasePrice').value = cake.basePrice;
+      document.getElementById('acEmoji').value = cake.emoji;
+      document.getElementById('acDesc').value = cake.desc;
+      document.getElementById('acDietary').value = cake.dietary;
+      document.getElementById('adminCakeModalTitle').textContent = '✏️ Edit Cake Details';
+      openModal('adminCakeModal');
+    }
+
+    function handleSaveCake(e) {
+      e.preventDefault();
+      const cakeId = document.getElementById('adminCakeId').value;
+      const cakes = getCakes();
+
+      const newCake = {
+        id: cakeId || 'CK-' + Date.now().toString().slice(-4),
+        title: document.getElementById('acTitle').value.trim(),
+        category: document.getElementById('acCategory').value,
+        flavor: document.getElementById('acFlavor').value,
+        emoji: document.getElementById('acEmoji').value,
+        basePrice: parseInt(document.getElementById('acBasePrice').value, 10),
+        desc: document.getElementById('acDesc').value.trim(),
+        dietary: document.getElementById('acDietary').value,
+        rating: 4.8,
+        reviewsCount: 15
+      };
+
+      if (cakeId) {
+        const idx = cakes.findIndex(c => c.id === cakeId);
+        if (idx !== -1) cakes[idx] = { ...cakes[idx], ...newCake };
+      } else {
+        cakes.push(newCake);
+      }
+
+      saveCakes(cakes);
+      closeModal('adminCakeModal');
+      showToast('Cake product saved successfully!', 'success');
+      renderAdminView();
+      applyFilters();
+    }
+
+    function deleteCake(cakeId) {
+      if (confirm('Delete this cake from the store inventory?')) {
+        let cakes = getCakes().filter(c => c.id !== cakeId);
+        saveCakes(cakes);
+        showToast('Cake product deleted.', 'info');
+        renderAdminView();
+        applyFilters();
+      }
+    }
+
+    function updateOrderStatus(orderId, newStatus) {
+      const orders = getOrders();
+      const o = orders.find(x => x.orderId === orderId);
+      if (o) {
+        o.status = newStatus;
+        saveOrders(orders);
+        showToast(`Order #${orderId} status updated to: ${newStatus}`, 'success');
+        renderAdminView();
+      }
+    }
+
+    function openAddLocationPrompt() {
+      const name = prompt('Enter Area / Hub Name (e.g. Whitefield Express Zone):');
+      if (!name) return;
+      const pincode = prompt('Enter 6-digit PIN Code (e.g. 560066):');
+      if (!pincode) return;
+
+      const locs = getLocations();
+      locs.push({
+        name,
+        pincode,
+        speed: 'Express 90 Mins',
+        status: 'Active'
+      });
+      saveLocations(locs);
+      showToast('Serviceable delivery location added!', 'success');
+      renderAdminView();
+    }
+
+    function removeLocation(idx) {
+      const locs = getLocations();
+      locs.splice(idx, 1);
+      saveLocations(locs);
+      renderAdminView();
+    }
+
+    function toggleUserRole(userId) {
+      const users = getUsers();
+      const u = users.find(x => x.id === userId);
+      if (u) {
+        u.role = u.role === 'admin' ? 'user' : 'admin';
+        saveUsers(users);
+        showToast(`Role for ${u.name} set to ${u.role.toUpperCase()}`, 'info');
+        renderAdminView();
+      }
+    }
+
+    /* ==========================================================================
+       9. AUTHENTICATION (STUDENT / USER / ADMIN LOGIN & REGISTRATION)
+       ========================================================================== */
+    function openAuthModal(tab = 'login') {
+      switchAuthTab(tab);
+      openModal('authModal');
+    }
+
+    function switchAuthTab(tab) {
+      const fLogin = document.getElementById('formSignIn');
+      const fReg = document.getElementById('formRegister');
+      const tLogin = document.getElementById('authTabLogin');
+      const tReg = document.getElementById('authTabRegister');
+      const modalTitle = document.getElementById('authModalTitle');
+
+      tLogin.style.borderBottom = 'none';
+      tReg.style.borderBottom = 'none';
+      fLogin.style.display = 'none';
+      fReg.style.display = 'none';
+
+      if (tab === 'login') {
+        fLogin.style.display = 'block';
+        tLogin.style.borderBottom = '2px solid var(--primary)';
+        modalTitle.textContent = '🔐 Sign In to Bakery Portal';
+      } else {
+        fReg.style.display = 'block';
+        tReg.style.borderBottom = '2px solid var(--primary)';
+        modalTitle.textContent = '📝 New Customer Registration';
+      }
+    }
+
+    function handleSignIn(e) {
+      e.preventDefault();
+      const username = document.getElementById('loginUsername').value.trim();
+      const pass = document.getElementById('loginPassword').value.trim();
+      const users = getUsers();
+
+      const user = users.find(u => (u.email.toLowerCase() === username.toLowerCase() || u.name.toLowerCase() === username.toLowerCase()) && u.password === pass);
+
+      if (user) {
+        setCurrentUser(user);
+        closeModal('authModal');
+        showToast(`Welcome back, ${user.name}!`, 'success');
+        updateAuthUI();
+        if (user.role === 'admin') navigate('admin');
+        else navigate('shop');
+      } else {
+        showToast('Invalid credentials! Try ananya@example.com / password or admin / admin123', 'danger');
+      }
+    }
+
+    function handleRegister(e) {
+      e.preventDefault();
+      const name = document.getElementById('regName').value.trim();
+      const email = document.getElementById('regEmail').value.trim();
+      const phone = document.getElementById('regPhone').value.trim();
+      const pass = document.getElementById('regPassword').value.trim();
+
+      const users = getUsers();
+      if (users.some(u => u.email.toLowerCase() === email.toLowerCase())) {
+        showToast('An account with this email address already exists.', 'danger');
+        return;
+      }
+
+      const newUser = {
+        id: 'USR-' + Date.now().toString().slice(-4),
+        name,
+        email,
+        phone,
+        role: 'user',
+        password: pass
+      };
+
+      users.push(newUser);
+      saveUsers(users);
+      setCurrentUser(newUser);
+
+      closeModal('authModal');
+      showToast(`Welcome ${name}! Your account has been registered.`, 'success');
+      updateAuthUI();
+      navigate('shop');
+    }
+
+    function logout() {
+      localStorage.removeItem(STORAGE_KEY_CURRENT_USER);
+      showToast('Signed out successfully.', 'info');
+      updateAuthUI();
+      navigate('shop');
+    }
+
+    /* ==========================================================================
+       10. UTILITIES (MODALS, TOASTS, THEME, REFRESH)
+       ========================================================================== */
+    function openModal(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.add('open');
+    }
+
+    function closeModal(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.remove('open');
+    }
+
+    document.querySelectorAll('.modal-overlay').forEach(overlay => {
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) overlay.classList.remove('open');
+      });
+    });
+
+    function showToast(msg, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast-msg ${type}`;
+      toast.textContent = msg;
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transition = 'all 0.2s ease';
+        setTimeout(() => toast.remove(), 200);
+      }, 3500);
+    }
+
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme') || 'dark';
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem(STORAGE_KEY_THEME, next);
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function refreshApp() {
+      updateAuthUI();
+      applyFilters();
+      renderCartView();
+      renderUserOrders();
+      populateAddressForm();
+      if (getCurrentUser() && getCurrentUser().role === 'admin') {
+        renderAdminView();
+      }
+    }
+
+    /* DOM Ready */
+    document.addEventListener('DOMContentLoaded', () => {
+      initDatabase();
+      updateAuthUI();
+      applyFilters();
+    });
+  </script>
+</body>
+</html>
