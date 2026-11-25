@@ -1,0 +1,189 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hotel Room Booking</title>
+</head>
+<body>
+
+    <h1>Welcome to Grand Hotel</h1>
+    <p>Book your comfortable stay with us!</p>
+    <hr>
+
+    <h2>User Registration</h2>
+    <form>
+        Name: <input type="text" placeholder="Enter name"><br><br>
+        Email: <input type="email" placeholder="Enter email"><br><br>
+        Password: <input type="password"><br><br>
+        <input type="submit" value="Register">
+    </form>
+
+    <h2>User Login</h2>
+    <form>
+        Email: <input type="email"><br><br>
+        Password: <input type="password"><br><br>
+        <input type="submit" value="Login">
+    </form>
+
+    <hr>
+
+    <h2>Search and Book Rooms</h2>
+    <form>
+        Destination: <input type="text" placeholder="Enter city"><br><br>
+        Check-in Date: <input type="date"><br><br>
+        Check-out Date: <input type="date"><br><br>
+        Number of Guests: <input type="number" min="1"><br><br>
+
+        Room Type:
+        <select>
+            <option>Single Room</option>
+            <option>Double Room</option>
+            <option>Deluxe Room</option>
+            <option>Suite Room</option>
+        </select>
+        <br><br>
+
+        <input type="submit" value="Check Availability">
+        <input type="submit" value="Book Room">
+    </form>
+
+    <h2>Room Details</h2>
+    <table border="1">
+        <tr>
+            <th>Room Type</th>
+            <th>Facilities</th>
+            <th>Price Per Night</th>
+        </tr>
+        <tr>
+            <td>Single Room</td>
+            <td>Bed, Wi-Fi, TV</td>
+            <td>Rs. 1500</td>
+        </tr>
+        <tr>
+            <td>Double Room</td>
+            <td>Double Bed, Wi-Fi, TV</td>
+            <td>Rs. 2500</td>
+        </tr>
+        <tr>
+            <td>Deluxe Room</td>
+            <td>AC, TV, Wi-Fi, Breakfast</td>
+            <td>Rs. 4000</td>
+        </tr>
+        <tr>
+            <td>Suite Room</td>
+            <td>Luxury Bed, AC, Wi-Fi, Mini Bar</td>
+            <td>Rs. 6000</td>
+        </tr>
+    </table>
+
+    <hr>
+
+    <h2>My Booking History</h2>
+    <table border="1">
+        <tr>
+            <th>Booking ID</th>
+            <th>Room Type</th>
+            <th>Check-in</th>
+            <th>Check-out</th>
+            <th>Status</th>
+        </tr>
+        <tr>
+            <td>101</td>
+            <td>Deluxe Room</td>
+            <td>10-11-2026</td>
+            <td>12-11-2026</td>
+            <td>Confirmed</td>
+        </tr>
+    </table>
+
+    <h3>Modify or Cancel Booking</h3>
+    <form>
+        Booking ID: <input type="text"><br><br>
+        New Check-in Date: <input type="date"><br><br>
+        New Check-out Date: <input type="date"><br><br>
+        <input type="submit" value="Modify Booking">
+        <input type="reset" value="Cancel Booking">
+    </form>
+
+    <p>Bookings can be modified or cancelled up to 3 days
+    before the arrival date, according to hotel policy.</p>
+
+    <hr>
+
+    <h2>Administrator Panel</h2>
+
+    <h3>Manage Rooms</h3>
+    <form>
+        Room Type:
+        <select>
+            <option>Single Room</option>
+            <option>Double Room</option>
+            <option>Deluxe Room</option>
+            <option>Suite Room</option>
+        </select><br><br>
+
+        Available Quantity: <input type="number"><br><br>
+        Price Per Night: <input type="number"><br><br>
+        <input type="submit" value="Update Room">
+    </form>
+
+    <h3>Manage Bookings</h3>
+    <form>
+        Booking ID: <input type="text"><br><br>
+        Customer Name: <input type="text"><br><br>
+        Booking Status:
+        <select>
+            <option>Confirmed</option>
+            <option>Cancelled</option>
+            <option>Completed</option>
+        </select><br><br>
+        <input type="submit" value="Update Booking">
+    </form>
+
+    <h3>Manage Hotel Information</h3>
+    <form>
+        Page Name:
+        <select>
+            <option>About Us</option>
+            <option>Contact Us</option>
+            <option>Room Information</option>
+            <option>Customer Service FAQ</option>
+            <option>Local Travel Guide</option>
+            <option>Privacy Policy</option>
+        </select><br><br>
+
+        Page Content:<br>
+        <textarea rows="5" cols="40"></textarea><br><br>
+        <input type="submit" value="Update Page">
+    </form>
+
+    <hr>
+
+    <h2>About Us</h2>
+    <p>Grand Hotel provides comfortable rooms and
+    quality service at affordable prices.</p>
+
+    <h2>Contact Us</h2>
+    <p>Address: Chennai, Tamil Nadu</p>
+    <p>Phone: 9876543210</p>
+    <p>Email: grandhotel@example.com</p>
+
+    <h2>Customer Service - FAQ</h2>
+    <p><b>Q: What time is check-in?</b></p>
+    <p>A: Check-in starts at 12 PM.</p>
+    <p><b>Q: Can I cancel my booking?</b></p>
+    <p>A: Yes, subject to the cancellation policy.</p>
+
+    <h2>Local Travel Guide</h2>
+    <p>Visit nearby beaches, temples, shopping centres,
+    and popular tourist attractions.</p>
+
+    <h2>Privacy Policy</h2>
+    <p>Customer information should be kept private
+    and used only for hotel services.</p>
+
+    <hr>
+    <p>Grand Hotel - 2026</p>
+
+</body>
+</html>

@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedCare Hospital Online Appointment Booking System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0fdfa;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            color: #1e293b;
+        }
+        .container {
+            max-width: 920px;
+            margin: auto;
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 14px rgba(13, 148, 136, 0.1);
+        }
+        h1 { color: #0f766e; margin-bottom: 5px; }
+        h2 { color: #0d9488; border-bottom: 2px solid #99f6e4; padding-bottom: 6px; margin-top: 25px; font-size: 20px; }
+        h3 { color: #115e59; font-size: 16px; margin-top: 15px; }
+        p { margin: 6px 0; }
+        input, select, textarea, button {
+            padding: 9px;
+            margin: 6px;
+            max-width: 95%;
+            border: 1px solid #5eead4;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        button, input[type="submit"], input[type="button"] {
+            cursor: pointer;
+            background: #0d9488;
+            color: white;
+            border: 0;
+            border-radius: 5px;
+            padding: 9px 18px;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+        button:hover, input[type="submit"]:hover {
+            background: #0f766e;
+        }
+        table {
+            margin: 15px auto;
+            border-collapse: collapse;
+            width: 98%;
+            background: #fff;
+        }
+        th, td {
+            border: 1px solid #99f6e4;
+            padding: 10px;
+            text-align: center;
+            font-size: 14px;
+        }
+        th {
+            background-color: #ccfbf1;
+            color: #115e59;
+        }
+        tr:nth-child(even) { background-color: #f8fafc; }
+        section {
+            padding: 14px 0;
+            border-bottom: 1px solid #ccfbf1;
+            text-align: center;
+        }
+        .message {
+            background-color: #ccfbf1;
+            color: #0f766e;
+            padding: 10px;
+            border-radius: 6px;
+            font-weight: bold;
+            margin: 12px 0;
+            display: inline-block;
+            min-width: 60%;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .badge-confirmed { background: #dcfce7; color: #166534; }
+        .badge-cancelled { background: #fee2e2; color: #991b1b; }
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .doc-card {
+            border: 1px solid #99f6e4;
+            border-radius: 8px;
+            padding: 15px;
+            background: #ffffff;
+            text-align: left;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+        }
+        .doc-card h4 { margin: 0 0 6px 0; color: #0f766e; }
+        .token-slip {
+            background: #f0fdf4;
+            border: 2px dashed #16a34a;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px auto;
+            width: 85%;
+            text-align: left;
+            display: none;
+        }
+        @media (max-width: 600px) {
+            body { padding: 8px; }
+            .container { padding: 12px; }
+            table { font-size: 12px; display: block; overflow-x: auto; }
+            th, td { padding: 6px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>MedCare Hospital Online Appointment System</h1>
+    <p>Streamlined Doctor Appointments, Digital Check-In, and Healthcare Management</p>
+    <p id="message" class="message">Welcome to MedCare Hospital. Seamless access to top healthcare specialists.</p>
+
+    <!-- 1. Patient & Hospital Authentication -->
+    <section>
+        <h2>User Registration & Authentication</h2>
+        <form id="patientRegForm">
+            <input type="text" id="pRegName" placeholder="Patient Full Name" required>
+            <input type="email" id="pRegEmail" placeholder="Email Address" required><br>
+            <input type="tel" id="pRegPhone" placeholder="Mobile Number" required>
+            <input type="number" id="pRegAge" placeholder="Age" min="1" max="120" required><br>
+            <button type="submit">Register as Patient</button>
+        </form>
+
+        <h3>Patient Login</h3>
+        <form id="patientLoginForm">
+            <input type="email" id="pLogEmail" placeholder="Registered Email" required>
+            <input type="password" id="pLogPass" placeholder="Password" required><br>
+            <button type="submit">Login</button>
+            <button type="button" onclick="demoPatientLogin()">Demo Patient Login</button>
+        </form>
+
+        <h3>Hospital Administration Login</h3>
+        <form id="hospitalLoginForm">
+            <input type="text" id="hospUser" placeholder="Admin Username (medadmin)" required>
+            <input type="password" id="hospPass" placeholder="Password (hosp123)" required><br>
+            <button type="submit" style="background: #115e59;">Hospital Admin Login</button>
+        </form>
+        <p id="userRoleStatus" style="font-weight: bold; color: #0d9488; margin-top: 8px;">Role: Guest</p>
+    </section>
+
+    <!-- 2. Search Doctor & Hospitals -->
+    <section>
+        <h2>Search Doctors & Hospitals</h2>
+        <form id="searchDocForm">
+            <select id="specSelect">
+                <option value="All">All Specialties</option>
+                <option value="Cardiology">Cardiology (Heart)</option>
+                <option value="Neurology">Neurology (Brain & Spine)</option>
+                <option value="Pediatrics">Pediatrics (Child Health)</option>
+                <option value="Orthopedics">Orthopedics (Bone & Joint)</option>
+                <option value="Dermatology">Dermatology (Skin)</option>
+            </select>
+            <select id="locSelect">
+                <option value="All">All Locations</option>
+                <option value="Central Branch">Chennai Central</option>
+                <option value="Anna Nagar">Anna Nagar</option>
+                <option value="T. Nagar">T. Nagar</option>
+                <option value="Velachery">Velachery</option>
+            </select><br>
+            <button type="button" onclick="filterDoctors()">Search Specialist Doctors</button>
+        </form>
+
+        <h3>Available Doctors & Clinical Ratings</h3>
+        <div id="doctorDirectory" class="card-grid"></div>
+
+        <h3>Hospital Branch Locations (Google Maps Navigation)</h3>
+        <ul style="text-align: left; max-width: 650px; margin: auto;">
+            <li><strong>MedCare Main Campus:</strong> 102 Poonamallee High Rd, Central Chennai. <a href="https://maps.google.com" target="_blank" style="color: #0d9488;">[View on Google Maps]</a></li>
+            <li><strong>MedCare Specialty Center:</strong> 4th Avenue, Anna Nagar. <a href="https://maps.google.com" target="_blank" style="color: #0d9488;">[View on Google Maps]</a></li>
+            <li><strong>MedCare Children's Clinic:</strong> 12 South Usman Rd, T. Nagar. <a href="https://maps.google.com" target="_blank" style="color: #0d9488;">[View on Google Maps]</a></li>
+        </ul>
+    </section>
+
+    <!-- 3. Appointment Booking & Check-in Form -->
+    <section>
+        <h2>Book Appointment & Digital Check-In Form</h2>
+        <form id="bookingCheckinForm">
+            <label>Selected Doctor:
+                <select id="bDoc">
+                    <option value="Dr. Arvind Swaminathan (Cardiology)">Dr. Arvind Swaminathan (Cardiology - ₹800)</option>
+                    <option value="Dr. Sunita Kapoor (Pediatrics)">Dr. Sunita Kapoor (Pediatrics - ₹600)</option>
+                    <option value="Dr. Rajesh Varma (Orthopedics)">Dr. Rajesh Varma (Orthopedics - ₹750)</option>
+                    <option value="Dr. Shalini Menon (Neurology)">Dr. Shalini Menon (Neurology - ₹900)</option>
+                </select>
+            </label><br>
+            <label>Appointment Date: <input type="date" id="bDate" required></label>
+            <label>Time Slot:
+                <select id="bTime">
+                    <option value="09:00 AM">09:00 AM - 09:30 AM</option>
+                    <option value="10:30 AM">10:30 AM - 11:00 AM</option>
+                    <option value="02:00 PM">02:00 PM - 02:30 PM</option>
+                    <option value="04:30 PM">04:30 PM - 05:00 PM</option>
+                    <option value="06:00 PM">06:00 PM - 06:30 PM</option>
+                </select>
+            </label><br>
+
+            <h3>Patient Pre-Consultation Check-In Details</h3>
+            <input type="text" id="chkSymptoms" placeholder="Chief Symptoms / Primary Complaint (e.g. Chest tightness, Fever)" required style="width: 80%;"><br>
+            <input type="text" id="chkHistory" placeholder="Past Medical History / Existing Conditions (e.g. Diabetes, BP)" style="width: 80%;"><br>
+            <input type="text" id="chkAllergies" placeholder="Known Allergies (e.g. Penicillin, None)" style="width: 40%;">
+            <select id="chkBloodGroup">
+                <option value="O+">Blood Group: O+</option>
+                <option value="A+">Blood Group: A+</option>
+                <option value="B+">Blood Group: B+</option>
+                <option value="AB+">Blood Group: AB+</option>
+                <option value="O-">Blood Group: O-</option>
+            </select><br>
+
+            <button type="submit" style="background: #16a34a; font-size: 16px;">Confirm Appointment & Submit Check-In</button>
+        </form>
+
+        <!-- Appointment Confirmation Slip -->
+        <div id="appointmentSlip" class="token-slip">
+            <h3 style="text-align: center; color: #166534; margin-top: 0;">MEDCARE HOSPITAL - OFFICIAL APPOINTMENT SLIP</h3>
+            <p><strong>Appointment Token:</strong> <span id="slipToken" style="font-size: 18px; color: #0d9488;"></span></p>
+            <p><strong>Doctor:</strong> <span id="slipDoc"></span></p>
+            <p><strong>Scheduled Slot:</strong> <span id="slipSlot"></span></p>
+            <p><strong>Patient:</strong> <span id="slipPatient"></span> (Blood Group: <span id="slipBlood"></span>)</p>
+            <p><strong>Symptoms Recorded:</strong> <span id="slipSymptoms"></span></p>
+            <p><strong>Status:</strong> <span class="badge badge-confirmed">Confirmed</span></p>
+            <p style="font-size: 12px; color: #64748b;">SMS and Email reminders dispatched. Please arrive 10 minutes before your token time.</p>
+            <button type="button" onclick="window.print()" style="background: #0f766e;">Print Appointment Slip</button>
+        </div>
+    </section>
+
+    <!-- 4. Patient Dashboard & Appointment History -->
+    <section>
+        <h2>Patient Dashboard - Appointment History & Reviews</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Token ID</th>
+                    <th>Patient</th>
+                    <th>Doctor</th>
+                    <th>Date & Time</th>
+                    <th>Symptoms</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="pastAppointmentsBody">
+                <tr><td colspan="7">No previous consultations found.</td></tr>
+            </tbody>
+        </table>
+
+        <h3>Doctor Review & Patient Feedback</h3>
+        <form id="docFeedbackForm">
+            <input type="text" id="fbDocName" placeholder="Doctor Name" required>
+            <select id="fbStars">
+                <option value="5">★★★★★ Excellent (5/5)</option>
+                <option value="4">★★★★☆ Very Good (4/5)</option>
+                <option value="3">★★★☆☆ Average (3/5)</option>
+            </select><br>
+            <textarea id="fbReviewText" rows="2" cols="45" placeholder="Share your consultation experience..." required></textarea><br>
+            <button type="submit">Submit Doctor Review</button>
+        </form>
+        <ul id="docReviewList" style="text-align: left; max-width: 650px; margin: 15px auto;"></ul>
+    </section>
+
+    <!-- 5. Hospital Administrator Dashboard -->
+    <section>
+        <h2>MedCare Hospital Administration</h2>
+        <h3>Manage Doctors & Add New Specialist</h3>
+        <form id="adminDoctorForm">
+            <input type="text" id="newDocName" placeholder="Doctor Name (e.g. Dr. Preeti Rao)" required>
+            <select id="newDocSpec">
+                <option value="Cardiology">Cardiology</option>
+                <option value="Neurology">Neurology</option>
+                <option value="Pediatrics">Pediatrics</option>
+                <option value="Orthopedics">Orthopedics</option>
+                <option value="Dermatology">Dermatology</option>
+            </select><br>
+            <select id="newDocBranch">
+                <option value="Central Branch">Chennai Central</option>
+                <option value="Anna Nagar">Anna Nagar</option>
+                <option value="T. Nagar">T. Nagar</option>
+                <option value="Velachery">Velachery</option>
+            </select>
+            <input type="number" id="newDocFee" placeholder="Consultation Fee (₹)" required>
+            <input type="number" id="newDocExp" placeholder="Years Exp" required><br>
+            <button type="submit" style="background: #115e59;">Add Doctor to Directory</button>
+        </form>
+
+        <h3>Hospital Appointment Statistics & Operational Report</h3>
+        <button type="button" onclick="generateHospReport()">Generate Statistics Report</button>
+        <p id="hospReportDisplay" style="font-weight: bold; color: #0f766e; margin-top: 10px;"></p>
+    </section>
+
+    <p style="color: #888; font-size: 13px; margin-top: 25px;">MedCare Hospital System - Academic Year 2026</p>
+</div>
+
+<script>
+    const msg = document.getElementById("message");
+    let currentPatient = null;
+    let appointments = [];
+
+    let doctors = [
+        { id: 1, name: "Dr. Arvind Swaminathan", specialty: "Cardiology", location: "Central Branch", exp: 14, fee: 800, rating: "4.9/5 (128 reviews)" },
+        { id: 2, name: "Dr. Sunita Kapoor", specialty: "Pediatrics", location: "T. Nagar", exp: 10, fee: 600, rating: "4.8/5 (95 reviews)" },
+        { id: 3, name: "Dr. Rajesh Varma", specialty: "Orthopedics", location: "Anna Nagar", exp: 12, fee: 750, rating: "4.7/5 (110 reviews)" },
+        { id: 4, name: "Dr. Shalini Menon", specialty: "Neurology", location: "Central Branch", exp: 15, fee: 900, rating: "4.9/5 (142 reviews)" }
+    ];
+
+    function showMessage(text) {
+        msg.textContent = text;
+    }
+
+    function demoPatientLogin() {
+        currentPatient = { name: "Karthik Subramanian", email: "karthik@example.com", phone: "9876543210" };
+        document.getElementById("userRoleStatus").textContent = "Patient: " + currentPatient.name;
+        showMessage("Logged in as patient Karthik Subramanian.");
+    }
+
+    function renderDoctors(list) {
+        const dir = document.getElementById("doctorDirectory");
+        dir.innerHTML = "";
+        if (list.length === 0) {
+            dir.innerHTML = "<p>No doctors found matching criteria.</p>";
+            return;
+        }
+        list.forEach(d => {
+            const card = document.createElement("div");
+            card.className = "doc-card";
+            card.innerHTML = `
+                <h4>👨‍⚕️ ${d.name}</h4>
+                <p><strong>Specialty:</strong> ${d.specialty} | <strong>Exp:</strong> ${d.exp} Years</p>
+                <p><strong>Location:</strong> ${d.location}</p>
+                <p><strong>Fee:</strong> ₹${d.fee} | <strong>Rating:</strong> ⭐ ${d.rating}</p>
+                <button type="button" onclick="selectDoctor('${d.name} (${d.specialty})')">Book Appointment</button>
+            `;
+            dir.appendChild(card);
+        });
+    }
+
+    renderDoctors(doctors);
+
+    function filterDoctors() {
+        const spec = document.getElementById("specSelect").value;
+        const loc = document.getElementById("locSelect").value;
+        const filtered = doctors.filter(d => {
+            const matchSpec = spec === "All" || d.specialty === spec;
+            const matchLoc = loc === "All" || d.location === loc;
+            return matchSpec && matchLoc;
+        });
+        renderDoctors(filtered);
+        showMessage("Filtered: " + filtered.length + " doctor(s) found.");
+    }
+
+    function selectDoctor(docLabel) {
+        document.getElementById("bDoc").value = docLabel;
+        showMessage("Selected " + docLabel + ". Please pick date and fill check-in details.");
+    }
+
+    // Patient Register
+    document.getElementById("patientRegForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const name = document.getElementById("pRegName").value.trim();
+        const email = document.getElementById("pRegEmail").value.trim();
+        const phone = document.getElementById("pRegPhone").value.trim();
+        currentPatient = { name, email, phone };
+        document.getElementById("userRoleStatus").textContent = "Patient: " + name;
+        showMessage("Patient registration completed for " + name);
+        this.reset();
+    });
+
+    // Patient Login
+    document.getElementById("patientLoginForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const email = document.getElementById("pLogEmail").value.trim();
+        currentPatient = { name: "Registered Patient", email };
+        document.getElementById("userRoleStatus").textContent = "Patient: " + email;
+        showMessage("Login successful!");
+    });
+
+    // Hospital Login
+    document.getElementById("hospitalLoginForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const u = document.getElementById("hospUser").value.trim();
+        const p = document.getElementById("hospPass").value;
+        if (u === "medadmin" && p === "hosp123") {
+            document.getElementById("userRoleStatus").textContent = "Authenticated Hospital Administrator";
+            showMessage("Admin panel activated.");
+        } else {
+            showMessage("Invalid Admin credentials.");
+        }
+    });
+
+    // Book & Check-In
+    document.getElementById("bookingCheckinForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const doc = document.getElementById("bDoc").value;
+        const date = document.getElementById("bDate").value || "2026-11-18";
+        const time = document.getElementById("bTime").value;
+        const symptoms = document.getElementById("chkSymptoms").value.trim();
+        const history = document.getElementById("chkHistory").value.trim();
+        const allergies = document.getElementById("chkAllergies").value.trim();
+        const blood = document.getElementById("chkBloodGroup").value;
+        const pName = currentPatient ? currentPatient.name : "Patient Walk-in";
+
+        const token = "MED-" + Math.floor(100 + Math.random() * 900);
+        const appt = {
+            token,
+            patient: pName,
+            doctor: doc,
+            slot: date + " at " + time,
+            symptoms,
+            history,
+            allergies,
+            blood,
+            status: "Confirmed"
+        };
+
+        appointments.push(appt);
+
+        // Display Slip
+        document.getElementById("slipToken").textContent = token;
+        document.getElementById("slipDoc").textContent = doc;
+        document.getElementById("slipSlot").textContent = appt.slot;
+        document.getElementById("slipPatient").textContent = pName;
+        document.getElementById("slipBlood").textContent = blood;
+        document.getElementById("slipSymptoms").textContent = symptoms;
+        document.getElementById("appointmentSlip").style.display = "block";
+
+        renderAppointments();
+        showMessage("Appointment Token " + token + " created successfully! Digital check-in complete.");
+        this.reset();
+    });
+
+    function renderAppointments() {
+        const tbody = document.getElementById("pastAppointmentsBody");
+        tbody.innerHTML = "";
+        if (appointments.length === 0) {
+            tbody.innerHTML = "<tr><td colspan='7'>No previous consultations found.</td></tr>";
+            return;
+        }
+        appointments.forEach((a, idx) => {
+            const tr = document.createElement("tr");
+            const badgeClass = a.status === "Confirmed" ? "badge-confirmed" : "badge-cancelled";
+            tr.innerHTML = `
+                <td><strong>${a.token}</strong></td>
+                <td>${a.patient}</td>
+                <td>${a.doctor}</td>
+                <td>${a.slot}</td>
+                <td>${a.symptoms}</td>
+                <td><span class="badge ${badgeClass}">${a.status}</span></td>
+                <td><button type="button" onclick="cancelAppointment(${idx})" style="background: #dc2626; padding: 3px 8px; font-size: 12px;">Cancel</button></td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function cancelAppointment(idx) {
+        if (confirm("Cancel appointment token " + appointments[idx].token + "?")) {
+            appointments[idx].status = "Cancelled";
+            renderAppointments();
+            showMessage("Appointment " + appointments[idx].token + " marked cancelled.");
+        }
+    }
+
+    // Doctor Review
+    document.getElementById("docFeedbackForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const docName = document.getElementById("fbDocName").value.trim();
+        const stars = document.getElementById("fbStars").value;
+        const review = document.getElementById("fbReviewText").value.trim();
+
+        const li = document.createElement("li");
+        li.innerHTML = `<strong>${docName}</strong> (${stars}/5 stars): <em>"${review}"</em>`;
+        document.getElementById("docReviewList").appendChild(li);
+        showMessage("Thank you! Review published for " + docName);
+        this.reset();
+    });
+
+    // Admin Add Doctor
+    document.getElementById("adminDoctorForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const name = document.getElementById("newDocName").value.trim();
+        const specialty = document.getElementById("newDocSpec").value;
+        const location = document.getElementById("newDocBranch").value;
+        const fee = parseInt(document.getElementById("newDocFee").value);
+        const exp = parseInt(document.getElementById("newDocExp").value);
+
+        doctors.push({
+            id: doctors.length + 1,
+            name, specialty, location, fee, exp, rating: "New Specialist"
+        });
+        renderDoctors(doctors);
+        showMessage("Doctor " + name + " added to MedCare staff database.");
+        this.reset();
+    });
+
+    // Admin Statistics Report
+    function generateHospReport() {
+        const total = appointments.length;
+        const confirmed = appointments.filter(a => a.status === "Confirmed").length;
+        const cancelled = appointments.filter(a => a.status === "Cancelled").length;
+
+        document.getElementById("hospReportDisplay").textContent =
+            `Hospital Metrics: Total Registered Appointments: ${total} | Confirmed Consultations: ${confirmed} | Cancelled: ${cancelled} | Active Specialists: ${doctors.length}`;
+        showMessage("Hospital clinical operations report compiled.");
+    }
+</script>
+</body>
+</html>

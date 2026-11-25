@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Online Bus Ticket Booking System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f6fc;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 850px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+        }
+        input, select, textarea, button {
+            padding: 9px;
+            margin: 5px;
+            max-width: 95%;
+            box-sizing: border-box;
+        }
+        button, input[type="submit"], input[type="button"] {
+            cursor: pointer;
+            background: #155eef;
+            color: white;
+            border: 0;
+            border-radius: 5px;
+        }
+        table {
+            margin: 12px auto;
+            border-collapse: collapse;
+            width: 95%;
+        }
+        th, td { border: 1px solid #999; padding: 9px; }
+        section { padding: 12px 0; border-bottom: 1px solid #ddd; }
+        .message { color: #087443; font-weight: bold; }
+        @media (max-width: 600px) {
+            body { padding: 8px; }
+            .container { padding: 12px; }
+            table { font-size: 13px; }
+            th, td { padding: 5px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Online Bus Ticket Booking System</h1>
+    <p>Search buses, select your journey and book your ticket.</p>
+    <p id="message" class="message">Welcome! Choose an action below.</p>
+
+    <section>
+        <h2>User Registration</h2>
+        <form id="registerForm">
+            <input id="regName" type="text" placeholder="Full name" required><br>
+            <input id="regEmail" type="email" placeholder="Email address" required><br>
+            <input id="regPassword" type="password" placeholder="Password" required><br>
+            <button type="submit">Register</button>
+        </form>
+    </section>
+
+    <section>
+        <h2>Login</h2>
+        <form id="loginForm">
+            <input id="loginEmail" type="email" placeholder="Email address" required><br>
+            <input id="loginPassword" type="password" placeholder="Password" required><br>
+            <button type="submit">Login</button>
+            <button type="button" id="forgotBtn">Forgot Password</button>
+            <button type="button" id="changeBtn">Change Password</button>
+        </form>
+    </section>
+
+    <section>
+        <h2>Search Buses</h2>
+        <form id="searchForm">
+            <input id="from" type="text" placeholder="From" required>
+            <input id="to" type="text" placeholder="To" required><br>
+            <label>Journey date: <input id="journeyDate" type="date" required></label><br>
+            <button type="submit">Search Buses</button>
+        </form>
+        <table>
+            <tr><th>Bus</th><th>Category</th><th>Time</th><th>Fare</th><th>Seats</th><th>Action</th></tr>
+            <tr>
+                <td>Chennai Express</td><td>Volvo AC</td><td>09:00 AM</td>
+                <td>₹750</td><td id="seats1">12</td>
+                <td><button type="button" onclick="selectBus('Chennai Express', 750, 'seats1')">Select</button></td>
+            </tr>
+            <tr>
+                <td>Southern Travels</td><td>Sleeper Coach</td><td>10:30 PM</td>
+                <td>₹950</td><td id="seats2">8</td>
+                <td><button type="button" onclick="selectBus('Southern Travels', 950, 'seats2')">Select</button></td>
+            </tr>
+        </table>
+        <p id="selectedBus">Selected bus: None</p>
+    </section>
+
+    <section>
+        <h2>Book Ticket</h2>
+        <form id="bookingForm">
+            <input id="passenger" type="text" placeholder="Passenger name" required><br>
+            <input id="age" type="number" min="1" placeholder="Passenger age" required><br>
+            <label>Seat:
+                <select id="seat">
+                    <option value="1">Seat 1</option><option value="2">Seat 2</option>
+                    <option value="3">Seat 3</option><option value="4">Seat 4</option>
+                </select>
+            </label><br>
+            <button type="submit">Book Ticket</button>
+        </form>
+        <h3>My Booking History</h3>
+        <table id="history">
+            <tr><th>Passenger</th><th>Bus</th><th>Seat</th><th>Fare</th><th>Status</th></tr>
+        </table>
+        <button type="button" id="cancelBtn">Cancel Latest Ticket</button>
+    </section>
+
+    <section>
+        <h2>Comments</h2>
+        <form id="commentForm">
+            <textarea id="comment" rows="3" cols="35" placeholder="Write a comment about a bus" required></textarea><br>
+            <button type="submit">Post Comment</button>
+        </form>
+        <ul id="comments"></ul>
+    </section>
+
+    <section>
+        <h2>Admin Panel (Demo)</h2>
+        <h3>Add or Update Bus Information</h3>
+        <form id="busForm">
+            <input id="busName" type="text" placeholder="Bus name" required><br>
+            <select id="busCategory">
+                <option>Volvo</option><option>Sleeper Coach</option><option>AC Coach</option><option>Non-AC Coach</option>
+            </select><br>
+            <input id="busRoute" type="text" placeholder="Route / location" required><br>
+            <input id="busTime" type="time" required><br>
+            <input id="busSeats" type="number" min="1" placeholder="Available seats" required><br>
+            <input id="busFare" type="number" min="1" placeholder="Ticket price (₹)" required><br>
+            <button type="submit">Save Bus</button>
+        </form>
+        <h3>Registered Users</h3>
+        <ul id="users"><li>No users registered yet.</li></ul>
+        <h3>Manage News</h3>
+        <form id="newsForm">
+            <input id="newsText" type="text" placeholder="Enter news or announcement" required>
+            <button type="submit">Publish News</button>
+        </form>
+        <ul id="news"></ul>
+        <h3>Reports</h3>
+        <button type="button" id="reportBtn">Generate Booking Report</button>
+        <p id="report"></p>
+    </section>
+
+    <section>
+        <h2>Contact Us</h2>
+        <p>Email: support@example.com | Phone: 9876543210</p>
+    </section>
+    <p>Online Bus Ticket Booking System</p>
+</div>
+
+<script>
+    const message = document.getElementById("message");
+    let currentBus = "";
+    let currentFare = 0;
+    let currentSeatCountId = "";
+    let bookings = [];
+    let users = [];
+
+    function showMessage(text) {
+        message.textContent = text;
+    }
+
+    document.getElementById("registerForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+        const name = document.getElementById("regName").value.trim();
+        const email = document.getElementById("regEmail").value.trim();
+        if (users.some(user => user.email === email)) {
+            showMessage("This email is already registered.");
+            return;
+        }
+        users.push({name, email});
+        const list = document.getElementById("users");
+        if (users.length === 1) list.innerHTML = "";
+        const item = document.createElement("li");
+        item.textContent = name + " (" + email + ")";
+        list.appendChild(item);
+        showMessage("Registration successful (demo only).");
+        this.reset();
+    });
+
+    document.getElementById("loginForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+        const email = document.getElementById("loginEmail").value.trim();
+        if (users.some(user => user.email === email)) {
+            showMessage("Login successful (demo only).");
+        } else {
+            showMessage("Please register first. This demo does not verify passwords.");
+        }
+    });
+
+    document.getElementById("forgotBtn").addEventListener("click", function() {
+        showMessage("Demo: password reset would be sent to your registered email.");
+    });
+    document.getElementById("changeBtn").addEventListener("click", function() {
+        showMessage("Demo: password change requires a real account system.");
+    });
+
+    document.getElementById("searchForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+        showMessage("Showing sample buses for " + document.getElementById("from").value +
+            " to " + document.getElementById("to").value +
+            " on " + document.getElementById("journeyDate").value + ".");
+    });
+
+    function selectBus(name, fare, seatId) {
+        currentBus = name;
+        currentFare = fare;
+        currentSeatCountId = seatId;
+        document.getElementById("selectedBus").textContent =
+            "Selected bus: " + name + " | Fare: ₹" + fare;
+        showMessage(name + " selected. Enter passenger details to book.");
+    }
+
+    document.getElementById("bookingForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+        if (!currentBus) {
+            showMessage("Please select a bus before booking.");
+            return;
+        }
+        const seatsCell = document.getElementById(currentSeatCountId);
+        let available = Number(seatsCell.textContent);
+        if (available <= 0) {
+            showMessage("Sorry, no seats are available on this bus.");
+            return;
+        }
+        available--;
+        seatsCell.textContent = available;
+        const booking = {
+            passenger: document.getElementById("passenger").value.trim(),
+            bus: currentBus,
+            seat: document.getElementById("seat").value,
+            fare: currentFare,
+            status: "Booked",
+            seatId: currentSeatCountId
+        };
+        bookings.push(booking);
+        addBookingRow(booking);
+        showMessage("Ticket booked successfully (demo only). No payment was taken.");
+        this.reset();
+    });
+
+    function addBookingRow(booking) {
+        const row = document.getElementById("history").insertRow();
+        [booking.passenger, booking.bus, booking.seat, "₹" + booking.fare, booking.status]
+            .forEach(value => {
+                const cell = row.insertCell();
+                cell.textContent = value;
+            });
+    }
+
+    document.getElementById("cancelBtn").addEventListener("click", function() {
+        const booking = bookings.find(item => item.status === "Booked");
+        if (!booking) {
+            showMessage("There are no active tickets to cancel.");
+            return;
+        }
+        booking.status = "Cancelled";
+        const rows = document.getElementById("history").rows;
+        for (let i = 1; i < rows.length; i++) {
+            if (rows[i].cells[0].textContent === booking.passenger &&
+                rows[i].cells[1].textContent === booking.bus &&
+                rows[i].cells[4].textContent === "Booked") {
+                rows[i].cells[4].textContent = "Cancelled";
+                break;
+            }
+        }
+        document.getElementById(booking.seatId).textContent =
+            Number(document.getElementById(booking.seatId).textContent) + 1;
+        showMessage("Latest active ticket cancelled (demo only).");
+    });
+
+    document.getElementById("commentForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+        const item = document.createElement("li");
+        item.textContent = document.getElementById("comment").value;
+        document.getElementById("comments").appendChild(item);
+        this.reset();
+        showMessage("Comment posted.");
+    });
+
+    document.getElementById("busForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+        const row = document.getElementById("history");
+        showMessage("Bus details saved for this demo: " +
+            document.getElementById("busName").value + " (" +
+            document.getElementById("busCategory").value + ").");
+        alert("Bus information saved in the current page demo. It is not stored permanently.");
+        this.reset();
+    });
+
+    document.getElementById("newsForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+        const item = document.createElement("li");
+        item.textContent = document.getElementById("newsText").value;
+        document.getElementById("news").appendChild(item);
+        this.reset();
+        showMessage("News published on this page.");
+    });
+
+    document.getElementById("reportBtn").addEventListener("click", function() {
+        const active = bookings.filter(item => item.status === "Booked");
+        const total = active.reduce((sum, item) => sum + item.fare, 0);
+        document.getElementById("report").textContent =
+            "Total bookings: " + bookings.length +
+            " | Active bookings: " + active.length +
+            " | Cancelled: " + (bookings.length - active.length) +
+            " | Active booking value: ₹" + total;
+        showMessage("Booking report generated.");
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Beauty Parlour Appointment Booking System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #faf5ff;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 920px;
+            margin: auto;
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 14px rgba(147, 51, 234, 0.1);
+        }
+        h1 { color: #7e22ce; margin-bottom: 5px; }
+        h2 { color: #9333ea; border-bottom: 2px solid #e9d5ff; padding-bottom: 6px; margin-top: 25px; font-size: 20px; }
+        h3 { color: #581c87; font-size: 16px; margin-top: 15px; }
+        p { margin: 6px 0; }
+        input, select, textarea, button {
+            padding: 9px;
+            margin: 6px;
+            max-width: 95%;
+            border: 1px solid #d8b4fe;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        button, input[type="submit"], input[type="button"] {
+            cursor: pointer;
+            background: #9333ea;
+            color: white;
+            border: 0;
+            border-radius: 5px;
+            padding: 9px 18px;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+        button:hover, input[type="submit"]:hover {
+            background: #7e22ce;
+        }
+        table {
+            margin: 15px auto;
+            border-collapse: collapse;
+            width: 98%;
+            background: #fff;
+        }
+        th, td {
+            border: 1px solid #e9d5ff;
+            padding: 10px;
+            text-align: center;
+            font-size: 14px;
+        }
+        th {
+            background-color: #f3e8ff;
+            color: #6b21a8;
+        }
+        tr:nth-child(even) { background-color: #fdfaff; }
+        section {
+            padding: 14px 0;
+            border-bottom: 1px solid #e9d5ff;
+            text-align: center;
+        }
+        .message {
+            background-color: #f3e8ff;
+            color: #6b21a8;
+            padding: 10px;
+            border-radius: 6px;
+            font-weight: bold;
+            margin: 12px 0;
+            display: inline-block;
+            min-width: 60%;
+        }
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .item-card {
+            border: 1px solid #e9d5ff;
+            border-radius: 8px;
+            padding: 15px;
+            background: #ffffff;
+            text-align: left;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+        }
+        .item-card h4 { margin: 0 0 6px 0; color: #7e22ce; }
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .badge-confirmed { background: #dcfce7; color: #166534; }
+        .badge-cancelled { background: #fee2e2; color: #991b1b; }
+        .badge-locked { background: #e5e7eb; color: #374151; }
+        @media (max-width: 600px) {
+            body { padding: 8px; }
+            .container { padding: 12px; }
+            table { font-size: 12px; display: block; overflow-x: auto; }
+            th, td { padding: 6px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Online Beauty Parlour Appointment Booking System</h1>
+    <p>Glow & Grace Luxury Salon - Real-time stylist scheduling & hassle-free appointments</p>
+    <p id="message" class="message">Welcome to Glow & Grace Salon. Pamper yourself with our certified stylists!</p>
+
+    <!-- 1. Customer Authentication -->
+    <section>
+        <h2>Customer Registration & Login</h2>
+        <form id="custRegForm">
+            <input type="text" id="custName" placeholder="Full Name" required>
+            <input type="email" id="custEmail" placeholder="Email Address" required><br>
+            <input type="tel" id="custPhone" placeholder="Mobile Number" required>
+            <input type="password" id="custPass" placeholder="Password" required><br>
+            <button type="submit">Create Customer Account</button>
+        </form>
+
+        <h3>Customer Login</h3>
+        <form id="custLoginForm">
+            <input type="email" id="logEmail" placeholder="Email Address" required>
+            <input type="password" id="logPass" placeholder="Password" required><br>
+            <button type="submit">Login to Profile</button>
+            <button type="button" onclick="demoCustLogin()">Demo Customer Login</button>
+        </form>
+
+        <h3>Salon Manager / Staff Login</h3>
+        <form id="staffLoginForm">
+            <input type="text" id="staffUser" placeholder="Staff Username (manager)" required>
+            <input type="password" id="staffPass" placeholder="Password (staff123)" required><br>
+            <button type="submit" style="background: #581c87;">Manager Login</button>
+        </form>
+        <p id="authDisplay" style="font-weight: bold; color: #9333ea; margin-top: 8px;">Current User: Guest (Not Logged In)</p>
+    </section>
+
+    <!-- 2. Services & Stylist Profiles -->
+    <section>
+        <h2>Our Services & Master Stylists</h2>
+        <div class="card-grid">
+            <div class="item-card">
+                <h4>💇 Hair Styling & Keratin</h4>
+                <p><strong>Duration:</strong> 45 Mins | <strong>Price:</strong> ₹850</p>
+                <p style="font-size: 13px; color: #555;">Precision cuts, organic keratin smoothing, and customized coloring.</p>
+                <button type="button" onclick="preselectService('Hair Styling & Keratin', 850)">Select Service</button>
+            </div>
+            <div class="item-card">
+                <h4>✨ Radiant Gold Facial</h4>
+                <p><strong>Duration:</strong> 60 Mins | <strong>Price:</strong> ₹1,200</p>
+                <p style="font-size: 13px; color: #555;">Deep cleansing, enzymatic exfoliation, and 24K gold foil rejuvenation.</p>
+                <button type="button" onclick="preselectService('Radiant Gold Facial', 1200)">Select Service</button>
+            </div>
+            <div class="item-card">
+                <h4>👰 Luxury Bridal Makeover</h4>
+                <p><strong>Duration:</strong> 120 Mins | <strong>Price:</strong> ₹4,500</p>
+                <p style="font-size: 13px; color: #555;">HD Airbrush bridal makeup, hair draping, and luxury floral adornment.</p>
+                <button type="button" onclick="preselectService('Luxury Bridal Makeover', 4500)">Select Service</button>
+            </div>
+            <div class="item-card">
+                <h4>🌿 Aromatherapy Body Spa</h4>
+                <p><strong>Duration:</strong> 90 Mins | <strong>Price:</strong> ₹2,200</p>
+                <p style="font-size: 13px; color: #555;">Full body relaxation massage using essential essential floral oils.</p>
+                <button type="button" onclick="preselectService('Aromatherapy Body Spa', 2200)">Select Service</button>
+            </div>
+        </div>
+
+        <h3>Our Certified Stylists</h3>
+        <p><strong>Stylist Priya:</strong> Senior Hair & Coloring Specialist (8+ Years Experience)<br>
+           <strong>Stylist Aisha:</strong> Celebrity & Bridal Makeup Artist (6+ Years Experience)<br>
+           <strong>Therapist Meera:</strong> Certified Aromatherapist & Skin Expert (5+ Years Experience)</p>
+    </section>
+
+    <!-- 3. Reservations Calendar & Booking -->
+    <section>
+        <h2>Book Salon Appointment</h2>
+        <form id="appointmentForm">
+            <label>Selected Service:
+                <select id="appService" onchange="updateServiceCost()">
+                    <option value="Hair Styling & Keratin" data-cost="850">Hair Styling & Keratin (₹850)</option>
+                    <option value="Radiant Gold Facial" data-cost="1200">Radiant Gold Facial (₹1,200)</option>
+                    <option value="Luxury Bridal Makeover" data-cost="4500">Luxury Bridal Makeover (₹4,500)</option>
+                    <option value="Aromatherapy Body Spa" data-cost="2200">Aromatherapy Body Spa (₹2,200)</option>
+                </select>
+            </label>
+            <label>Choose Stylist:
+                <select id="appStylist">
+                    <option value="Stylist Priya">Stylist Priya (Hair Specialist)</option>
+                    <option value="Stylist Aisha">Stylist Aisha (Bridal Specialist)</option>
+                    <option value="Therapist Meera">Therapist Meera (Skin & Spa)</option>
+                </select>
+            </label><br>
+            <label>Appointment Date: <input type="date" id="appDate" required></label>
+            <label>Available Time Slot:
+                <select id="appTimeSlot">
+                    <option value="10:00 AM">10:00 AM - 11:00 AM</option>
+                    <option value="11:30 AM">11:30 AM - 12:30 PM</option>
+                    <option value="02:00 PM">02:00 PM - 03:00 PM</option>
+                    <option value="03:30 PM">03:30 PM - 04:30 PM</option>
+                    <option value="05:00 PM">05:00 PM - 06:00 PM</option>
+                    <option value="06:30 PM">06:30 PM - 07:30 PM</option>
+                </select>
+            </label><br>
+
+            <h3>Online Payment Gateway (Stripe / PayPal Integration)</h3>
+            <p>Total Service Fee: ₹<span id="serviceFeeDisplay">850</span></p>
+            <label>Payment Structure:
+                <select id="paymentType" onchange="updatePaymentAmount()">
+                    <option value="Full">Full Payment (100% - ₹850)</option>
+                    <option value="Deposit">Partial Deposit (30% Advance Booking - ₹255)</option>
+                </select>
+            </label>
+            <label>Payment Platform:
+                <select id="paymentGateway">
+                    <option value="Stripe">Stripe Checkout (Cards)</option>
+                    <option value="PayPal">PayPal Global</option>
+                    <option value="UPI / Wallet">UPI / Digital Wallet</option>
+                </select>
+            </label><br>
+            <p style="font-weight: bold; color: #7e22ce;">Amount to Pay Now: ₹<span id="payableNow">850</span></p>
+            <button type="submit" style="background: #16a34a; font-size: 16px;">Confirm Booking & Pay</button>
+        </form>
+    </section>
+
+    <!-- 4. Customer Personal Account Page -->
+    <section>
+        <h2>Customer Personal Account & Upcoming Reservations</h2>
+        <div id="custProfileBox" style="margin-bottom: 15px; font-weight: bold; color: #581c87;">
+            Customer: Not Selected | Phone: - | Email: -
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Appt ID</th>
+                    <th>Customer</th>
+                    <th>Service</th>
+                    <th>Stylist</th>
+                    <th>Date & Time</th>
+                    <th>Paid</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="customerAppointmentsBody">
+                <tr><td colspan="8">No appointments registered yet.</td></tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- 5. Salon Manager Panel & Calendar Lockout -->
+    <section>
+        <h2>Salon Manager & Staff Control Center</h2>
+        <h3>Lockout Unavailable Hours / Calendar Maintenance</h3>
+        <form id="lockoutForm">
+            <label>Date: <input type="date" id="lockDate" required></label>
+            <label>Stylist:
+                <select id="lockStylist">
+                    <option value="All Stylists">All Stylists (Salon Closed)</option>
+                    <option value="Stylist Priya">Stylist Priya</option>
+                    <option value="Stylist Aisha">Stylist Aisha</option>
+                    <option value="Therapist Meera">Therapist Meera</option>
+                </select>
+            </label>
+            <label>Slot to Lock:
+                <select id="lockSlot">
+                    <option value="10:00 AM">10:00 AM</option>
+                    <option value="11:30 AM">11:30 AM</option>
+                    <option value="02:00 PM">02:00 PM</option>
+                    <option value="03:30 PM">03:30 PM</option>
+                    <option value="05:00 PM">05:00 PM</option>
+                    <option value="06:30 PM">06:30 PM</option>
+                </select>
+            </label><br>
+            <button type="submit" style="background: #be123c;">Lockout Selected Hour</button>
+        </form>
+        <p id="lockoutNotice" style="font-weight: bold; color: #b91c1c;"></p>
+
+        <h3>Send SMS / Call Alert to Customer</h3>
+        <form id="smsForm">
+            <input type="text" id="smsApptId" placeholder="Appointment ID" required>
+            <input type="text" id="smsText" placeholder="Reminder Message..." value="Friendly reminder from Glow & Grace: Your appointment is scheduled for tomorrow." required><br>
+            <button type="submit" style="background: #0284c7;">Dispatch SMS Alert</button>
+        </form>
+
+        <h3>Client Reviews & Feedback Board</h3>
+        <form id="feedbackForm">
+            <input type="text" id="fbClient" placeholder="Your Name" required>
+            <input type="text" id="fbReview" placeholder="Write feedback about stylist..." required><br>
+            <button type="submit">Submit Feedback</button>
+        </form>
+        <ul id="feedbackList" style="text-align: left; max-width: 600px; margin: 15px auto;"></ul>
+    </section>
+
+    <p style="color: #888; font-size: 13px; margin-top: 25px;">Online Beauty Parlour Appointment Booking System - Academic Year 2026</p>
+</div>
+
+<script>
+    const msg = document.getElementById("message");
+    let loggedInCustomer = null;
+    let appointments = [];
+    let lockedSlots = [];
+
+    function showMessage(text) {
+        msg.textContent = text;
+    }
+
+    function demoCustLogin() {
+        loggedInCustomer = { name: "Sneha Reddy", email: "sneha@example.com", phone: "9876543210" };
+        document.getElementById("authDisplay").textContent = "Logged In As Customer: " + loggedInCustomer.name;
+        document.getElementById("custProfileBox").textContent = "Customer: " + loggedInCustomer.name + " | Phone: " + loggedInCustomer.phone + " | Email: " + loggedInCustomer.email;
+        showMessage("Logged in as demo customer Sneha Reddy.");
+    }
+
+    function preselectService(name, cost) {
+        document.getElementById("appService").value = name;
+        updateServiceCost();
+        showMessage(name + " chosen. Please select stylist and slot.");
+    }
+
+    function updateServiceCost() {
+        const sel = document.getElementById("appService");
+        const cost = parseInt(sel.options[sel.selectedIndex].getAttribute("data-cost"));
+        document.getElementById("serviceFeeDisplay").textContent = cost;
+        updatePaymentAmount();
+    }
+
+    function updatePaymentAmount() {
+        const cost = parseInt(document.getElementById("serviceFeeDisplay").textContent);
+        const pType = document.getElementById("paymentType").value;
+        const nowPay = pType === "Full" ? cost : Math.round(cost * 0.3);
+        document.getElementById("payableNow").textContent = nowPay;
+    }
+
+    // Customer Registration
+    document.getElementById("custRegForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const name = document.getElementById("custName").value.trim();
+        const email = document.getElementById("custEmail").value.trim();
+        const phone = document.getElementById("custPhone").value.trim();
+
+        loggedInCustomer = { name, email, phone };
+        document.getElementById("authDisplay").textContent = "Logged In As Customer: " + name;
+        document.getElementById("custProfileBox").textContent = "Customer: " + name + " | Phone: " + phone + " | Email: " + email;
+        showMessage("Customer profile created for " + name);
+        this.reset();
+    });
+
+    // Customer Login
+    document.getElementById("custLoginForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const email = document.getElementById("logEmail").value.trim();
+        loggedInCustomer = { name: "Registered Client", email: email, phone: "9840112233" };
+        document.getElementById("authDisplay").textContent = "Logged In: " + email;
+        document.getElementById("custProfileBox").textContent = "Customer: Registered Client | Email: " + email;
+        showMessage("Welcome back! You are logged in.");
+    });
+
+    // Staff Login
+    document.getElementById("staffLoginForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const u = document.getElementById("staffUser").value.trim();
+        const p = document.getElementById("staffPass").value;
+        if (u === "manager" && p === "staff123") {
+            document.getElementById("authDisplay").textContent = "Authenticated: Salon Manager (Admin Rights)";
+            showMessage("Salon manager controls enabled.");
+        } else {
+            showMessage("Invalid staff credentials.");
+        }
+    });
+
+    // Book Appointment
+    document.getElementById("appointmentForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const service = document.getElementById("appService").value;
+        const stylist = document.getElementById("appStylist").value;
+        const date = document.getElementById("appDate").value || "2026-11-15";
+        const slot = document.getElementById("appTimeSlot").value;
+        const payType = document.getElementById("paymentType").value;
+        const gateway = document.getElementById("paymentGateway").value;
+        const amountPaid = document.getElementById("payableNow").textContent;
+
+        // Check if locked
+        const isLocked = lockedSlots.some(l => l.date === date && l.slot === slot && (l.stylist === "All Stylists" || l.stylist === stylist));
+        if (isLocked) {
+            showMessage("Sorry! The slot " + slot + " on " + date + " is locked by salon administration.", true);
+            return;
+        }
+
+        const apptId = "GLOW-" + Math.floor(1000 + Math.random() * 9000);
+        const custName = loggedInCustomer ? loggedInCustomer.name : "Guest Client";
+
+        const appt = {
+            id: apptId,
+            customer: custName,
+            service,
+            stylist,
+            date,
+            slot,
+            paid: "₹" + amountPaid + " (" + payType + " via " + gateway + ")",
+            status: "Confirmed"
+        };
+
+        appointments.push(appt);
+        renderAppointments();
+        showMessage("Appointment " + apptId + " booked successfully with " + stylist + " on " + date + " at " + slot + "!");
+        this.reset();
+        updateServiceCost();
+    });
+
+    function renderAppointments() {
+        const tbody = document.getElementById("customerAppointmentsBody");
+        tbody.innerHTML = "";
+        if (appointments.length === 0) {
+            tbody.innerHTML = "<tr><td colspan='8'>No appointments registered yet.</td></tr>";
+            return;
+        }
+        appointments.forEach((a, idx) => {
+            const tr = document.createElement("tr");
+            const badgeClass = a.status === "Confirmed" ? "badge-confirmed" : "badge-cancelled";
+            tr.innerHTML = `
+                <td><strong>${a.id}</strong></td>
+                <td>${a.customer}</td>
+                <td>${a.service}</td>
+                <td>${a.stylist}</td>
+                <td>${a.date} (${a.slot})</td>
+                <td>${a.paid}</td>
+                <td><span class="badge ${badgeClass}">${a.status}</span></td>
+                <td>
+                    <button type="button" onclick="rescheduleAppt(${idx})" style="padding: 3px 8px; font-size: 12px;">Reschedule</button>
+                    <button type="button" onclick="cancelAppt(${idx})" style="padding: 3px 8px; font-size: 12px; background: #dc2626;">Cancel</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function rescheduleAppt(idx) {
+        const newDate = prompt("Enter new preferred date (YYYY-MM-DD):", appointments[idx].date);
+        const newSlot = prompt("Enter new preferred time slot (e.g. 02:00 PM):", appointments[idx].slot);
+        if (newDate && newSlot) {
+            appointments[idx].date = newDate;
+            appointments[idx].slot = newSlot;
+            renderAppointments();
+            showMessage("Appointment " + appointments[idx].id + " rescheduled to " + newDate + " " + newSlot);
+        }
+    }
+
+    function cancelAppt(idx) {
+        if (confirm("Are you sure you want to cancel appointment " + appointments[idx].id + "?")) {
+            appointments[idx].status = "Cancelled";
+            renderAppointments();
+            showMessage("Appointment " + appointments[idx].id + " has been cancelled.");
+        }
+    }
+
+    // Lockout Form
+    document.getElementById("lockoutForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const date = document.getElementById("lockDate").value;
+        const stylist = document.getElementById("lockStylist").value;
+        const slot = document.getElementById("lockSlot").value;
+
+        lockedSlots.push({ date, stylist, slot });
+        document.getElementById("lockoutNotice").textContent = "Locked Slot: " + slot + " on " + date + " for " + stylist + ".";
+        showMessage("Admin: Hour locked successfully. Unavailable to clients.");
+    });
+
+    // SMS Dispatch
+    document.getElementById("smsForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const aId = document.getElementById("smsApptId").value.trim();
+        const text = document.getElementById("smsText").value;
+        showMessage("SMS notification dispatched to customer for appointment " + aId + ": '" + text + "'");
+        this.reset();
+    });
+
+    // Feedback
+    document.getElementById("feedbackForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const client = document.getElementById("fbClient").value.trim();
+        const review = document.getElementById("fbReview").value.trim();
+
+        const li = document.createElement("li");
+        li.innerHTML = `<strong>${client}:</strong> <em>"${review}"</em>`;
+        document.getElementById("feedbackList").appendChild(li);
+        showMessage("Thank you for sharing your salon experience!");
+        this.reset();
+    });
+</script>
+</body>
+</html>

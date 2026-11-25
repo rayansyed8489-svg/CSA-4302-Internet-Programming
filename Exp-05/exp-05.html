@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Flight Reservation System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f7ff;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+            color: #1e293b;
+        }
+        .container {
+            max-width: 920px;
+            margin: auto;
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+        }
+        h1 { color: #0369a1; margin-bottom: 5px; }
+        h2 { color: #0284c7; border-bottom: 2px solid #bae6fd; padding-bottom: 6px; margin-top: 25px; font-size: 20px; }
+        h3 { color: #0f172a; font-size: 16px; margin-top: 15px; }
+        p { margin: 6px 0; }
+        input, select, textarea, button {
+            padding: 9px;
+            margin: 6px;
+            max-width: 95%;
+            border: 1px solid #cbd5e1;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        button, input[type="submit"], input[type="button"] {
+            cursor: pointer;
+            background: #0284c7;
+            color: white;
+            border: 0;
+            border-radius: 5px;
+            padding: 9px 18px;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+        button:hover, input[type="submit"]:hover {
+            background: #0369a1;
+        }
+        table {
+            margin: 15px auto;
+            border-collapse: collapse;
+            width: 98%;
+            background: #fff;
+        }
+        th, td {
+            border: 1px solid #e2e8f0;
+            padding: 10px;
+            text-align: center;
+            font-size: 14px;
+        }
+        th {
+            background-color: #e0f2fe;
+            color: #0369a1;
+        }
+        tr:nth-child(even) { background-color: #f8fafc; }
+        section {
+            padding: 14px 0;
+            border-bottom: 1px solid #e2e8f0;
+            text-align: center;
+        }
+        .message {
+            background-color: #e0f2fe;
+            color: #0369a1;
+            padding: 10px;
+            border-radius: 6px;
+            font-weight: bold;
+            margin: 12px 0;
+            display: inline-block;
+            min-width: 60%;
+        }
+        .boarding-pass {
+            background: #ffffff;
+            border: 2px dashed #0284c7;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px auto;
+            width: 85%;
+            text-align: left;
+            display: none;
+            box-shadow: 0 4px 10px rgba(2, 132, 199, 0.15);
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .badge-confirmed { background: #dcfce7; color: #166534; }
+        .badge-cancelled { background: #fee2e2; color: #991b1b; }
+        @media (max-width: 600px) {
+            body { padding: 8px; }
+            .container { padding: 12px; }
+            table { font-size: 12px; display: block; overflow-x: auto; }
+            th, td { padding: 6px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Online Flight Reservation System</h1>
+    <p>SkyWings Global Airlines - Search flights, reserve seats, pay securely & download e-tickets</p>
+    <p id="message" class="message">Welcome to SkyWings Airline Reservation Portal.</p>
+
+    <!-- 1. User & Admin Authentication -->
+    <section>
+        <h2>User Registration & Login</h2>
+        <form id="regForm">
+            <input type="text" id="regName" placeholder="Full Name" required>
+            <input type="email" id="regEmail" placeholder="Email Address" required><br>
+            <input type="tel" id="regPhone" placeholder="Mobile Number" required>
+            <input type="password" id="regPass" placeholder="Password" required><br>
+            <button type="submit">Register as Passenger</button>
+        </form>
+
+        <h3>Passenger Login</h3>
+        <form id="loginForm">
+            <input type="email" id="loginEmail" placeholder="Passenger Email" required>
+            <input type="password" id="loginPass" placeholder="Password" required><br>
+            <button type="submit">Login</button>
+            <button type="button" onclick="forgotPassword()">Forgot Password</button>
+            <button type="button" onclick="quickPassengerLogin()">Demo Passenger Login</button>
+        </form>
+
+        <h3>Administrator Login</h3>
+        <form id="adminLoginForm">
+            <input type="text" id="adminUser" placeholder="Admin Username (admin)" required>
+            <input type="password" id="adminPass" placeholder="Admin Password (admin123)" required><br>
+            <button type="submit" style="background: #0f172a;">Login as Administrator</button>
+        </form>
+        <p id="authStatusText" style="font-weight: bold; color: #0284c7; margin-top: 8px;">Logged In: None (Guest)</p>
+    </section>
+
+    <!-- 2. Search Flights -->
+    <section>
+        <h2>Search Flights</h2>
+        <form id="flightSearchForm">
+            <input type="text" id="fromCity" placeholder="From (e.g. Chennai - MAA)" required>
+            <input type="text" id="toCity" placeholder="To (e.g. Delhi - DEL)" required><br>
+            <label>Departure Date: <input type="date" id="flightDate" required></label>
+            <label>Trip:
+                <select id="tripType">
+                    <option value="One Way">One Way</option>
+                    <option value="Round Trip">Round Trip</option>
+                </select>
+            </label>
+            <label>Cabin Class:
+                <select id="flightClass">
+                    <option value="Economy">Economy</option>
+                    <option value="Premium Economy">Premium Economy</option>
+                    <option value="Business">Business Class</option>
+                </select>
+            </label><br>
+            <button type="submit">Search Available Flights</button>
+        </form>
+
+        <h3>Available Flights</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Flight No</th>
+                    <th>Airline</th>
+                    <th>Route</th>
+                    <th>Departure / Arrival</th>
+                    <th>Class</th>
+                    <th>Seats Left</th>
+                    <th>Fare (₹)</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="flightListBody">
+                <tr>
+                    <td>AI-504</td>
+                    <td>Air India</td>
+                    <td>Chennai (MAA) -> Delhi (DEL)</td>
+                    <td>06:00 AM - 08:45 AM</td>
+                    <td>Economy</td>
+                    <td id="seats-AI504">18</td>
+                    <td>₹5,200</td>
+                    <td><button type="button" onclick="selectFlight('AI-504', 'Air India', 'Chennai (MAA)', 'Delhi (DEL)', 'Economy', 5200, 'seats-AI504')">Select Flight</button></td>
+                </tr>
+                <tr>
+                    <td>6E-214</td>
+                    <td>IndiGo</td>
+                    <td>Chennai (MAA) -> Mumbai (BOM)</td>
+                    <td>09:15 AM - 11:10 AM</td>
+                    <td>Economy</td>
+                    <td id="seats-6E214">25</td>
+                    <td>₹4,300</td>
+                    <td><button type="button" onclick="selectFlight('6E-214', 'IndiGo', 'Chennai (MAA)', 'Mumbai (BOM)', 'Economy', 4300, 'seats-6E214')">Select Flight</button></td>
+                </tr>
+                <tr>
+                    <td>UK-835</td>
+                    <td>Vistara</td>
+                    <td>Chennai (MAA) -> Bangalore (BLR)</td>
+                    <td>14:30 PM - 15:30 PM</td>
+                    <td>Business</td>
+                    <td id="seats-UK835">8</td>
+                    <td>₹8,900</td>
+                    <td><button type="button" onclick="selectFlight('UK-835', 'Vistara', 'Chennai (MAA)', 'Bangalore (BLR)', 'Business', 8900, 'seats-UK835')">Select Flight</button></td>
+                </tr>
+            </tbody>
+        </table>
+        <p id="selectedFlightNotice" style="font-weight: bold; color: #0369a1;">No flight selected yet.</p>
+    </section>
+
+    <!-- 3. Passenger Details & Seat Selection -->
+    <section>
+        <h2>Book Ticket & Seat Selection</h2>
+        <form id="passengerBookingForm">
+            <input type="text" id="paxName" placeholder="Primary Passenger Full Name" required>
+            <input type="number" id="paxAge" placeholder="Age" min="1" max="110" required>
+            <select id="paxGender" required>
+                <option value="">Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+            </select><br>
+            <label>Select Seat:
+                <select id="paxSeat">
+                    <option value="4A (Window)">4A (Window)</option>
+                    <option value="4B (Middle)">4B (Middle)</option>
+                    <option value="4C (Aisle)">4C (Aisle)</option>
+                    <option value="5A (Window)">5A (Window)</option>
+                    <option value="5C (Aisle)">5C (Aisle)</option>
+                </select>
+            </label>
+            <label>Meal:
+                <select id="paxMeal">
+                    <option value="Standard Vegetarian">Standard Vegetarian</option>
+                    <option value="Asian Non-Veg">Asian Non-Veg</option>
+                    <option value="Fruit Platter">Fruit Platter</option>
+                    <option value="No Meal">No Meal</option>
+                </select>
+            </label><br>
+
+            <h3>Payment Gateway Simulation</h3>
+            <p id="fareSummaryText">Select a flight above to view total payable amount.</p>
+            <label>Payment Method:
+                <select id="paymentMethod">
+                    <option value="Credit / Debit Card">Credit / Debit Card</option>
+                    <option value="UPI (GPay / PhonePe / Paytm)">UPI (GPay / PhonePe / Paytm)</option>
+                    <option value="Net Banking">Net Banking</option>
+                </select>
+            </label><br>
+            <input type="text" id="paymentAccount" placeholder="Card Number or UPI ID" required><br>
+            <button type="submit" style="background: #16a34a;">Authorize Payment & Confirm Booking</button>
+        </form>
+
+        <!-- Printable E-Ticket / Boarding Pass -->
+        <div id="boardingPassBox" class="boarding-pass">
+            <h3 style="text-align: center; color: #0369a1; margin-top: 0;">✈ SKYWINGS AIRWAYS - OFFICIAL E-TICKET & BOARDING PASS</h3>
+            <p><strong>Booking Reference (PNR):</strong> <span id="bpPnr" style="color: #0284c7; font-size: 18px;"></span></p>
+            <p><strong>Flight:</strong> <span id="bpFlight"></span> (<span id="bpAirline"></span>) | <strong>Class:</strong> <span id="bpClass"></span></p>
+            <p><strong>Route:</strong> <span id="bpRoute"></span> | <strong>Date:</strong> <span id="bpDate"></span></p>
+            <p><strong>Passenger:</strong> <span id="bpPax"></span> | <strong>Seat:</strong> <span id="bpSeat"></span> | <strong>Meal:</strong> <span id="bpMeal"></span></p>
+            <p><strong>Total Fare Paid:</strong> ₹<span id="bpFare"></span> | <strong>Status:</strong> <span class="badge badge-confirmed">Confirmed</span></p>
+            <p style="font-size: 12px; color: #64748b;">Gate closes 25 mins prior to departure. Please show this e-ticket along with government photo ID at airport security.</p>
+            <button type="button" onclick="window.print()" style="background: #0284c7;">Print E-Ticket / Boarding Pass</button>
+        </div>
+    </section>
+
+    <!-- 4. View Booking Status -->
+    <section>
+        <h2>View Booking Status</h2>
+        <form id="statusCheckForm">
+            <input type="text" id="statusPnrInput" placeholder="Enter Booking Reference / PNR" required>
+            <button type="submit">Enquire Flight Status</button>
+        </form>
+        <p id="flightStatusOutput" style="font-weight: bold; margin-top: 10px;"></p>
+    </section>
+
+    <!-- 5. Passenger Dashboard & My Tickets -->
+    <section>
+        <h2>Passenger Dashboard - My Tickets & Travel History</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>PNR / Ref</th>
+                    <th>Passenger</th>
+                    <th>Flight</th>
+                    <th>Route</th>
+                    <th>Date</th>
+                    <th>Seat</th>
+                    <th>Fare</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="myTicketsBody">
+                <tr><td colspan="8">No flight bookings found.</td></tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- 6. Cancel Flight Ticket -->
+    <section>
+        <h2>Cancel Ticket & Refund</h2>
+        <form id="cancelFlightForm">
+            <input type="text" id="cancelPnr" placeholder="Enter Booking Reference / PNR" required>
+            <button type="submit" style="background: #dc2626;">Cancel Booking & Request Refund</button>
+        </form>
+        <p id="cancelFlightResult" style="font-weight: bold; margin-top: 10px;"></p>
+    </section>
+
+    <!-- 7. Customer Feedback -->
+    <section>
+        <h2>Customer Feedback</h2>
+        <form id="feedbackForm">
+            <input type="text" id="fbName" placeholder="Your Name" required>
+            <select id="fbRating">
+                <option value="5">★★★★★ Excellent (5/5)</option>
+                <option value="4">★★★★☆ Very Good (4/5)</option>
+                <option value="3">★★★☆☆ Good (3/5)</option>
+                <option value="2">★★☆☆☆ Average (2/5)</option>
+                <option value="1">★☆☆☆☆ Poor (1/5)</option>
+            </select><br>
+            <textarea id="fbComment" rows="3" cols="45" placeholder="Share your flying experience with us..." required></textarea><br>
+            <button type="submit">Submit Feedback</button>
+        </form>
+        <ul id="feedbackList" style="text-align: left; max-width: 650px; margin: 15px auto;"></ul>
+    </section>
+
+    <!-- 8. Administrator Panel & Reports -->
+    <section>
+        <h2>Airline Administrator Dashboard</h2>
+        <h3>Manage Flight Schedules & Seat Inventory</h3>
+        <form id="adminAddFlightForm">
+            <input type="text" id="admFNo" placeholder="Flight No (e.g. AI-992)" required>
+            <input type="text" id="admAirline" placeholder="Airline Name" required><br>
+            <input type="text" id="admOrigin" placeholder="Origin Airport" required>
+            <input type="text" id="admDest" placeholder="Destination Airport" required><br>
+            <input type="text" id="admTimes" placeholder="Time (e.g. 10:00 - 12:30)" required>
+            <select id="admClass">
+                <option value="Economy">Economy</option>
+                <option value="Premium Economy">Premium Economy</option>
+                <option value="Business">Business</option>
+            </select><br>
+            <input type="number" id="admSeats" placeholder="Seat Count" min="1" required>
+            <input type="number" id="admFare" placeholder="Base Fare (₹)" min="1" required><br>
+            <button type="submit" style="background: #0f172a;">Add Flight to Schedule</button>
+        </form>
+
+        <h3>Airline Revenue & Operations Report</h3>
+        <button type="button" onclick="generateFlightReport()">Generate Real-time Inventory & Booking Report</button>
+        <p id="adminFlightReport" style="font-weight: bold; color: #0369a1; margin-top: 10px;"></p>
+    </section>
+
+    <p style="color: #64748b; font-size: 13px; margin-top: 25px;">Online Flight Reservation System - Academic Year 2026</p>
+</div>
+
+<script>
+    const msgEl = document.getElementById("message");
+    let loggedPassenger = null;
+    let selectedFlight = null;
+    let flightBookings = [];
+    let passengers = [
+        { name: "Rahul Sharma", email: "rahul@skywings.com", phone: "9876543210", pass: "pass123" }
+    ];
+
+    function showMessage(text, isError = false) {
+        msgEl.textContent = text;
+        msgEl.style.backgroundColor = isError ? "#fee2e2" : "#e0f2fe";
+        msgEl.style.color = isError ? "#991b1b" : "#0369a1";
+    }
+
+    function quickPassengerLogin() {
+        loggedPassenger = passengers[0];
+        document.getElementById("authStatusText").textContent = "Passenger: " + loggedPassenger.name + " (" + loggedPassenger.email + ")";
+        showMessage("Logged in as " + loggedPassenger.name);
+    }
+
+    function forgotPassword() {
+        const mail = prompt("Enter your registered email address for password reset link:");
+        if (mail) {
+            showMessage("Password reset instructions have been dispatched to " + mail);
+        }
+    }
+
+    // Register
+    document.getElementById("regForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const name = document.getElementById("regName").value.trim();
+        const email = document.getElementById("regEmail").value.trim();
+        const phone = document.getElementById("regPhone").value.trim();
+        const pass = document.getElementById("regPass").value;
+
+        if (passengers.some(p => p.email === email)) {
+            showMessage("Passenger email already registered! Please login.", true);
+            return;
+        }
+        const pax = { name, email, phone, pass };
+        passengers.push(pax);
+        loggedPassenger = pax;
+        document.getElementById("authStatusText").textContent = "Passenger: " + name + " (" + email + ")";
+        showMessage("Account created successfully! Logged in as " + name);
+        this.reset();
+    });
+
+    // Login
+    document.getElementById("loginForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const email = document.getElementById("loginEmail").value.trim();
+        const pass = document.getElementById("loginPass").value;
+        const found = passengers.find(p => p.email === email && p.pass === pass);
+        if (found) {
+            loggedPassenger = found;
+            document.getElementById("authStatusText").textContent = "Passenger: " + found.name + " (" + found.email + ")";
+            showMessage("Login successful! Welcome aboard, " + found.name);
+        } else {
+            showMessage("Invalid passenger credentials.", true);
+        }
+    });
+
+    // Admin Login
+    document.getElementById("adminLoginForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const u = document.getElementById("adminUser").value.trim();
+        const p = document.getElementById("adminPass").value;
+        if (u === "admin" && p === "admin123") {
+            document.getElementById("authStatusText").textContent = "Authenticated as Administrator (Full Access)";
+            showMessage("Administrator login verified. Management controls unlocked.");
+        } else {
+            showMessage("Invalid Admin credentials. Use admin / admin123.", true);
+        }
+    });
+
+    // Search Flights
+    document.getElementById("flightSearchForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const from = document.getElementById("fromCity").value.trim();
+        const to = document.getElementById("toCity").value.trim();
+        const date = document.getElementById("flightDate").value;
+        const cls = document.getElementById("flightClass").value;
+        showMessage("Displaying flights from " + from + " to " + to + " on " + date + " in " + cls + " class.");
+    });
+
+    // Select Flight
+    function selectFlight(fNo, airline, from, to, cls, fare, seatId) {
+        const seatCell = document.getElementById(seatId);
+        const avail = parseInt(seatCell ? seatCell.textContent : "0");
+        if (avail <= 0) {
+            showMessage("Sorry, flight " + fNo + " is sold out in this class!", true);
+            return;
+        }
+        const taxes = Math.round(fare * 0.12);
+        const totalFare = fare + taxes;
+        selectedFlight = { fNo, airline, from, to, cls, baseFare: fare, taxes, totalFare, seatId };
+
+        document.getElementById("selectedFlightNotice").textContent =
+            "Selected: " + airline + " (" + fNo + ") | Route: " + from + " -> " + to + " | Base: ₹" + fare + " + Tax: ₹" + taxes + " = Total ₹" + totalFare;
+        document.getElementById("fareSummaryText").textContent =
+            "Payable Amount: ₹" + totalFare + " (Base Fare ₹" + fare + " + Airport Tax & GST ₹" + taxes + ")";
+        showMessage("Flight " + fNo + " selected. Please fill passenger details to proceed with ticketing.");
+    }
+
+    // Reserve & Pay
+    document.getElementById("passengerBookingForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        if (!selectedFlight) {
+            showMessage("Please select a flight first before making payment!", true);
+            return;
+        }
+
+        const seatCell = document.getElementById(selectedFlight.seatId);
+        let avail = parseInt(seatCell ? seatCell.textContent : "10");
+        if (avail <= 0) {
+            showMessage("Seat inventory exhausted for this flight.", true);
+            return;
+        }
+        avail--;
+        if (seatCell) seatCell.textContent = avail;
+
+        const pnr = "SK" + Math.floor(100000 + Math.random() * 900000);
+        const paxName = document.getElementById("paxName").value.trim();
+        const paxSeat = document.getElementById("paxSeat").value;
+        const paxMeal = document.getElementById("paxMeal").value;
+        const flightDate = document.getElementById("flightDate").value || "2026-11-20";
+
+        const booking = {
+            pnr,
+            paxName,
+            fNo: selectedFlight.fNo,
+            airline: selectedFlight.airline,
+            route: selectedFlight.from + " -> " + selectedFlight.to,
+            date: flightDate,
+            cls: selectedFlight.cls,
+            seat: paxSeat,
+            meal: paxMeal,
+            fare: selectedFlight.totalFare,
+            status: "Confirmed",
+            seatId: selectedFlight.seatId
+        };
+        flightBookings.push(booking);
+
+        // Display Boarding Pass
+        document.getElementById("bpPnr").textContent = pnr;
+        document.getElementById("bpFlight").textContent = booking.fNo;
+        document.getElementById("bpAirline").textContent = booking.airline;
+        document.getElementById("bpClass").textContent = booking.cls;
+        document.getElementById("bpRoute").textContent = booking.route;
+        document.getElementById("bpDate").textContent = booking.date;
+        document.getElementById("bpPax").textContent = booking.paxName;
+        document.getElementById("bpSeat").textContent = booking.seat;
+        document.getElementById("bpMeal").textContent = booking.meal;
+        document.getElementById("bpFare").textContent = booking.fare;
+        document.getElementById("boardingPassBox").style.display = "block";
+
+        updateMyTicketsTable();
+        showMessage("Flight booking confirmed! E-Ticket generated with PNR: " + pnr + ". Confirmation sent to email.");
+        this.reset();
+    });
+
+    function updateMyTicketsTable() {
+        const tbody = document.getElementById("myTicketsBody");
+        tbody.innerHTML = "";
+        if (flightBookings.length === 0) {
+            tbody.innerHTML = "<tr><td colspan='8'>No flight bookings found.</td></tr>";
+            return;
+        }
+        flightBookings.forEach(b => {
+            const tr = document.createElement("tr");
+            const badgeCls = b.status === "Confirmed" ? "badge-confirmed" : "badge-cancelled";
+            tr.innerHTML = `
+                <td><strong>${b.pnr}</strong></td>
+                <td>${b.paxName}</td>
+                <td>${b.fNo} (${b.airline})</td>
+                <td>${b.route}</td>
+                <td>${b.date}</td>
+                <td>${b.seat}</td>
+                <td>₹${b.fare}</td>
+                <td><span class="badge ${badgeCls}">${b.status}</span></td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+
+    // Status Check
+    document.getElementById("statusCheckForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const pnr = document.getElementById("statusPnrInput").value.trim();
+        const b = flightBookings.find(item => item.pnr === pnr);
+        const out = document.getElementById("flightStatusOutput");
+        if (b) {
+            out.style.color = b.status === "Confirmed" ? "#0369a1" : "#b91c1c";
+            out.textContent = "PNR " + pnr + ": Flight " + b.fNo + " on " + b.date + " is [" + b.status + "]. Passenger: " + b.paxName + ", Assigned Seat: " + b.seat + ".";
+        } else {
+            out.style.color = "#b91c1c";
+            out.textContent = "Booking reference " + pnr + " could not be found. Please check your ticket details.";
+        }
+    });
+
+    // Cancel Ticket
+    document.getElementById("cancelFlightForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const pnr = document.getElementById("cancelPnr").value.trim();
+        const b = flightBookings.find(item => item.pnr === pnr);
+        const out = document.getElementById("cancelFlightResult");
+
+        if (!b) {
+            out.style.color = "#b91c1c";
+            out.textContent = "Error: PNR " + pnr + " does not exist.";
+            return;
+        }
+        if (b.status === "Cancelled") {
+            out.style.color = "#b91c1c";
+            out.textContent = "PNR " + pnr + " is already marked cancelled.";
+            return;
+        }
+
+        b.status = "Cancelled";
+        const refund = Math.round(b.fare * 0.75); // 75% refund
+        if (b.seatId) {
+            const seatCell = document.getElementById(b.seatId);
+            if (seatCell) seatCell.textContent = parseInt(seatCell.textContent) + 1;
+        }
+        out.style.color = "#0369a1";
+        out.textContent = "Ticket " + pnr + " has been cancelled. Refund of ₹" + refund + " (75% of ₹" + b.fare + ") initiated to original payment mode.";
+        updateMyTicketsTable();
+        showMessage("PNR " + pnr + " cancelled successfully.");
+        this.reset();
+    });
+
+    // Feedback
+    document.getElementById("feedbackForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const name = document.getElementById("fbName").value.trim();
+        const rating = document.getElementById("fbRating").value;
+        const comment = document.getElementById("fbComment").value.trim();
+
+        const li = document.createElement("li");
+        li.innerHTML = `<strong>${name}</strong> (${rating}/5 stars): <em>"${comment}"</em>`;
+        document.getElementById("feedbackList").appendChild(li);
+        showMessage("Thank you for your valuable feedback, " + name + "!");
+        this.reset();
+    });
+
+    // Admin Add Flight
+    document.getElementById("adminAddFlightForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        const fNo = document.getElementById("admFNo").value.trim();
+        const airline = document.getElementById("admAirline").value.trim();
+        const orig = document.getElementById("admOrigin").value.trim();
+        const dest = document.getElementById("admDest").value.trim();
+        const times = document.getElementById("admTimes").value.trim();
+        const cls = document.getElementById("admClass").value;
+        const seats = document.getElementById("admSeats").value;
+        const fare = parseInt(document.getElementById("admFare").value);
+
+        const seatId = "seats-" + fNo.replace("-", "");
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${fNo}</td>
+            <td>${airline}</td>
+            <td>${orig} -> ${dest}</td>
+            <td>${times}</td>
+            <td>${cls}</td>
+            <td id="${seatId}">${seats}</td>
+            <td>₹${fare.toLocaleString()}</td>
+            <td><button type="button" onclick="selectFlight('${fNo}', '${airline}', '${orig}', '${dest}', '${cls}', ${fare}, '${seatId}')">Select Flight</button></td>
+        `;
+        document.getElementById("flightListBody").appendChild(tr);
+        showMessage("Flight " + fNo + " (" + airline + ") added to active schedules.");
+        this.reset();
+    });
+
+    // Admin Report
+    function generateFlightReport() {
+        const total = flightBookings.length;
+        const confirmed = flightBookings.filter(b => b.status === "Confirmed").length;
+        const cancelled = flightBookings.filter(b => b.status === "Cancelled").length;
+        const totalRev = flightBookings.filter(b => b.status === "Confirmed").reduce((sum, b) => sum + b.fare, 0);
+
+        document.getElementById("adminFlightReport").textContent =
+            `Aviation Operations Summary: Total Bookings: ${total} | Confirmed Seats: ${confirmed} | Cancelled: ${cancelled} | Total Ticket Sales: ₹${totalRev.toLocaleString()}`;
+        showMessage("Consolidated Flight & Revenue Report generated.");
+    }
+</script>
+</body>
+</html>
